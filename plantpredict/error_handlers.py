@@ -28,7 +28,10 @@ def handle_error_response(function):
                 raise APIError(response.status_code, response.content)
             else:
                 if response.content:
-                    return convert_json(json.loads(response.content), camel_to_snake)
+                    if "Queue" in response.url:
+                        return json.loads(response.content)
+                    else:
+                        return convert_json(json.loads(response.content), camel_to_snake)
                 else:
                     return {'is_successful': True}
         except AttributeError:

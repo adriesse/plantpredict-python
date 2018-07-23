@@ -12,7 +12,7 @@ def wait_for_prediction(prediction_id):
     while not is_complete:
         task_queue = plantpredict.User.get_queue()
         try:
-            prediction_task = (task for task in task_queue if task['prediction_id'] == prediction_id).next()
+            prediction_task = (task for task in task_queue if task['predictionId'] == prediction_id).next()
         except (StopIteration, TypeError):
             continue
 
