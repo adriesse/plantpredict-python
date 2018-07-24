@@ -32,13 +32,13 @@ plantpredict.utilities.wait_for_prediction(prediction.id)
 # retrieve the nodal data of Array 1 (in Block 1)
 nodal_data_array = prediction.get_nodal_data(params={
     'block_number': 1,
-    'array_number': 1,
+    'array_number': 1
 })
 
 # retrieve the nodal data of DC  Field 1 (in Block 1 --> Array 1 --> Inverter A)
 nodal_data_dc_field = prediction.get_nodal_data(params={
     'block_number': 1,
-    'Array_number': 1,
+    'array_number': 1,
     'inverter_name': 'A',
     'dc_field_number': 1
 })

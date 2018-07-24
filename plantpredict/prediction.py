@@ -41,7 +41,7 @@ class Prediction(PlantPredictEntity):
         return requests.post(
             url=settings.BASE_URL + "/Project/{}/Prediction/{}/Run".format(self.project_id, self.id),
             headers={"Authorization": "Bearer " + settings.TOKEN},
-            json=export_options
+            json=convert_json(export_options, snake_to_camel)
         )
 
     def get_results_summary(self):
@@ -66,7 +66,7 @@ class Prediction(PlantPredictEntity):
         return requests.get(
             url=settings.BASE_URL + "/Project/{}/Prediction/{}/NodalJson".format(self.project_id, self.id),
             headers={"Authorization": "Bearer " + settings.TOKEN},
-            params=snake_to_camel(params)
+            params=convert_json(params, snake_to_camel)
         )
 
     def clone(self, new_prediction_name):

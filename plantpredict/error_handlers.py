@@ -49,5 +49,5 @@ class APIError(Exception):
     def __str__(self):
         return "HTTP Status Code {}: {}".format(
             self.status,
-            json.loads(self.errors)
+            self.errors
         )

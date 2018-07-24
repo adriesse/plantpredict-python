@@ -60,7 +60,7 @@ the lowest node (power plant hierarchy-wise) in the input dictionary specifies t
 
     nodal_data_dc_field = prediction.get_nodal_data(params = {
         'block_number': 1,
-        'Array_number': 1,
+        'array_number': 1,
         'inverter_name': 'A',
         'dc_field_number': 1
     })
