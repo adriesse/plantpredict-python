@@ -1,17 +1,9 @@
 .. currentmodule:: plantpredict
 
-##############
-SDK Reference
-##############
+Project
+----------------
 
-Classes
-=======
-
-.. autosummary::
-   :toctree: generated/
-
-    project.Project
-    prediction.Prediction
-    powerplant.PowerPlant
-    weather.Weather
-    module.Module
+.. automodule:: plantpredict.project
+    :members:
+    :undoc-members:
+    :show-inheritance:

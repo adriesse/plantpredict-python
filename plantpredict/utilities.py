@@ -64,6 +64,7 @@ MANUAL_KEY_FIXES = {
         "uiamg": "uiam_g",
         "ashraeiam": "ashrae_iam",
         "stcmpp": "stc_mpp",
+        "a_c": "ac"
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",
@@ -99,6 +100,9 @@ def convert_json(d, convert_function):
         for key, val in MANUAL_KEY_FIXES[convert_function.__name__].iteritems():
             if key in new_key:
                 new_key = new_key.replace(key, val)
+
+        # this removes the underscore given to a snake case when the first character in the camel case is capital
+        new_key = new_key[1:] if new_key[0] == "_" else new_key
 
         new[new_key] = new_v
 
