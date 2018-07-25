@@ -15,6 +15,8 @@ def handle_refused_connection(function):
             except requests.exceptions.ConnectionError:
                 print('Connection refused, trying again...')
                 time.sleep(7)
+    function_wrapper.__name__ = function.__name__
+    function_wrapper.__doc__ = function.__doc__
     return function_wrapper
 
 
@@ -37,6 +39,8 @@ def handle_error_response(function):
         except AttributeError:
             return response
 
+    function_wrapper.__name__ = function.__name__
+    function_wrapper.__doc__ = function.__doc__
     return function_wrapper
 
 
