@@ -54,7 +54,6 @@ class PlantPredictEntity(object):
         )
 
     def __init__(self, **kwargs):
-        self.id = None
         self.create_url_suffix = None
         self.delete_url_suffix = None
         self.get_url_suffix = None
