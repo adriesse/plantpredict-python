@@ -1,27 +1,8 @@
 import plantpredict
 import re
 
-
-def wait_for_prediction(prediction_id):
-    """
-
-    :param prediction_id:
-    :return:
-    """
-    is_complete = False
-    while not is_complete:
-        task_queue = plantpredict.User.get_queue()
-        try:
-            prediction_task = (task for task in task_queue if task['predictionId'] == prediction_id).next()
-        except (StopIteration, TypeError):
-            continue
-
-        # Processing Status Enum (Success = 3)
-        # TODO 4 is error but works for module file stuff
-        if prediction_task['prediction']['processingStatus'] in [3, 4]:
-            is_complete = True
-
-
+# Not currently used.
+"""
 def decorate_all_methods(decorator):
     def decorate(cls):
         for attr in cls.__dict__:
@@ -29,6 +10,7 @@ def decorate_all_methods(decorator):
                 setattr(cls, attr, decorator(getattr(cls, attr)))
         return cls
     return decorate
+"""
 
 
 def camel_to_snake(key):
