@@ -4,6 +4,12 @@
 SDK Reference
 ################
 
+Detailed information on how to use PlantPredict can be found in the
+`User Manual <https://plantpredict.com/user_manual/introduction/>`_. The manual is written in the context of
+PlantPredict's GUI, but is fully applicable to the API. Additional documentation for the general PlantPredict API,
+including a full list of endpoints and their respective inputs/outputs can be found
+`here <http://api.plantpredict.com/swagger/ui/index#/>`_.
+
 API
 =================
 

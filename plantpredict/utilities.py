@@ -64,7 +64,8 @@ MANUAL_KEY_FIXES = {
         "uiamg": "uiam_g",
         "ashraeiam": "ashrae_iam",
         "stcmpp": "stc_mpp",
-        "a_c": "ac"
+        "a_c": "ac",
+        "u_t_c": "utc"
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",
