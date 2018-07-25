@@ -6,7 +6,6 @@ from plantpredict.error_handlers import handle_refused_connection, handle_error_
 from plantpredict.utilities import decorate_all_methods, convert_json, camel_to_snake, snake_to_camel
 
 
-
 class Weather(PlantPredictEntity):
     """
     """

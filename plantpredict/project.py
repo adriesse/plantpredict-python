@@ -1,18 +1,16 @@
 import requests
 from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
-from plantpredict.utilities import decorate_all_methods
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 
 
-@decorate_all_methods(handle_refused_connection)
-@decorate_all_methods(handle_error_response)
 class Project(PlantPredictEntity):
+    """
+    """
 
     def create(self, name=None, latitude=None, longitude=None, country=None, country_code=None, elevation=None,
                standard_offset_from_utc=None):
-        """
-        HTTP Request: POST /Project
+        """HTTP Request: POST /Project
 
         Creates a new Project entity in PlantPredict and assigns the uid of the newly created Project to self.id in the
         local object instance. Any attributes (including but not limited to those also assignable via the inputs to
@@ -36,8 +34,7 @@ class Project(PlantPredictEntity):
         return super(Project, self).create()
 
     def delete(self):
-        """
-        HTTP Request: DELETE /Project/{ProjectId}
+        """HTTP Request: DELETE /Project/{ProjectId}
 
         Deletes an existing Project entity in PlantPredict. The local instance of the Project entity must have
         attribute self.id identical to the project id of the Project to be deleted.
@@ -51,8 +48,7 @@ class Project(PlantPredictEntity):
         return super(Project, self).delete()
 
     def get(self):
-        """
-        HTTP Request: GET /Project/{Id}
+        """HTTP Request: GET /Project/{Id}
 
         Retrieves an existing Project entity in PlantPredict and automatically assigns all of its attributes to the
         local Project object instance. The local instance of the Project entity must have attribute self.id identical
@@ -67,8 +63,7 @@ class Project(PlantPredictEntity):
         return super(Project, self).get()
 
     def update(self):
-        """
-        HTTP Request: PUT /Project
+        """HTTP Request: PUT /Project
 
         Updates an existing Project entity in PlantPredict using the full attributes of the local Project instance.
         Calling this method is most commonly preceded by instantiating a local instance of Project with a specified
@@ -81,9 +76,10 @@ class Project(PlantPredictEntity):
 
         return super(Project, self).update()
 
+    @handle_refused_connection
+    @handle_error_response
     def get_all_predictions(self):
-        """
-        HTTP Request: GET /Project/{ProjectId}/Prediction
+        """HTTP Request: GET /Project/{ProjectId}/Prediction
 
         Retrieves the full attributes of every Prediction associated with the Project.
 
@@ -97,9 +93,10 @@ class Project(PlantPredictEntity):
         )
 
     @staticmethod
+    @handle_refused_connection
+    @handle_error_response
     def search(latitude, longitude, search_radius=1.0):
-        """
-        HTTP Request: GET /Project/Search
+        """HTTP Request: GET /Project/Search
 
         :param latitude: North-South coordinate of the Project location, in decimal degrees.
         :type latitude: float
