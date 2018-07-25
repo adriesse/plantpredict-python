@@ -6,6 +6,8 @@ from plantpredict.error_handlers import handle_refused_connection, handle_error_
 
 class Project(PlantPredictEntity):
     """
+    The full contents of the Project database entity (in JSON) can be found
+    `here <http://app.plantpredict.com/swagger/ui/index#!/Project/Project_Get_0>`_.
     """
 
     def create(self, name=None, latitude=None, longitude=None, country=None, country_code=None, elevation=None,
@@ -15,6 +17,26 @@ class Project(PlantPredictEntity):
         Creates a new Project entity in PlantPredict and assigns the uid of the newly created Project to self.id in the
         local object instance. Any attributes (including but not limited to those also assignable via the inputs to
         this method) assigned prior to calling this method will be recorded in the new Project entity in PlantPredict.
+
+        The following variables can be obtained via the methods belonging to plantpredict.Geo: country and country_code
+        (plantpredict.Geo.get_location_info), elevation (plantpredict.Geo.get_elevation), and standard_offset_from_utc
+        (plantpredict.Geo.get_timezone).
+
+        :param name: The name of the Project.
+        :type name: str
+        :param latitude: North-South coordinate of the Project location, in decimal degrees.
+        :type latitude: float
+        :param longitude: East-West coordinate of the Project location, in decimal degrees.
+        :type longitude: float
+        :param country: Full name of the country of the Project's location.
+        :type country: str
+        :param country_code: Country code of the country of the Project's location (ex. US for United States, CHN for
+        China, AUS for Australia, etc.).
+        :type country_code: str
+        :param elevation: The elevation of the Project location above sea level in units meters.
+        :type elevation: float
+        :param standard_offset_from_utc: Time zone with respect to Greenwich Mean Time (GMT) in +/- hours offset.
+        :type standard_offset_from_utc: float
 
         :return: A dictionary containing the project id.
         :rtype: dict
@@ -97,6 +119,8 @@ class Project(PlantPredictEntity):
     @handle_error_response
     def search(latitude, longitude, search_radius=1.0):
         """HTTP Request: GET /Project/Search
+
+        Searches for all existing Project entities within a search radius of a specified latitude/longitude.
 
         :param latitude: North-South coordinate of the Project location, in decimal degrees.
         :type latitude: float

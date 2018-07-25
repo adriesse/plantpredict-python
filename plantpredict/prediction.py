@@ -2,17 +2,31 @@ import requests
 from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.powerplant import PowerPlant
-from plantpredict.utilities import decorate_all_methods, convert_json, camel_to_snake, snake_to_camel
+from plantpredict.utilities import convert_json, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
+from plantpredict.enumerations.library_status_enum import *
 
 
-@decorate_all_methods(handle_refused_connection)
-@decorate_all_methods(handle_error_response)
 class Prediction(PlantPredictEntity):
     """
+    T
     """
-    def create(self):
-        """POST /Project/{ProjectId}/Prediction"""
+    def create(self, name=None, project_id=None, status=DRAFT_PRIVATE, year_repeater=1):
+        """POST /Project/{ProjectId}/Prediction
+
+        :param name:
+        :type name: str
+        :param project_id:
+        :type
+        :param status:
+        :param year_repeater:
+        :return:
+        """
+        self.name = name if name is not None else self.name
+        self.project_id = project_id if project_id is not None else self.project_id
+        self.status = status if self.status is None else self.status
+        self.year_repeater = year_repeater if self.year_repeater is None else self.year_repeater
+
         self.create_url_suffix = "/Project/{}/Prediction".format(self.project_id)
 
         return super(Prediction, self).create()
@@ -35,6 +49,8 @@ class Prediction(PlantPredictEntity):
 
         return super(Prediction, self).update()
 
+    @handle_refused_connection
+    @handle_error_response
     def run(self, export_options=None):
         """POST /Project/{ProjectId}/Prediction/{PredictionId}/Run"""
 
@@ -44,6 +60,8 @@ class Prediction(PlantPredictEntity):
             json=convert_json(export_options, snake_to_camel)
         )
 
+    @handle_refused_connection
+    @handle_error_response
     def get_results_summary(self):
         """GET /Project/{ProjectId}/Prediction/{Id}/ResultSummary"""
 
@@ -52,6 +70,8 @@ class Prediction(PlantPredictEntity):
             headers={"Authorization": "Bearer " + settings.TOKEN}
         )
 
+    @handle_refused_connection
+    @handle_error_response
     def get_results_details(self):
         """GET /Project/{ProjectId}/Prediction/{Id}/ResultDetails"""
 
@@ -60,6 +80,8 @@ class Prediction(PlantPredictEntity):
             headers={"Authorization": "Bearer " + settings.TOKEN}
         )
 
+    @handle_refused_connection
+    @handle_error_response
     def get_nodal_data(self, params):
         """GET /Project/{ProjectId}/Prediction/{Id}/NodalJson"""
 
@@ -69,6 +91,8 @@ class Prediction(PlantPredictEntity):
             params=convert_json(params, snake_to_camel)
         )
 
+    @handle_refused_connection
+    @handle_error_response
     def clone(self, new_prediction_name):
         """
 
@@ -125,17 +149,10 @@ class Prediction(PlantPredictEntity):
 
         return new_prediction_id
 
-    def init(self):
-        """This class initializes with the attributes (with set to null) required to successfully create a new
-        prediction via Prediction.create()."""
+    def __init__(self):
+        self.name = None
+        self.project_id = None
+        self.status = None
+        self.year_repeater = None
 
         super(Prediction, self).__init__()
-        self.__dict__.update({
-            'project_id': 0,
-            'linear_degradation_rate': 0,
-            'error_model_acc': 0,
-            'error_sens_acc': 0,
-            'error_int_ann_var': 0,
-            'error_mon_acc': 0,
-            'error_spa_var': 0
-        })
