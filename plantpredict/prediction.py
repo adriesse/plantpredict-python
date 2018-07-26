@@ -110,10 +110,6 @@ class Prediction(PlantPredictEntity):
 
         Runs the Prediction and waits for simulation to complete. The input variable "export_options" should take the
 
-        .. code-block:: python
-
-
-
         :param export_options: Contains options for exporting
         :return:
         """

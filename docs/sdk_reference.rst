@@ -16,7 +16,7 @@ API
 Project
 ----------------
 
-.. automodule:: plantpredict.project.Project
+.. automodule:: plantpredict.project
     :members:
     :undoc-members:
     :show-inheritance:
@@ -24,7 +24,7 @@ Project
 Prediction
 ----------------
 
-.. automodule:: plantpredict.prediction.Prediction
+.. automodule:: plantpredict.prediction
     :members:
     :undoc-members:
     :show-inheritance:
@@ -32,7 +32,7 @@ Prediction
 PowerPlant
 ----------------
 
-.. automodule:: plantpredict.powerplant.PowerPlant
+.. automodule:: plantpredict.powerplant
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,7 +40,7 @@ PowerPlant
 Weather
 ----------------
 
-.. automodule:: plantpredict.weather.Weather
+.. automodule:: plantpredict.weather
     :members:
     :undoc-members:
     :show-inheritance:
@@ -48,7 +48,7 @@ Weather
 Module
 ----------------
 
-.. automodule:: plantpredict.module.Module
+.. automodule:: plantpredict.module
     :members:
     :undoc-members:
     :show-inheritance:
@@ -56,7 +56,7 @@ Module
 Inverter
 ----------------
 
-.. automodule:: plantpredict.inverter.Inverter
+.. automodule:: plantpredict.inverter
     :members:
     :undoc-members:
     :show-inheritance:
