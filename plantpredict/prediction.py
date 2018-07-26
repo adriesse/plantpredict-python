@@ -14,6 +14,7 @@ class Prediction(PlantPredictEntity):
     "GET /Project/{ProjectId}/Prediction/{PredictionId}" in `the general PlantPredict API documentation
     <http://app.plantpredict.com/swagger/ui/index#!/Project/Project_GetPrediction>`_.
     """
+
     def create(self, name=None, project_id=None, status=DRAFT_PRIVATE, year_repeater=1):
         """HTTP Request: POST /Project/{ProjectId}/Prediction
 
@@ -31,7 +32,7 @@ class Prediction(PlantPredictEntity):
         :param year_repeater: Number of years of power plant operation to be simulated (defaulted to 1 year).
         :type year_repeater: int
 
-         :return: A dictionary containing the prediction id.
+        :return: A dictionary containing the prediction id.
         :rtype: dict
         """
         self.name = name if name is not None else self.name
