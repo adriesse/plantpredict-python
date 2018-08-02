@@ -1,7 +1,9 @@
 import requests
+import json
 from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
+from plantpredict.utilities import convert_json, camel_to_snake
 
 
 class Project(PlantPredictEntity):
@@ -115,8 +117,6 @@ class Project(PlantPredictEntity):
         )
 
     @staticmethod
-    @handle_refused_connection
-    @handle_error_response
     def search(latitude, longitude, search_radius=1.0):
         """HTTP Request: GET /Project/Search
 
@@ -130,14 +130,20 @@ class Project(PlantPredictEntity):
         :type search_radius: float
         :return: int, float
         """
-
-        return requests.get(
+        response = requests.get(
             url=settings.BASE_URL + "/Project/Search",
             headers={"Authorization": "Bearer " + settings.TOKEN},
             params={'latitude': latitude, 'longitude': longitude, 'searchRadius': search_radius}
         )
 
-    def __init__(self):
+        project_list = json.loads(response.content)
+
+        return [convert_json(p, camel_to_snake) for p in project_list]
+
+    def __init__(self, id=None):
+        if id:
+            self.id = id
+
         self.name = None
         self.latitude = None
         self.longitude = None
