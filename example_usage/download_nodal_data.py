@@ -27,7 +27,6 @@ prediction = plantpredict.Prediction(id=prediction_id, project_id=project_id)
 
 # run prediction and call utility to wait for it to complete
 prediction.run(export_options=export_options)
-plantpredict.utilities.wait_for_prediction(prediction.id)
 
 # retrieve the nodal data of Array 1 (in Block 1)
 nodal_data_array = prediction.get_nodal_data(params={

@@ -50,7 +50,9 @@ MANUAL_KEY_FIXES = {
         "d_n_i": "dni",
         "poa_i": "poai",
         "g_c_r": "gcr",
-        "bi_faciality": "bifaciality"
+        "bi_faciality": "bifaciality",
+        "poairradinace": "global_poa_irradiance",
+        "g_teff": "gt_eff"
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",
