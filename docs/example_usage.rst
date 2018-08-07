@@ -40,13 +40,11 @@ Instantiate a new prediction using the :py:class:`~plantpredict.Prediction` clas
     prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
     prediction = plantpredict.Prediction(id=prediction_id, project_id=project_id)
 
-Run the prediction and call the utility method :py:func:`~plantpredict.utilities.wait_for_prediction` that waits for the prediction
-to complete.
+Run the prediction.
 
 .. code-block:: python
 
     prediction.run(export_options=export_options)
-    plantpredict.utilities.wait_for_prediction(prediction.id)
 
 Retrieve the nodal data of Array 1 (in Block 1) and DC  Field 1 (in Block 1 --> Array 1 --> Inverter A). Note that
 the lowest node (power plant hierarchy-wise) in the input dictionary specifies the nodal data returned.

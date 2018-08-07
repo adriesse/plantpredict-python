@@ -22,6 +22,9 @@ new_prediction.get()
 new_prediction.transposition_model = HAY
 new_prediction.update()
 
+# delete prediction for housekeeping
+new_prediction.delete()
+
 
 
 
