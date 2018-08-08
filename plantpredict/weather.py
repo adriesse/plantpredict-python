@@ -20,20 +20,16 @@ class Weather(PlantPredictEntity):
         Creates a new Weather entity.
 
         Minimum required attributes for successful Weather creation:
-        =====  =====  ============
-        Field  Type   Description
-        =====  =====  ============
-        False  False  False
-        True   False  False
-        False  True   False
-        True   True   True
-        =====  =====  =======
+
+        .. csv-table::
+            :header: Field, Type, Description
+
+            latitude, float, adfaldkfa
+            longitude, float, adlfajdfla
+            weather detail, dict, adf;lkajdsf
 
         :return:
         """
-
-
-
         self.create_url_suffix = "/Weather"
         super(Weather, self).create()
 
