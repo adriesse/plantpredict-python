@@ -8,9 +8,32 @@ from plantpredict.utilities import decorate_all_methods, convert_json, camel_to_
 
 class Weather(PlantPredictEntity):
     """
+    The full contents of the Weather database entity (in JSON) can be found under
+    "GET /Weather/{Id}" in `the general PlantPredict API documentation
+    <http://app.plantpredict.com/swagger/ui/index#!/Weather/Weather_Get_0>`_.
     """
+
     def create(self):
-        """POST /Weather"""
+        """
+        POST /Weather
+
+        Creates a new Weather entity.
+
+        Minimum required attributes for successful Weather creation:
+        =====  =====  ============
+        Field  Type   Description
+        =====  =====  ============
+        False  False  False
+        True   False  False
+        False  True   False
+        True   True   True
+        =====  =====  =======
+
+        :return:
+        """
+
+
+
         self.create_url_suffix = "/Weather"
         super(Weather, self).create()
 

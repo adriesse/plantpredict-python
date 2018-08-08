@@ -16,7 +16,7 @@ class Prediction(PlantPredictEntity):
     """
 
     def create(self, name=None, project_id=None, status=DRAFT_PRIVATE, year_repeater=1):
-        """HTTP Request: POST /Project/{ProjectId}/Prediction
+        """POST /Project/{ProjectId}/Prediction
 
         Creates a new Prediction entity in PlantPredict and assigns the uid of the newly created Prediction to self.id
         in the local object instance. Any attributes (including but not limited to those also assignable via the inputs
