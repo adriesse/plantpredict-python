@@ -29,8 +29,8 @@ class Weather(PlantPredictEntity):
         self.update_url_suffix = "/Weather/{}".format(self.id)
         super(Weather, self).update()
 
-    @handle_error_response
     @handle_refused_connection
+    @handle_error_response
     def get_detail(self):
         """GET /Weather/{Id}/Detail"""
         return requests.get(
@@ -61,8 +61,8 @@ class Weather(PlantPredictEntity):
 
         return [convert_json(w, camel_to_snake) for w in weather_list]
 
-    @handle_error_response
     @handle_refused_connection
+    @handle_error_response
     def download(self, latitude, longitude, provider=0):
         """POST /Weather/Download/{Provider}
 
