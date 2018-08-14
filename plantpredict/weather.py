@@ -20,15 +20,18 @@ class Weather(PlantPredictEntity):
         Creates a new Weather entity.
 
         .. csv-table:: Minimum required attributes for successful Weather creation
+            :delim: ;
             :header: Field, Type, Description
+            :widths: 5, 5, 5
+            :stub-columns: 1
 
-            name, str, Name of weather file
-            country_code, str, Country code of the Weather's location (ex. US for United States, AUS for Australia, etc.)
-            country, str, Full name of the country of the Weather's location.
-            latitude, float, North-South coordinate of the Project location, in decimal degrees.
-            longitude, float, East-West coordinate of the Project location, in decimal degrees.
-            data_provider, int, Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.weather_data_provider_enum` for a list of options.
-            weather_detail, list of dict, Each dictionary in the list contains one timestamp of weather data points summarized below.
+            name; str; Name of weather file
+            country_code; str; Country code of the Weather's location (ex. US for United States, AUS for Australia, etc.)
+            country; str; Full name of the country of the Weather's location.
+            latitude; float; North-South coordinate of the Project location (in decimal degrees).
+            longitude; float; East-West coordinate of the Project location (in decimal degrees).
+            data_provider; int; Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.weather_data_provider_enum` for a list of options.
+            weather_detail; list of dict; Each dictionary in the list contains one timestamp of weather data points summarized below.
 
         .. list-table:: Contents of each weather_detail timestamp
             :header-rows: 1
