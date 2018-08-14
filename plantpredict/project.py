@@ -128,7 +128,7 @@ class Project(PlantPredictEntity):
         :type longitude: float
         :param search_radius: search radius in miles
         :type search_radius: float
-        :return: int, float
+        :return: TODO
         """
         response = requests.get(
             url=settings.BASE_URL + "/Project/Search",

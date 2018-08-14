@@ -19,24 +19,45 @@ class Weather(PlantPredictEntity):
 
         Creates a new Weather entity.
 
-        Minimum required attributes for successful Weather creation:
-
-        .. csv-table::
+        .. csv-table:: Minimum required attributes for successful Weather creation
             :header: Field, Type, Description
 
-            latitude, float, adfaldkfa
-            longitude, float, adlfajdfla
-            weather detail, dict, adf;lkajdsf
+            name, str, Name of weather file
+            country_code, str, Country code of the Weather's location (ex. US for United States, AUS for Australia, etc.)
+            country, str, Full name of the country of the Weather's location.
+            latitude, float, North-South coordinate of the Project location, in decimal degrees.
+            longitude, float, East-West coordinate of the Project location, in decimal degrees.
+            data_provider, int, Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.weather_data_provider_enum` for a list of options.
+            weather_detail, list of dict, Each dictionary in the list contains one timestamp of weather data points summarized below.
 
-        :return:
+        .. list-table:: Contents of each weather_detail timestamp
+            :header-rows: 1
+
+            * - Field
+              - Type
+              - Description
+            * - Index
+              - aldkfjafa
+              - aldskfjakdlf
+
+        :return: A dictionary containing the project id.
+        :rtype: dict
         """
         self.create_url_suffix = "/Weather"
         super(Weather, self).create()
 
     def delete(self):
-        """DELETE /Weather/{Id}"""
+        """DELETE /Weather/{WeatherId}
+
+        Deletes an existing Weather entity in PlantPredict. The local instance of the Weather entity must have
+        attribute self.id identical to the weather id of the Weather to be deleted.
+
+        :return: A dictionary {"is_successful": True}.
+        :rtype: dict
+        """
         self.delete_url_suffix = "/Weather/{}".format(self.id)
-        super(Weather, self).delete()
+
+        return super(Weather, self).delete()
 
     def get(self):
         """GET /Weather/{Id}"""
