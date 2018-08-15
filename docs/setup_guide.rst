@@ -55,9 +55,12 @@ Download the source code for plantpredict-python from `GitHub <https://github.co
 2. Add the plantpredict python package to your Project Structure in PyCharm.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Add the "plantpredict" folder as a content root in your current project following
+Add the "plantpredict-python" folder as a separate content root in your current project following
 `these steps <https://www.jetbrains.com/help/pycharm/configuring-content-roots.html#create-content-root>`_.
 
+.. note::
+
+    You will not be able to successfully :code:`import plantpredict` unless the package is in a separate content root in PyCharm.
 
 3. Get client credentials (link to OAuth2).
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

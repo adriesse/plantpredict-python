@@ -52,7 +52,8 @@ MANUAL_KEY_FIXES = {
         "g_c_r": "gcr",
         "bi_faciality": "bifaciality",
         "poairradinace": "global_poa_irradiance",
-        "g_teff": "gt_eff"
+        "g_teff": "gt_eff",
+        "time_stamp": "timestamp"
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",

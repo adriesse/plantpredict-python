@@ -9,4 +9,3 @@ from plantpredict.weather import Weather
 from plantpredict.oauth2 import OAuth2
 from plantpredict.settings import BASE_URL, CLIENT_ID, CLIENT_SECRET, TOKEN
 from plantpredict import utilities
-from plantpredict.data_enums import *
