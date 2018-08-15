@@ -211,3 +211,80 @@ Change the weather ID of the prediction and update the prediction.
 
     prediction.weather_id = weather_id
     prediction.update()
+
+Upload raw weather data.
+-------------------------
+
+Whether you are starting with an Excel file, CSV file, SQL query, or other data format, the first step is to get your
+data into a JSON-like format. That format is represented in Python as a list of dictionaries, where each dictionary
+represents a timestamp of weather data. Depending on the initial data format, you can utilize any of Python's
+open-source data tools such as the `native csv library
+<https://docs.python.org/2/library/csv.html>`_ or
+`pandas<https://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_excel.html>`_. This tutorial skips that step
+and loads pre-processed data from :download:`this JSON file <example_usage_files/weather_details.json>`.
+
+.. code-block:: python
+
+    import json
+    with open('weather_details.json', 'rb') as json_file:
+        weather_details = json.load(json_file)
+
+Using the known latitude and longitude of the weather data location :, call
+py:meth:`~plantpredict.Geo.get_location_info` query crucial location info necessary to populate the weather file's
+metadata.
+
+.. code-block:: python
+
+    latitude = 35.0
+    longitude = -119.0
+    location_info = plantpredict.Geo.get_location_info(latitude=latitude, longitude=longitude)
+
+Initialize the :py:class:`~plantpredict.Weather` entity and populate with the minimum fields required by
+:py:meth:`~plantpredict.Weather.create`. Note that the weather details time series data loaded in the first step
+ is assigned to :py:attribute::`weather.weather_details` at this point.
+
+.. code-block:: python
+
+    from plantpredict.enumerations import weather_data_provider_enum
+    weather = plantpredict.Weather()
+    weather.name = "Python SDK Test Weather"
+    weather.latitude = 35.0
+    weather.longitude = -119.0
+    weather.country = location_info['country']
+    weather.country_code = location_info['country_code']
+    weather.data_provider = weather_data_provider_enum.METEONORM
+    weather.weather_details = weather_details
+
+Assign additional metadata fields.
+
+.. code-block:: python
+
+    weather.elevation = round(plantpredict.Geo.get_elevation(latitude=latitude, longitude=longitude)['elevation'], 2)
+    weather.locality = location_info['locality']
+    weather.region = location_info['region']
+    weather.state_province = location_info['state_province']
+    weather.state_province_code = location_info['state_province_code']
+    weather.time_zone = plantpredict.Geo.get_time_zone(latitude=latitude, longitude=longitude)['time_zone']
+    weather.status = library_status_enum.DRAFT_PRIVATE
+    weather.data_type = weather_data_type_enum.MEASURED
+    weather.p_level = weather_plevel_enum.P95
+    weather.time_interval = 60  # minutes
+    weather.global_horizontal_irradiance_sum = round(
+        sum([w['global_horizontal_irradiance'] for w in weather_details])/1000, 2
+    )
+    weather.diffuse_horizontal_irradiance_sum = round(
+        sum([w['diffuse_horizontal_irradiance'] for w in weather_details])/1000, 2
+    )
+    weather.direct_normal_irradiance_sum = round(
+        sum([w['direct_normal_irradiance'] for w in weather_details])/1000, 2
+    )
+    weather.average_air_temperature = np.round(np.mean([w['temperature'] for w in weather_details]), 2)
+    weather.average_relative_humidity = np.round(np.mean([w['relative_humidity'] for w in weather_details]), 2)
+    weather.average_wind_speed = np.round(np.mean([w['windspeed'] for w in weather_details]), 2)
+    weather.max_air_temperature = np.round(max([w['temperature'] for w in weather_details]), 2)
+
+Create the weather file in PlantPredict with :py:meth:`~plantpredict.Weather.create`.
+
+.. code-block:: python
+
+    weather.create()

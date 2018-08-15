@@ -53,7 +53,7 @@ class Geo(object):
     @staticmethod
     @handle_error_response
     @handle_refused_connection
-    def get_timezone(latitude, longitude):
+    def get_time_zone(latitude, longitude):
         """GET /Geo/{Latitude}/{Longitude}/TimeZone
 
         :param latitude:
