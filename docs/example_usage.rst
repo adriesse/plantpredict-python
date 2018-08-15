@@ -230,7 +230,7 @@ and loads pre-processed data from :download:`this JSON file <_static/weather_det
         weather_details = json.load(json_file)
 
 Using the known latitude and longitude of the weather data location, call
-py:meth:`~plantpredict.Geo.get_location_info` query crucial location info necessary to populate the weather file's
+:py:meth:`~plantpredict.Geo.get_location_info` query crucial location info necessary to populate the weather file's
 metadata.
 
 .. code-block:: python
@@ -241,7 +241,7 @@ metadata.
 
 Initialize the :py:class:`~plantpredict.Weather` entity and populate with the minimum fields required by
 :py:meth:`~plantpredict.Weather.create`. Note that the weather details time series data loaded in the first step
-is assigned to :py:attribute:`weather.weather_details` at this point.
+is assigned to `weather.weather_details` at this point.
 
 .. code-block:: python
 

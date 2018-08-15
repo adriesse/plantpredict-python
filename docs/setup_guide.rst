@@ -29,7 +29,7 @@ and debugging code, and much more. The PyCharm website contains a lot of useful 
 
 Follow `these steps <https://www.jetbrains.com/help/pycharm/configuring-python-interpreter.html#local-interpreter>`_. to
 configure your Project Interpreter in PyCharm. Make sure you follow the steps for "Configuring a local interpreter". In
- simple terms, this is how you "tell" PyCharm to use your preferred installation of Python (Anaconda, in this case).
+simple terms, this is how you "tell" PyCharm to use your preferred installation of Python (Anaconda, in this case).
 
 Move onto the next section once you have completed the above steps.
 
