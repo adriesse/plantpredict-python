@@ -51,9 +51,11 @@ MANUAL_KEY_FIXES = {
         "poa_i": "poai",
         "g_c_r": "gcr",
         "bi_faciality": "bifaciality",
-        "poairradinace": "global_poa_irradiance",
+        "poairradinace": "poa_irradiance",
         "g_teff": "gt_eff",
-        "time_stamp": "timestamp"
+        "time_stamp": "timestamp",
+        "generatedcurrent": "generated_current",
+        "po_a_insolation": "poa_insolation"
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",
@@ -85,7 +87,6 @@ def convert_json(d, convert_function):
 
         new_key = convert_function(k)
 
-        # manual fixes
         for key, val in MANUAL_KEY_FIXES[convert_function.__name__].iteritems():
             if key in new_key:
                 new_key = new_key.replace(key, val)

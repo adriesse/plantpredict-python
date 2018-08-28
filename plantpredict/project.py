@@ -11,7 +11,6 @@ class Project(PlantPredictEntity):
     The full contents of the Project database entity (in JSON) can be found under "GET /Project/{Id}" in `the general
     PlantPredict API documentation <http://app.plantpredict.com/swagger/ui/index#!/Project/Project_Get_0>`_.
     """
-
     def create(self, name=None, latitude=None, longitude=None, country=None, country_code=None, elevation=None,
                standard_offset_from_utc=None):
         """HTTP Request: POST /Project
