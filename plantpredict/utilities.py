@@ -55,7 +55,8 @@ MANUAL_KEY_FIXES = {
         "g_teff": "gt_eff",
         "time_stamp": "timestamp",
         "generatedcurrent": "generated_current",
-        "po_a_insolation": "poa_insolation"
+        "po_a_insolation": "poa_insolation",
+        "i_v": "iv"
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",
