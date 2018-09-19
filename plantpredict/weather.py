@@ -21,7 +21,7 @@ class Weather(PlantPredictEntity):
 
             .. container:: header
 
-                Show/Hide minimum required attributes
+                Show/Hide required attributes
 
             .. csv-table:: Minimum required attributes for successful Weather creation
                 :delim: ;
