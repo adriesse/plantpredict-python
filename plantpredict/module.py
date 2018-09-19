@@ -15,7 +15,7 @@ class Module(PlantPredictEntity):
     """
     def create(self):
         """
-        :http:post:`/Module`
+        **POST** */Module*
 
         Creates a new :py:class:`plantpredict.Module` entity in the PlantPredict database and automatically assigns
         the resulting :py:attr:`id` to the local object instance.
@@ -28,7 +28,7 @@ class Module(PlantPredictEntity):
 
     def delete(self):
         """
-        :http:delete:`/Module/(int:id)`
+        **DELETE** */Module/(int:self.id)*
 
         Deletes an existing :py:class:`plantpredict.Module` entity in the PlantPredict database according to the
         :py:attr:`id` of the local object instance.
@@ -41,7 +41,7 @@ class Module(PlantPredictEntity):
 
     def get(self):
         """
-        :http:get:`/Module/(int:id)`
+        **GET** */Module/(int:self.id)*
 
         Retrieves an existing :py:class:`plantpredict.Module` entity from the PlantPredict database according to the
         :py:attr:`id` of the local object instance, and automatically assigns all of its attributes to the local object
@@ -55,7 +55,7 @@ class Module(PlantPredictEntity):
 
     def update(self):
         """
-        PUT /Module
+        **PUT** */Module*
 
         """
         self.update_url_suffix = "/Module/{}".format(self.id)
