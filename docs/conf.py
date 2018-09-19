@@ -24,6 +24,9 @@ sys.path.insert(0, os.path.abspath('../'))
 
 # -- General configuration ------------------------------------------------
 
+# mock module import for successful build
+autodoc_mock_imports = ["pandas"]
+
 # If your documentation needs a minimal Sphinx version, state it here.
 #
 # needs_sphinx = '1.0'
@@ -83,8 +86,6 @@ todo_include_todos = False
 
 autosummary_generate = True
 
-autodoc_mock_imports = ['_pandas']
-
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -104,8 +105,8 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 
-# A workaround for the responsive tables always having annoying scrollbars.
 def setup(app):
+    # A workaround for the responsive tables always having annoying scrollbars.
     app.add_stylesheet("no_scrollbars.css")
 
 # Custom sidebar templates, must be a dictionary that maps document names
