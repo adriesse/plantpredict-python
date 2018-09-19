@@ -17,7 +17,7 @@ class Weather(PlantPredictEntity):
         POST /Weather
 
         Creates a new Weather entity.
-        .. container :: toggle
+        .. container:: toggle
 
             .. container:: header
 

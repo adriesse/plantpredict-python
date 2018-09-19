@@ -1,6 +1,6 @@
 import json
 import requests
-import pandas
+#import pandas
 from itertools import groupby
 from operator import itemgetter
 from plantpredict import settings
@@ -15,6 +15,11 @@ class Module(PlantPredictEntity):
     """
     def create(self):
         """
+        :http:post:`/Module`
+
+        Creates a new :py:class:`plantpredict.Module` entity in the PlantPredict database and automatically assigns
+        the resulting :py:attr:`id` to the local object instance.
+
         :return: A dictionary containing the weather id.
         :rtype: dict
         """
@@ -23,6 +28,11 @@ class Module(PlantPredictEntity):
 
     def delete(self):
         """
+        :http:delete:`/Module/(int:id)`
+
+        Deletes an existing :py:class:`plantpredict.Module` entity in the PlantPredict database according to the
+        :py:attr:`id` of the local object instance.
+
         :return: A dictionary {"is_successful": True}.
         :rtype: dict
         """
@@ -31,6 +41,12 @@ class Module(PlantPredictEntity):
 
     def get(self):
         """
+        :http:get:`/Module/(int:id)`
+
+        Retrieves an existing :py:class:`plantpredict.Module` entity from the PlantPredict database according to the
+        :py:attr:`id` of the local object instance, and automatically assigns all of its attributes to the local object
+        instance.
+
         :return: A dictionary containing all of the retrieved Weather attributes.
         :rtype: dict
         """
