@@ -1,6 +1,6 @@
 import json
 import requests
-#import pandas
+import pandas
 from itertools import groupby
 from operator import itemgetter
 from plantpredict import settings
