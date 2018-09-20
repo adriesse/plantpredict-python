@@ -47,7 +47,7 @@ Confirm that your project interpreter is properly set up by `running your Python
 "I already have my Python environment set up."
 ----------------------------------------------
 
-1. Download the plantpredict-python package.
+1. Download plantpredict-python package.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Download the source code for plantpredict-python from `GitHub <https://github.com/stephenkaplan/plantpredict-python>`_.
