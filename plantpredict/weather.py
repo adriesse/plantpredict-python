@@ -52,8 +52,8 @@ class Weather(PlantPredictEntity):
                     "soiling_loss": 0.19                    # [%]
                 }
 
-            :return: A dictionary containing the weather id.
-            :rtype: dict
+        :return: A dictionary containing the weather id.
+        :rtype: dict
         """
         self.create_url_suffix = "/Weather"
         super(Weather, self).create()
