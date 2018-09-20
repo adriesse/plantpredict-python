@@ -17,10 +17,10 @@ class Module(PlantPredictEntity):
         """
         **POST** */Module*
 
-        Creates a new :py:class:`plantpredict.Module` entity in the PlantPredict database and automatically assigns
+        Creates a new Module entity in the PlantPredict database and automatically assigns
         the resulting :py:attr:`id` to the local object instance.
 
-        :return: A dictionary containing the weather id.
+        :return: A dictionary containing the module id.
         :rtype: dict
         """
         self.create_url_suffix = "/Module"
@@ -30,7 +30,7 @@ class Module(PlantPredictEntity):
         """
         **DELETE** */Module/(int:self.id)*
 
-        Deletes an existing :py:class:`plantpredict.Module` entity in the PlantPredict database according to the
+        Deletes an existing Module entity in the PlantPredict database according to the
         :py:attr:`id` of the local object instance.
 
         :return: A dictionary {"is_successful": True}.
@@ -43,11 +43,11 @@ class Module(PlantPredictEntity):
         """
         **GET** */Module/(int:self.id)*
 
-        Retrieves an existing :py:class:`plantpredict.Module` entity from the PlantPredict database according to the
+        Retrieves an existing Module entity from the PlantPredict database according to the
         :py:attr:`id` of the local object instance, and automatically assigns all of its attributes to the local object
         instance.
 
-        :return: A dictionary containing all of the retrieved Weather attributes.
+        :return: A dictionary containing all of the retrieved Module attributes.
         :rtype: dict
         """
         self.get_url_suffix = "/Module/{}".format(self.id)
