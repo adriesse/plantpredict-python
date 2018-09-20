@@ -220,8 +220,8 @@ data into a JSON-like format. That format is represented in Python as a list of 
 represents a timestamp of weather data. Depending on the initial data format, you can utilize any of Python's
 open-source data tools such as the `native csv library
 <https://docs.python.org/2/library/csv.html>`_ or
-`pandas<https://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_excel.html>`_. This tutorial skips that step
-and loads pre-processed data from :download:`this JSON file <example_usage_files/weather_details.json>`.
+`pandas <https://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_excel.html>`_. This tutorial skips that step
+and loads pre-processed data from :download:`this JSON file <_static/weather_details.json>`.
 
 .. code-block:: python
 
@@ -229,8 +229,8 @@ and loads pre-processed data from :download:`this JSON file <example_usage_files
     with open('weather_details.json', 'rb') as json_file:
         weather_details = json.load(json_file)
 
-Using the known latitude and longitude of the weather data location :, call
-py:meth:`~plantpredict.Geo.get_location_info` query crucial location info necessary to populate the weather file's
+Using the known latitude and longitude of the weather data location, call
+:py:meth:`~plantpredict.Geo.get_location_info` query crucial location info necessary to populate the weather file's
 metadata.
 
 .. code-block:: python
@@ -241,7 +241,7 @@ metadata.
 
 Initialize the :py:class:`~plantpredict.Weather` entity and populate with the minimum fields required by
 :py:meth:`~plantpredict.Weather.create`. Note that the weather details time series data loaded in the first step
- is assigned to :py:attribute::`weather.weather_details` at this point.
+is assigned to `weather.weather_details` at this point.
 
 .. code-block:: python
 
