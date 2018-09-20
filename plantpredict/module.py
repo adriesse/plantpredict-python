@@ -10,6 +10,7 @@ from plantpredict.error_handlers import handle_refused_connection, handle_error_
 @decorate_all_methods(handle_error_response)
 class Module(PlantPredictEntity):
     """
+    The Module entity models all of the characteristics of a photovoltaic solar module (panel).
     """
     def create(self):
         """POST /Module"""
