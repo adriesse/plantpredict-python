@@ -22,7 +22,7 @@ class Weather(PlantPredictEntity):
 
             .. container:: header
 
-                Show/Hide required attributes.
+                Required Attributes
 
             .. container:: required_attributes
 

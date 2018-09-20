@@ -4,9 +4,15 @@
 }
 
 .toggle .header:after {
-    content: " ▼";
+    content: "(Show)";
+    font-weight: bold;
+    text-decoration: underline;
+    color: blue;
 }
 
 .toggle .header.open:after {
-    content: " ▲";
+    content: "(Hide)";
+    font-weight: bold;
+    text-decoration: underline;
+    color: blue;
 }
