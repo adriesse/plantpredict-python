@@ -13,7 +13,15 @@ class Module(PlantPredictEntity):
     The Module entity models all of the characteristics of a photovoltaic solar module (panel).
     """
     def create(self):
-        """POST /Module"""
+        """
+        **POST** */Module*
+
+        Creates a new :py:mod:`plantpredict.Module` entity in the PlantPredict database and automatically assigns
+        the resulting :py:attr:`id` to the local object instance.
+
+        :return: A dictionary containing the module id.
+        :rtype: dict
+        """
         self.create_url_suffix = "/Module"
         super(Module, self).create()
 

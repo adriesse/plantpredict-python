@@ -6,7 +6,6 @@
 .toggle .header:after {
     content: " (Show)";
     font-weight: bold;
-    text-decoration: underline;
     color: blue;
 }
 
