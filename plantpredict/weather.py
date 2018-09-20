@@ -22,7 +22,7 @@ class Weather(PlantPredictEntity):
 
             .. container:: header
 
-                Required Attributes
+                **Required Attributes**
 
             .. container:: required_attributes
 
