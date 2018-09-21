@@ -59,7 +59,7 @@ class Module(PlantPredictEntity):
 
         Updates an existing :py:mod:`plantpredict.Module` entity in PlantPredict using the full attributes of the local
         object instance. Calling this method is most commonly preceded by instantiating a local instance of
-        :py:mod:`plantpredict.Module` with a specified :py:atrr:`id`, calling :py:meth:`plantpredict.Meather.get()`,
+        :py:mod:`plantpredict.Module` with a specified :py:atrr:`id`, calling :py:meth:`plantpredict.Module.get()`,
         and changing any attributes locally.
 
         :return: A dictionary {"is_successful": True}.
