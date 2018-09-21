@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath('../'))
 # -- General configuration ------------------------------------------------
 
 # mock module import for successful build
-autodoc_mock_imports = ['requests', 'pandas', 'plantpredict']
+autodoc_mock_imports = ['requests', 'pandas', 'plantpredict.settings']
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
