@@ -27,9 +27,17 @@ class Weather(PlantPredictEntity):
             .. container:: required_attributes
 
                 .. csv-table:: Minimum required attributes for successful Weather creation
-                    :file: /docs/_static/table_csv/weather_create.csv
-                    :header-rows: 1
+                    :delim: ;
+                    :header: Field, Type, Description
                     :stub-columns: 1
+
+                    name; str; Name of weather file
+                    country_code; str; Country code of the Weather's location (ex. US for United States, AUS for Australia, etc.) :py:meth:`plantpredict.Geo.get_location_info` will return this information.
+                    country; str; Full name of the country of the Weather's location. :py:meth:`plantpredict.Geo.get_location_info` will return this information.
+                    latitude; float; North-South coordinate of the Weather location (in decimal degrees).
+                    longitude; float; East-West coordinate of the Weather location (in decimal degrees).
+                    data_provider; int; Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.weather_data_provider_enum` for a list of options.
+                    weather_details; list of dict; The code block below contains an example of one timestamp (array element) of this field, as well as information on which dictionary keys are required.
 
                 .. code-block:: python
 
