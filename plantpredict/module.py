@@ -1,7 +1,9 @@
 import json
 import requests
 import pandas
-from plantpredict import settings
+from operator import itemgetter
+from itertools import groupby
+from plantpredict.settings import BASE_URL, TOKEN
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel, decorate_all_methods
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
@@ -88,8 +90,8 @@ class Module(PlantPredictEntity):
         :rtype:
         """
         response = requests.post(
-            url=settings.BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersDefault",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersDefault",
+            headers={"Authorization": "Bearer " + TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
         # TODO can switch this back, Jesse fixed
@@ -117,8 +119,8 @@ class Module(PlantPredictEntity):
         :rtype:
         """
         response = requests.post(
-            url=settings.BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersAdvanced",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersAdvanced",
+            headers={"Authorization": "Bearer " + TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -142,8 +144,8 @@ class Module(PlantPredictEntity):
         POST /Module/Generator/CalculateEffectiveIrradianceResponse
         """
         return requests.post(
-            url=settings.BASE_URL + "/Module/Generator/CalculateEffectiveIrradianceResponse",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=BASE_URL + "/Module/Generator/CalculateEffectiveIrradianceResponse",
+            headers={"Authorization": "Bearer " + TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -154,8 +156,8 @@ class Module(PlantPredictEntity):
         POST /Module/Generator/OptimizeSeriesResistance
         """
         response = requests.post(
-            url=settings.BASE_URL + "/Module/Generator/OptimizeSeriesResistance",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=BASE_URL + "/Module/Generator/OptimizeSeriesResistance",
+            headers={"Authorization": "Bearer " + TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -218,8 +220,8 @@ class Module(PlantPredictEntity):
             key_iv_points_data = self._parse_key_iv_points_template(file_path)
 
         response = requests.post(
-            url=settings.BASE_URL + "/Module/Generator/ProcessKeyIVPoints",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=BASE_URL + "/Module/Generator/ProcessKeyIVPoints",
+            headers={"Authorization": "Bearer " + TOKEN},
             json=[convert_json(d, snake_to_camel) for d in key_iv_points_data]
         )
 
@@ -282,8 +284,8 @@ class Module(PlantPredictEntity):
             full_iv_curve_data = self._parse_full_iv_curves_template(file_path)
 
         response = requests.post(
-            url=settings.BASE_URL + "/Module/Generator/ProcessIVCurves",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=BASE_URL + "/Module/Generator/ProcessIVCurves",
+            headers={"Authorization": "Bearer " + TOKEN},
             json=[convert_json(d, snake_to_camel) for d in full_iv_curve_data]
         )
 
@@ -300,7 +302,7 @@ class Module(PlantPredictEntity):
         self.num_iv_points = num_iv_points
 
         return requests.post(
-            url=settings.BASE_URL + "/Module/Generator/GenerateIVCurve",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=BASE_URL + "/Module/Generator/GenerateIVCurve",
+            headers={"Authorization": "Bearer " + TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
