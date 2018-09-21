@@ -1,6 +1,6 @@
 import json
 import requests
-import pandas
+#import pandas
 from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel, decorate_all_methods
