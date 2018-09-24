@@ -19,6 +19,8 @@ class Module(PlantPredictEntity):
 
         Creates a new :py:mod:`plantpredict.Module` entity in the PlantPredict database using the attributes assigned to
         the local object instance. Automatically assigns the resulting :py:attr:`id` to the local object instance.
+        See the minimum required attributes (below) necessary to successfully create a new
+        :py:mod:`plantpredict.Module`. Note that the full scope of attributes is not limited to the minimum required set.
 
         .. container:: toggle
 
@@ -26,30 +28,32 @@ class Module(PlantPredictEntity):
 
                 **Required Attributes**
 
-            .. csv-table:: Minimum required attributes for successful Module creation
-                    :delim: ;
-                    :header: Field, Type, Description
-                    :stub-columns: 1
+            .. container:: required_attributes
 
-                    name; str; Name of module file
-                    model; str; Model number/name of module (can be the same as :py:attr:`name`)
-                    manufacturer; str; Module manufacturer
-                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`
-                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`
-                    stc_short_circuit_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`
-                    stc_open_circuit_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`
-                    stc_mpp_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`
-                    stc_mpp_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`
-                    saturation_current_at_stc; float; Must be between :py:data:`1e-13` and :py:data:`1e-6` - units :py:data:`[A]`
-                    diode_ideality_factor_at_stc; float; Must be between :py:data:`0.1` and :py:data:`5.0` - unitless
-                    exponential_dependency_on_shunt_resistance; float; Must be between :py:data:`1.0` and :py:data:`100.0` - unitless
-                    dark_shunt_resistance; float; Must be between :py:data:`100.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`
-                    shunt_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`
-                    bandgap_voltage; float; Must be between :py:data:`0.5` and :py:data:`4.0` - units :py:data:`[V]`
-                    heat_absorption_coef_alpha_t; float; Must be between :py:data:`0.1` and :py:data:`1.0`
-                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units [W/m:superscript:`2`]
-                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`
-                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0` - units :py:data:`[V]`
+                .. csv-table:: Minimum required attributes for successful Module creation
+                        :delim: ;
+                        :header: Field, Type, Description
+                        :stub-columns: 1
+
+                        name; str; Name of module file
+                        model; str; Model number/name of module (can be the same as :py:attr:`name`)
+                        manufacturer; str; Module manufacturer
+                        cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`
+                        pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`
+                        stc_short_circuit_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`
+                        stc_open_circuit_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`
+                        stc_mpp_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`
+                        stc_mpp_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`
+                        saturation_current_at_stc; float; Must be between :py:data:`1e-13` and :py:data:`1e-6` - units :py:data:`[A]`
+                        diode_ideality_factor_at_stc; float; Must be between :py:data:`0.1` and :py:data:`5.0` - unitless
+                        exponential_dependency_on_shunt_resistance; float; Must be between :py:data:`1.0` and :py:data:`100.0` - unitless
+                        dark_shunt_resistance; float; Must be between :py:data:`100.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`
+                        shunt_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`
+                        bandgap_voltage; float; Must be between :py:data:`0.5` and :py:data:`4.0` - units :py:data:`[V]`
+                        heat_absorption_coef_alpha_t; float; Must be between :py:data:`0.1` and :py:data:`1.0`
+                        reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units [W/m:superscript:`2`]
+                        built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`
+                        recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0` - units :py:data:`[V]`
 
         .. container:: toggle
 
@@ -57,6 +61,74 @@ class Module(PlantPredictEntity):
 
                 **Example Code**
 
+            .. container:: example_code
+
+                First, import the plantpredict library and receive an authentication token in your
+                Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
+                object.
+
+                .. code-block:: python
+
+                    new_module = plantpredict.Module()
+
+                Populate the Module's require attributes by either directly assigning them...
+
+                .. code-block:: python
+
+                    m.model = "Test Module"
+                    m.cell_technology_type = cell_technology_type_enum.CDTE
+                    m.manufacturer = "Solar Company"
+                    m.pv_model = pv_model_type_enum.ONE_DIODE_RECOMBINATION
+                    m.stc_short_circuit_current = 2.54
+                    m.stc_open_circuit_voltage = 219.2
+                    m.stc_mpp_current = 2.355
+                    m.stc_mpp_voltage = 182.55
+                    m.saturation_current_at_stc = 2.415081e-12
+                    m.diode_ideality_factor_at_stc = 1.17
+                    m.exponential_dependency_on_shunt_resistance = 5.5
+                    m.dark_shunt_resistance = 6400
+                    m.shunt_resistance_at_stc = 6400
+                    m.bandgap_voltage = 1.5
+                    m.heat_absorption_coef_alpha_t = 0.9
+                    m.reference_irradiance = 1000
+
+                    # required for modules with recombination
+                    m.built_in_voltage = 0.9
+                    m.recombination_parameter = 0.9
+
+                ...OR via dictionary assignment.
+
+                .. code-block:: python
+
+                    module.__dict__ = {
+                        "model": "Test Module",
+                        "cell_technology_type": cell_technology_type_enum.CDTE,
+                        "manufacturer": "Solar Company",
+                        "pv_model": pv_model_type_enum.ONE_DIODE_RECOMBINATION,
+                        "stc_short_circuit_current": 2.54,
+                        "stc_open_circuit_voltage": 219.2,
+                        "stc_mpp_current": 2.355,
+                        "stc_mpp_voltage": 182.55,
+                        "saturation_current_at_stc": 2.415081e-12,
+                        "diode_ideality_factor_at_stc": 1.17,
+                        "exponential_dependency_on_shunt_resistance": 5.5,
+                        "dark_shunt_resistance": 6400,
+                        "shunt_resistance_at_stc": 6400,
+                        "bandgap_voltage": 1.5,
+                        "heat_absorption_coef_alpha_t": 0.9,
+                        "reference_irradiance": 1000,
+                        "built_in_voltage": 0.9,
+                        "recombination_parameter": 0.9
+                    }
+
+
+                Create a new module in the PlantPredict database, and observe that the Module now has a unique database
+                identifier.
+
+                ..code-block:: python
+                    module.create()
+
+                    print module.id
 
         :return: A dictionary containing the module id.
         :rtype: dict
@@ -103,7 +175,7 @@ class Module(PlantPredictEntity):
 
         Updates an existing :py:mod:`plantpredict.Module` entity in PlantPredict using the full attributes of the local
         object instance. Calling this method is most commonly preceded by instantiating a local instance of
-        :py:mod:`plantpredict.Module` with a specified :py:atrr:`id`, calling :py:meth:`plantpredict.Module.get()`,
+        :py:mod:`plantpredict.Module` with a specified :py:attr:`id`, calling :py:meth:`plantpredict.Module.get()`,
         and changing any attributes locally.
 
         :return: A dictionary {"is_successful": True}.

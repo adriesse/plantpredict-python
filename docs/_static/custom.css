@@ -12,6 +12,6 @@
 .toggle .header.open:after {
     content: " (Hide)";
     font-weight: bold;
-    text-decoration: underline;
+    text-decoration: bold;
     color: blue;
 }
