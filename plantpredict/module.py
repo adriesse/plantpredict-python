@@ -34,7 +34,7 @@ class Module(PlantPredictEntity):
                     :delim: ;
                     :header: Field, Type, Description
                     :stub-columns: 1
-                    :width: 90
+                    :widths: 25, 10, 65
 
                     name; str; Name of module file
                     model; str; Model number/name of module (can be the same as :py:attr:`name`)
@@ -54,7 +54,7 @@ class Module(PlantPredictEntity):
                     heat_absorption_coef_alpha_t; float; Must be between :py:data:`0.1` and :py:data:`1.0`.
                     reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units [W/m :superscript:`2`].
                     built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
-                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0` - units :py:data:`[V]`.
+                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0` - units :py:data:`[V]`
 
         .. container:: toggle
 
