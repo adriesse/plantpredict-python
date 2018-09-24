@@ -126,6 +126,7 @@ class Module(PlantPredictEntity):
                 identifier.
 
                 .. code-block:: python
+                
                     module.create()
 
                     print module.id
