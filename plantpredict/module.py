@@ -34,7 +34,6 @@ class Module(PlantPredictEntity):
                     :delim: ;
                     :header: Field, Type, Description
                     :stub-columns: 1
-                    :widths: 25, 10, 65
 
                     name; str; Name of module file
                     model; str; Model number/name of module (can be the same as :py:attr:`name`)
