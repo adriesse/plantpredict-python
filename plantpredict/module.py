@@ -69,38 +69,38 @@ class Module(PlantPredictEntity):
 
                 .. code-block:: python
 
-                    new_module = plantpredict.Module()
+                    module_to_create = plantpredict.Module()
 
                 Populate the Module's require attributes by either directly assigning them...
 
                 .. code-block:: python
 
-                    m.model = "Test Module"
-                    m.cell_technology_type = cell_technology_type_enum.CDTE
-                    m.manufacturer = "Solar Company"
-                    m.pv_model = pv_model_type_enum.ONE_DIODE_RECOMBINATION
-                    m.stc_short_circuit_current = 2.54
-                    m.stc_open_circuit_voltage = 219.2
-                    m.stc_mpp_current = 2.355
-                    m.stc_mpp_voltage = 182.55
-                    m.saturation_current_at_stc = 2.415081e-12
-                    m.diode_ideality_factor_at_stc = 1.17
-                    m.exponential_dependency_on_shunt_resistance = 5.5
-                    m.dark_shunt_resistance = 6400
-                    m.shunt_resistance_at_stc = 6400
-                    m.bandgap_voltage = 1.5
-                    m.heat_absorption_coef_alpha_t = 0.9
-                    m.reference_irradiance = 1000
+                    module_to_create.model = "Test Module"
+                    module_to_create.cell_technology_type = cell_technology_type_enum.CDTE
+                    module_to_create.manufacturer = "Solar Company"
+                    module_to_create.pv_model = pv_model_type_enum.ONE_DIODE_RECOMBINATION
+                    module_to_create.stc_short_circuit_current = 2.54
+                    module_to_create.stc_open_circuit_voltage = 219.2
+                    module_to_create.stc_mpp_current = 2.355
+                    module_to_create.stc_mpp_voltage = 182.55
+                    module_to_create.saturation_current_at_stc = 2.415081e-12
+                    module_to_create.diode_ideality_factor_at_stc = 1.17
+                    module_to_create.exponential_dependency_on_shunt_resistance = 5.5
+                    module_to_create.dark_shunt_resistance = 6400
+                    module_to_create.shunt_resistance_at_stc = 6400
+                    module_to_create.bandgap_voltage = 1.5
+                    module_to_create.heat_absorption_coef_alpha_t = 0.9
+                    module_to_create.reference_irradiance = 1000
 
                     # required for modules with recombination
-                    m.built_in_voltage = 0.9
-                    m.recombination_parameter = 0.9
+                    module_to_create.built_in_voltage = 0.9
+                    module_to_create.recombination_parameter = 0.9
 
                 ...OR via dictionary assignment.
 
                 .. code-block:: python
 
-                    module.__dict__ = {
+                    module_to_create.__dict__ = {
                         "model": "Test Module",
                         "cell_technology_type": cell_technology_type_enum.CDTE,
                         "manufacturer": "Solar Company",
@@ -127,7 +127,7 @@ class Module(PlantPredictEntity):
 
                 .. code-block:: python
 
-                    module.create()
+                    module_to_create.create()
 
                     print module.id
 
@@ -160,17 +160,17 @@ class Module(PlantPredictEntity):
 
                 First, import the plantpredict library and receive an authentication token in your
                 Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
-                object with the :py:attr:`id` of the target module in the PlantPredict database.
+                object with the :py:attr:`id` of the target Module in the PlantPredict database.
 
                 .. code-block:: python
 
-                    new_module = plantpredict.Module(id=99999)
+                    module_to_delete = plantpredict.Module(id=99999)
 
-                Delete the module.
+                Delete the Module.
 
                 .. code-block:: python
 
-                    module.delete()
+                    module_to_delete.delete()
 
         :return: A dictionary {"is_successful": True}.
         :rtype: dict
@@ -180,11 +180,41 @@ class Module(PlantPredictEntity):
 
     def get(self):
         """
-        **GET** */Module/(int:self.id)*
+        **GET** */Module/* :py:attr:`id`
 
         Retrieves an existing :py:mod:`plantpredict.Module` entity from the PlantPredict database according to the
         :py:attr:`id` of the local object instance, and automatically assigns all of its attributes to the local object
         instance.
+
+        .. container:: toggle
+
+            .. container:: header
+
+                **Example Code**
+
+            .. container:: example_code
+
+                First, import the plantpredict library and receive an authentication token in your
+                Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
+                object with the :py:attr:`id` of the target module in the PlantPredict database.
+
+                .. code-block:: python
+
+                    module_to_get = plantpredict.Module(id=99999)
+
+                Retrieve the Module from the PlantPredict database.
+
+                .. code-block:: python
+
+                    module_to_get.get()
+
+                This will automatically assign all of that Module's attributes to the local object instance. All of the
+                attributes are now readily accessible in the local Python session.
+
+                .. code-block:: python
+
+                    module_name = module_to_get.name
+                    Isc = module_to_get.stc_short_circuit_current
 
         :return: A dictionary containing all of the retrieved Module attributes.
         :rtype: dict
