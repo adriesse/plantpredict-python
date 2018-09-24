@@ -145,7 +145,7 @@ class Module(PlantPredictEntity):
 
     def delete(self):
         """
-        **DELETE** */Module/:py:attr:`id`*
+        **DELETE** */Module/* :py:attr:`id`
 
         Deletes an existing :py:mod:`plantpredict.Module` entity in the PlantPredict database according to the
         :py:attr:`id` of the local object instance.
@@ -157,10 +157,10 @@ class Module(PlantPredictEntity):
                 **Example Code**
 
             .. container:: example_code
-    
+
                 First, import the plantpredict library and receive an authentication token in your
                 Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
-                object with the :py:attr:`id` of the target Module.
+                object with the :py:attr:`id` of the target module in the PlantPredict database.
 
                 .. code-block:: python
 
