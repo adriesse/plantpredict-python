@@ -51,7 +51,7 @@ class Module(PlantPredictEntity):
                     shunt_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
                     bandgap_voltage; float; Must be between :py:data:`0.5` and :py:data:`4.0` - units :py:data:`[V]`.
                     heat_absorption_coef_alpha_t; float; Must be between :py:data:`0.1` and :py:data:`1.0`.
-                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units [W/m :superscript:`2`].
+                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`.
                     built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
                     recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0` - units :py:data:`[V]`
 
@@ -126,7 +126,7 @@ class Module(PlantPredictEntity):
                 identifier.
 
                 .. code-block:: python
-                
+
                     module.create()
 
                     print module.id
@@ -145,10 +145,32 @@ class Module(PlantPredictEntity):
 
     def delete(self):
         """
-        **DELETE** */Module/(int:self.id)*
+        **DELETE** */Module/:py:attr:`id`*
 
         Deletes an existing :py:mod:`plantpredict.Module` entity in the PlantPredict database according to the
         :py:attr:`id` of the local object instance.
+
+        .. container:: toggle
+
+            .. container:: header
+
+                **Example Code**
+
+            .. container:: example_code
+    
+                First, import the plantpredict library and receive an authentication token in your
+                Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
+                object with the :py:attr:`id` of the target Module.
+
+                .. code-block:: python
+
+                    new_module = plantpredict.Module(id=99999)
+
+                Delete the module.
+
+                .. code-block:: python
+
+                    module.delete()
 
         :return: A dictionary {"is_successful": True}.
         :rtype: dict
