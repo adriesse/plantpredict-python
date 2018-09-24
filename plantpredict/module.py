@@ -231,6 +231,42 @@ class Module(PlantPredictEntity):
         :py:mod:`plantpredict.Module` with a specified :py:attr:`id`, calling :py:meth:`plantpredict.Module.get()`,
         and changing any attributes locally.
 
+        .. container:: toggle
+
+            .. container:: header
+
+                **Example Code**
+
+            .. container:: example_code
+
+                First, import the plantpredict library and receive an authentication token in your
+                Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
+                object with the :py:attr:`id` of the target module in the PlantPredict database.
+
+                .. code-block:: python
+
+                    module_to_update = plantpredict.Module(id=99999)
+
+                Retrieve the Module from the PlantPredict database.
+
+                .. code-block:: python
+
+                    module_to_update.get()
+
+                This will automatically assign all of that Module's attributes to the local object instance. Any/all
+                of the attributes can now be modified locally.
+
+                .. code-block:: python
+
+                    module.name = "New Name"
+                    module.shunt_resistance_at_stc = 8000
+
+                Persist (update) the local changes to the PlantPredict database.
+
+                .. code-block:: python
+
+                    module.update()
+
         :return: A dictionary {"is_successful": True}.
         :rtype: dict
         """
