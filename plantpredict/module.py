@@ -38,12 +38,18 @@ class Module(PlantPredictEntity):
                     name; str; Name of module file
                     model; str; Model number/name of module (can be the same as :py:attr:`name`)
                     manufacturer; str; Module manufacturer
+                    length; float; Long side of the module. Must be between :py:data:`0.0` and :py:data:`10000.0` - units :py:data:`[mm]`.
+                    width; float; Short side of the module. Must be between :py:data:`0.0` and :py:data:`10000.0` - units :py:data:`[mm]`.
                     cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
                     pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
+                    construction_type; int; Represents the module construction (Glass-Glass, Glass-Backsheet). Use :py:mod:`plantpredict.enumerations.construction_type_enum`.
                     stc_short_circuit_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
                     stc_open_circuit_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
                     stc_mpp_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
                     stc_mpp_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
+                    stc_power_temp_coef; float; Must be between :py:data:`-3.0` and :py:data:`3.0` - units :py:data:`[%/deg-C]`.
+                    stc_short_circuit_current_temp_coef; float; Must be between :py:data:`-0.3` and :py:data:`2.0` - units :py:data:`[%/deg-C]`.
+                    stc_open_circuit_voltage_temp_coef; float; Must be between :py:data:`-3.0` and :py:data:`3.0` - units :py:data:`[%/deg-C]`.
                     saturation_current_at_stc; float; Must be between :py:data:`1e-13` and :py:data:`1e-6` - units :py:data:`[A]`.
                     diode_ideality_factor_at_stc; float; Must be between :py:data:`0.1` and :py:data:`5.0` - unitless.
                     linear_temp_dependence_on_gamma; float; Must be between :py:data:`-3.0` and :py:data:`3.0` - units :py:data:`[%/deg-C]`.
@@ -76,19 +82,28 @@ class Module(PlantPredictEntity):
                 Populate the Module's require attributes by either directly assigning them...
 
                 .. code-block:: python
+                    from plantpredict.enumerations import cell_technology_type_enum, pv_model_type_enum, construction_type_enum_type
 
+                    module_to_create.name = "Test Module"
                     module_to_create.model = "Test Module"
-                    module_to_create.cell_technology_type = cell_technology_type_enum.CDTE
                     module_to_create.manufacturer = "Solar Company"
+                    module_to_create.length = 2009
+                    module_to_create.width = 1232
+                    module_to_create.cell_technology_type = cell_technology_type_enum.CDTE
                     module_to_create.pv_model = pv_model_type_enum.ONE_DIODE_RECOMBINATION
+                    module_to_create.construction_type = construction_type_enum.GLASS_GLASS
                     module_to_create.stc_short_circuit_current = 2.54
                     module_to_create.stc_open_circuit_voltage = 219.2
                     module_to_create.stc_mpp_current = 2.355
                     module_to_create.stc_mpp_voltage = 182.55
+                    module_to_create.stc_power_temp_coef = -0.32
+                    module_to_create.stc_short_circuit_current_temp_coef = 0.04
+                    module_to_create.stc_open_circuit_voltage_temp_coef = -0.28
                     module_to_create.saturation_current_at_stc = 2.415081e-12
                     module_to_create.diode_ideality_factor_at_stc = 1.17
                     module_to_create.linear_temp_dependence_on_gamma = -0.08
                     module_to_create.exponential_dependency_on_shunt_resistance = 5.5
+                    module_to_create.series_resistance_at_stc = 5.277
                     module_to_create.dark_shunt_resistance = 6400
                     module_to_create.shunt_resistance_at_stc = 6400
                     module_to_create.bandgap_voltage = 1.5
@@ -104,16 +119,24 @@ class Module(PlantPredictEntity):
                 .. code-block:: python
 
                     module_to_create.__dict__ = {
+                        "name": "Test Module",
                         "model": "Test Module",
-                        "cell_technology_type": cell_technology_type_enum.CDTE,
                         "manufacturer": "Solar Company",
+                        "length": 2009,
+                        "width": 1232,
+                        "cell_technology_type": cell_technology_type_enum.CDTE,
                         "pv_model": pv_model_type_enum.ONE_DIODE_RECOMBINATION,
+                        "construction_type": construction_type_enum.GLASS_GLASS,
                         "stc_short_circuit_current": 2.54,
                         "stc_open_circuit_voltage": 219.2,
                         "stc_mpp_current": 2.355,
                         "stc_mpp_voltage": 182.55,
+                        "stc_power_temp_coef": -0.32,
+                        "stc_short_circuit_current_temp_coef": 0.04,
+                        "stc_open_circuit_voltage_temp_coef": -0.28,
                         "saturation_current_at_stc": 2.415081e-12,
                         "diode_ideality_factor_at_stc": 1.17,
+                        "linear_temp_dependence_on_gamma": -0.08,
                         "exponential_dependency_on_shunt_resistance": 5.5,
                         "dark_shunt_resistance": 6400,
                         "shunt_resistance_at_stc": 6400,
@@ -143,6 +166,13 @@ class Module(PlantPredictEntity):
         # this line of code streamlines Module creation by only requiring the user to define
         # "stc_short_circuit_current" (2018-09-21; things may have changed since then)
         self.short_circuit_current_at_stc = self.stc_short_circuit_current
+        self.linear_temp_dependence_on_isc = self.stc_short_circuit_current_temp_coef
+
+        # if values that are simply calculated from required parameters are not specified, calculate them
+        if self.area is 0:
+            self.area = (self.length/1000.0)*(self.width/1000.0)
+        if self.stc_efficiency is 0:
+            self.stc_efficiency = self.stc_max_power / (self.area * 1000.0)
 
         super(Module, self).create()
 
@@ -284,7 +314,7 @@ class Module(PlantPredictEntity):
 
         Generates single-diode parameters from module electrical characteristics available on any standard
         manufacturers' module datasheet. Detailed documentation on the algorithm and assumptions can be found
-        `here<https://plantpredict.com/algorithm/module-file-generator/#756-2>`_. An example of using this method in
+        `here <https://plantpredict.com/algorithm/module-file-generator/#756-2>`_. An example of using this method in
         practice can be found in :ref:`example_usage`.
 
         .. container:: toggle
@@ -335,8 +365,9 @@ class Module(PlantPredictEntity):
                     dark_shunt_resistnace; float; units :py:data:`[Ohms]`
                     saturation_current_at_stc; float; units :py:data:`[A]`
                     diode_ideality_factor_at_stc; float; unitless
-                    linear_temp_dependence_on_gamma; units :py:data:`[%/deg-C]`
+                    linear_temp_dependence_on_gamma; float; units :py:data:`[%/deg-C]`
                     light_generated_current; float; units :py:data:`[A]`
+                    power_at_stc; float; Model Calculated maximum power - units :py:data:`[W]`
 
         :return: Dictionary mirroring local module object with newly generated parameters.
         :rtype: dict
