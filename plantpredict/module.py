@@ -3,7 +3,7 @@ import requests
 import pandas
 from operator import itemgetter
 from itertools import groupby
-from plantpredict.settings import BASE_URL, TOKEN
+import plantpredict
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
@@ -46,7 +46,9 @@ class Module(PlantPredictEntity):
                     stc_mpp_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
                     saturation_current_at_stc; float; Must be between :py:data:`1e-13` and :py:data:`1e-6` - units :py:data:`[A]`.
                     diode_ideality_factor_at_stc; float; Must be between :py:data:`0.1` and :py:data:`5.0` - unitless.
+                    linear_temp_dependence_on_gamma; float; Must be between :py:data:`-3.0` and :py:data:`3.0` - units :py:data:`[%/deg-C]`.
                     exponential_dependency_on_shunt_resistance; float; Must be between :py:data:`1.0` and :py:data:`100.0` - unitless.
+                    series_resistance_at_stc; float; Must be between - units :py:data:`[Ohms]`
                     dark_shunt_resistance; float; Must be between :py:data:`100.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
                     shunt_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
                     bandgap_voltage; float; Must be between :py:data:`0.5` and :py:data:`4.0` - units :py:data:`[V]`.
@@ -63,7 +65,7 @@ class Module(PlantPredictEntity):
 
             .. container:: example_code
 
-                First, import the plantpredict library and receive an authentication token in your
+                First, import the plantpredict library and receive an authentication plantpredict.settings.TOKEN in your
                 Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
                 object.
 
@@ -85,6 +87,7 @@ class Module(PlantPredictEntity):
                     module_to_create.stc_mpp_voltage = 182.55
                     module_to_create.saturation_current_at_stc = 2.415081e-12
                     module_to_create.diode_ideality_factor_at_stc = 1.17
+                    module_to_create.linear_temp_dependence_on_gamma = -0.08
                     module_to_create.exponential_dependency_on_shunt_resistance = 5.5
                     module_to_create.dark_shunt_resistance = 6400
                     module_to_create.shunt_resistance_at_stc = 6400
@@ -158,7 +161,7 @@ class Module(PlantPredictEntity):
 
             .. container:: example_code
 
-                First, import the plantpredict library and receive an authentication token in your
+                First, import the plantpredict library and receive an authentication plantpredict.settings.TOKEN in your
                 Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
                 object with the :py:attr:`id` of the target Module in the PlantPredict database.
 
@@ -194,7 +197,7 @@ class Module(PlantPredictEntity):
 
             .. container:: example_code
 
-                First, import the plantpredict library and receive an authentication token in your
+                First, import the plantpredict library and receive an authentication plantpredict.settings.TOKEN in your
                 Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
                 object with the :py:attr:`id` of the target module in the PlantPredict database.
 
@@ -239,7 +242,7 @@ class Module(PlantPredictEntity):
 
             .. container:: example_code
 
-                First, import the plantpredict library and receive an authentication token in your
+                First, import the plantpredict library and receive an authentication plantpredict.settings.TOKEN in your
                 Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
                 object with the :py:attr:`id` of the target module in the PlantPredict database.
 
@@ -277,37 +280,72 @@ class Module(PlantPredictEntity):
     @handle_error_response
     def generate_single_diode_parameters_default(self):
         """
-        POST /Module/Generator/GenerateSingleDiodeParametersDefault
-        first stab at required inputs from unit test....
-        module.number_of_cells_in_series = 264
-        module.cell_technology_type = cell_technology_type_enum.CDTE
-        module.stc_max_power = 400.0
-        module.stc_short_circuit_current = 2.51
-        module.stc_open_circuit_voltage = 216.1
-        module.stc_mpp_current = 2.27
-        module.stc_mpp_voltage = 175.95
-        module.reference_temperature = 25
-        module.reference_irradiance = 1000
-        #TODO need to verify and turn into documentation
-        :return:
-        :rtype:
+        **POST** */Module/Generator/GenerateSingleDiodeParametersDefault*
+
+        Generates single-diode parameters from module electrical characteristics available on any standard
+        manufacturers' module datasheet. Detailed documentation on the algorithm and assumptions can be found
+        `here<https://plantpredict.com/algorithm/module-file-generator/#756-2>`_. An example of using this method in
+        practice can be found in :ref:`example_usage`.
+
+        .. container:: toggle
+
+            .. container:: header
+
+                **Required Attributes**
+
+            .. container:: required_attributes
+
+                .. csv-table:: Minimum required attributes
+                    :delim: ;
+                    :header: Field, Type, Description
+                    :stub-columns: 1
+
+                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
+                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
+                    number_of_cells_in_series; int; Number of cells in one string of cells - unitless
+                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`.
+                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`.
+                    stc_max_power; float; Must be between :py:data:`0.0` and :py:data:`1000.0` - units :py:data:`[W]`.
+                    stc_short_circuit_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
+                    stc_open_circuit_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
+                    stc_mpp_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
+                    stc_mpp_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
+                    stc_power_temp_coef; float; Must be between :py:data:`-3.0` and :py:data:`3.0` - units :py:data:`[%/deg-C]`.
+                    stc_short_circuit_current_temp_coef; float; Must be between :py:data:`-0.3` and :py:data:`2.0` - units :py:data:`[%/deg-C]`.
+
+        .. container:: toggle
+
+            .. container:: header
+
+                **Generated Parameters**
+
+            .. container:: generated_parameters
+
+                .. csv-table:: Generated Parameters
+                    :delim: ;
+                    :header: Field, Type, Description
+                    :stub-columns: 1
+
+                    series_resistance_at_stc; float; units :py:data:`[Ohms]`
+                    maximum_series_resistance; float; units :py:data:`[Ohms]`
+                    recombination_parameter; float; units :py:data:`[V]`
+                    maximum_recombination_parameter; float; units :py:data:`[V]`
+                    shunt_resistance_at_stc; float; units :py:data:`[Ohms]`
+                    exponential_dependency_on_shunt_resistance; float; unitless
+                    dark_shunt_resistnace; float; units :py:data:`[Ohms]`
+                    saturation_current_at_stc; float; units :py:data:`[A]`
+                    diode_ideality_factor_at_stc; float; unitless
+                    linear_temp_dependence_on_gamma; units :py:data:`[%/deg-C]`
+                    light_generated_current; float; units :py:data:`[A]`
+
+        :return: Dictionary mirroring local module object with newly generated parameters.
+        :rtype: dict
         """
         response = requests.post(
-            url=BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersDefault",
-            headers={"Authorization": "Bearer " + TOKEN},
+            url=plantpredict.settings.BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersDefault",
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
-        # TODO can switch this back, Jesse fixed
-        """r = convert_json(json.loads(response.content), camel_to_snake)
-        self.__dict__.update({
-            "shunt_resistance_at_stc": r["shunt_resistance_at_stc"],
-            "dark_shunt_resistance": r["dark_shunt_resistance"],
-            "series_resistance_at_stc": r["series_resistance_at_stc"],
-            "recombination_parameter": r["recombination_parameter"],
-            "diode_ideality_factor_at_stc": r["diode_ideality_factor_at_stc"],
-            "saturation_current_at_stc": r["saturation_current_at_stc"],
-            "linear_temp_dependence_on_gamma": r["linear_temp_dependence_on_gamma"]
-        })"""
 
         self.__dict__.update(convert_json(json.loads(response.content), camel_to_snake))
 
@@ -317,13 +355,14 @@ class Module(PlantPredictEntity):
     @handle_error_response
     def generate_single_diode_parameters_advanced(self):
         """
-        POST /Module/Generator/GenerateSingleDiodeParametersAdvanced
+        **POST** */Module/Generator/GenerateSingleDiodeParametersAdvanced*
+
         :return:
         :rtype:
         """
         response = requests.post(
-            url=BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersAdvanced",
-            headers={"Authorization": "Bearer " + TOKEN},
+            url=plantpredict.settings.BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersAdvanced",
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -344,11 +383,12 @@ class Module(PlantPredictEntity):
     @handle_error_response
     def calculate_effective_irradiance_response(self):
         """
-        POST /Module/Generator/CalculateEffectiveIrradianceResponse
+        **POST** */Module/Generator/CalculateEffectiveIrradianceResponse*
+
         """
         return requests.post(
-            url=BASE_URL + "/Module/Generator/CalculateEffectiveIrradianceResponse",
-            headers={"Authorization": "Bearer " + TOKEN},
+            url=plantpredict.settings.BASE_URL + "/Module/Generator/CalculateEffectiveIrradianceResponse",
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -356,11 +396,12 @@ class Module(PlantPredictEntity):
     @handle_error_response
     def optimize_series_resistance(self):
         """
-        POST /Module/Generator/OptimizeSeriesResistance
+        **POST** */Module/Generator/OptimizeSeriesResistance*
+
         """
         response = requests.post(
-            url=BASE_URL + "/Module/Generator/OptimizeSeriesResistance",
-            headers={"Authorization": "Bearer " + TOKEN},
+            url=plantpredict.settings.BASE_URL + "/Module/Generator/OptimizeSeriesResistance",
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -371,10 +412,15 @@ class Module(PlantPredictEntity):
     @staticmethod
     def _parse_key_iv_points_template(file_path, sheet_name=None):
         """
-        Locally parses the PlantPredict standard template for Key IV Points input and returns a JSON-serializable
+        Parses the PlantPredict standard template for Key IV Points input and returns a JSON-serializable
         data structure.
+
         :param file_path:
+        :type file_path: str
+        :param sheet_name:
+        :type sheet_name: str
         :return:
+        :rtype:
         """
         xl = pandas.ExcelFile(file_path)
         sheet_idx = 0 if not sheet_name else xl.sheet_names.index(sheet_name)
@@ -398,7 +444,8 @@ class Module(PlantPredictEntity):
     @handle_error_response
     def process_key_iv_points(self, file_path=None, key_iv_points_data=None):
         """
-        POST /Module/Generator/ProcessKeyIVPoints
+        **POST** */Module/Generator/ProcessKeyIVPoints*
+
         :param file_path: File path to the .xlsx template for Key IV Points
         :type file_path: str
         :param key_iv_points_data:
@@ -423,8 +470,8 @@ class Module(PlantPredictEntity):
             key_iv_points_data = self._parse_key_iv_points_template(file_path)
 
         response = requests.post(
-            url=BASE_URL + "/Module/Generator/ProcessKeyIVPoints",
-            headers={"Authorization": "Bearer " + TOKEN},
+            url=plantpredict.settings.BASE_URL + "/Module/Generator/ProcessKeyIVPoints",
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             json=[convert_json(d, snake_to_camel) for d in key_iv_points_data]
         )
 
@@ -437,8 +484,13 @@ class Module(PlantPredictEntity):
         """
         Locally parses the PlantPredict standard template for Full IV Curves input and returns a JSON-serializable
         data structure.
+
         :param file_path:
+        :type file_path: str
+        :param sheet_name:
+        :type sheet_name: str
         :return:
+        :rtype:
         """
         xl = pandas.ExcelFile(file_path)
         sheet_idx = 0 if not sheet_name else xl.sheet_names.index(sheet_name)
@@ -462,7 +514,8 @@ class Module(PlantPredictEntity):
     @handle_error_response
     def process_iv_curves(self, file_path=None, full_iv_curve_data=None):
         """
-        POST /Module/Generator/ProcessIVCurves
+        **POST** */Module/Generator/ProcessIVCurves*
+
         :param file_path: File path to the .xlsx template for Full IV Curves
         :type file_path: str
         :param full_iv_curve_data:
@@ -487,8 +540,8 @@ class Module(PlantPredictEntity):
             full_iv_curve_data = self._parse_full_iv_curves_template(file_path)
 
         response = requests.post(
-            url=BASE_URL + "/Module/Generator/ProcessIVCurves",
-            headers={"Authorization": "Bearer " + TOKEN},
+            url=plantpredict.settings.BASE_URL + "/Module/Generator/ProcessIVCurves",
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             json=[convert_json(d, snake_to_camel) for d in full_iv_curve_data]
         )
 
@@ -499,13 +552,16 @@ class Module(PlantPredictEntity):
     def generate_iv_curve(self, num_iv_points=100):
         """
         POST /Module/Generator/GenerateIVCurve
+        
+        :param num_iv_points:
+        :type num_iv_points: int
         :return:
         :rtype:
         """
         self.num_iv_points = num_iv_points
 
         return requests.post(
-            url=BASE_URL + "/Module/Generator/GenerateIVCurve",
-            headers={"Authorization": "Bearer " + TOKEN},
+            url=plantpredict.settings.BASE_URL + "/Module/Generator/GenerateIVCurve",
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
