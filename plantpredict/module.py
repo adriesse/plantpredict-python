@@ -54,7 +54,7 @@ class Module(PlantPredictEntity):
                     diode_ideality_factor_at_stc; float; Must be between :py:data:`0.1` and :py:data:`5.0` - unitless.
                     linear_temp_dependence_on_gamma; float; Must be between :py:data:`-3.0` and :py:data:`3.0` - units :py:data:`[%/deg-C]`.
                     exponential_dependency_on_shunt_resistance; float; Must be between :py:data:`1.0` and :py:data:`100.0` - unitless.
-                    series_resistance_at_stc; float; Must be between - units :py:data:`[Ohms]`
+                    series_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100.0` - units :py:data:`[Ohms]`
                     dark_shunt_resistance; float; Must be between :py:data:`100.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
                     shunt_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
                     bandgap_voltage; float; Must be between :py:data:`0.5` and :py:data:`4.0` - units :py:data:`[V]`.
@@ -314,8 +314,9 @@ class Module(PlantPredictEntity):
 
         Generates single-diode parameters from module electrical characteristics available on any standard
         manufacturers' module datasheet. Detailed documentation on the algorithm and assumptions can be found
-        `here <https://plantpredict.com/algorithm/module-file-generator/#756-2>`_. An example of using this method in
-        practice can be found in :ref:`example_usage`.
+        `here <https://plantpredict.com/algorithm/module-file-generator/#756-2>`_. (Note: The values in the table
+        titled "Defaulted Inputs" are used in the algorithm and returned in the response of this method). An example of
+        using this method in practice can be found in :ref:`example_usage`.
 
         .. container:: toggle
 
@@ -361,13 +362,12 @@ class Module(PlantPredictEntity):
                     recombination_parameter; float; units :py:data:`[V]`
                     maximum_recombination_parameter; float; units :py:data:`[V]`
                     shunt_resistance_at_stc; float; units :py:data:`[Ohms]`
-                    exponential_dependency_on_shunt_resistance; float; unitless
+                    exponential_dependency_on_shunt_resistance; float; Defaulted to 5.5 - unitless
                     dark_shunt_resistnace; float; units :py:data:`[Ohms]`
                     saturation_current_at_stc; float; units :py:data:`[A]`
                     diode_ideality_factor_at_stc; float; unitless
                     linear_temp_dependence_on_gamma; float; units :py:data:`[%/deg-C]`
                     light_generated_current; float; units :py:data:`[A]`
-                    power_at_stc; float; Model Calculated maximum power - units :py:data:`[W]`
 
         :return: Dictionary mirroring local module object with newly generated parameters.
         :rtype: dict
@@ -388,23 +388,74 @@ class Module(PlantPredictEntity):
         """
         **POST** */Module/Generator/GenerateSingleDiodeParametersAdvanced*
 
-        :return:
-        :rtype:
+        Solves for unknown single-diode parameters from module electrical characteristics and known single-diode
+        parameters. This method is considered "advanced" because it requires more inputs to generate the remaining
+        single-diode parameters. Whereas, the "default" method
+        :py:meth:`plantpredict.Module.generate_single_diode_parameters_default` is relatively basic in that it requires
+        less inputs and automatically calculates more of the parameters. An example of using this method in practice
+        can be found in :ref:`example_usage`.
+
+        .. container:: toggle
+
+            .. container:: header
+
+                **Required Attributes**
+
+            .. container:: required_attributes
+
+                .. csv-table:: Minimum required attributes
+                    :delim: ;
+                    :header: Field, Type, Description
+                    :stub-columns: 1
+
+                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
+                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
+                    number_of_cells_in_series; int; Number of cells in one string of cells - unitless
+                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`.
+                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`.
+                    stc_max_power; float; Must be between :py:data:`0.0` and :py:data:`1000.0` - units :py:data:`[W]`.
+                    stc_short_circuit_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
+                    stc_open_circuit_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
+                    stc_mpp_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
+                    stc_mpp_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
+                    stc_power_temp_coef; float; Must be between :py:data:`-3.0` and :py:data:`3.0` - units :py:data:`[%/deg-C]`.
+                    stc_short_circuit_current_temp_coef; float; Must be between :py:data:`-0.3` and :py:data:`2.0` - units :py:data:`[%/deg-C]`.
+                    series_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100.0` - units :py:data:`[Ohms]`
+                    shunt_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
+                    dark_shunt_resistance; float; Must be between :py:data:`100.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
+                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0`
+                    exponential_dependency_on_shunt_resistance; float; Must be between :py:data:`1.0` and :py:data:`100.0` - unitless.
+                    bandgap_voltage; float; Must be between :py:data:`0.5` and :py:data:`4.0` - units :py:data:`[V]`.
+                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
+
+        .. container:: toggle
+
+            .. container:: header
+
+                **Generated Parameters**
+
+            .. container:: generated_parameters
+
+                .. csv-table:: Generated Parameters
+                    :delim: ;
+                    :header: Field, Type, Description
+                    :stub-columns: 1
+
+                    maximum_series_resistance; float; units :py:data:`[Ohms]`
+                    maximum_recombination_parameter; float; units :py:data:`[V]`
+                    saturation_current_at_stc; float; units :py:data:`[A]`
+                    diode_ideality_factor_at_stc; float; unitless
+                    linear_temp_dependence_on_gamma; float; units :py:data:`[%/deg-C]`
+                    light_generated_current; float; units :py:data:`[A]`
+
+        :return: Dictionary mirroring local module object with newly generated parameters.
+        :rtype: dict
         """
         response = requests.post(
             url=plantpredict.settings.BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersAdvanced",
             headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
-
-        # TODO can switch this back, Jesse fixed
-        """r = convert_json(json.loads(response.content), camel_to_snake)
-        self.__dict__.update({
-            "series_resistance_at_stc": r["series_resistance_at_stc"],
-            "diode_ideality_factor_at_stc": r["diode_ideality_factor_at_stc"],
-            "saturation_current_at_stc": r["saturation_current_at_stc"],
-            "linear_temp_dependence_on_gamma": r["linear_temp_dependence_on_gamma"]
-        })"""
 
         self.__dict__.update(convert_json(json.loads(response.content), camel_to_snake))
 

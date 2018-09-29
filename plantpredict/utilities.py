@@ -53,7 +53,9 @@ MANUAL_KEY_FIXES = {
         "bi_faciality": "bifaciality",
         "poairradinace": "global_poa_irradiance",
         "g_teff": "gt_eff",
-        "time_stamp": "timestamp"
+        "time_stamp": "timestamp",
+        "i_v": "iv",
+        "light_generatedcurrent": "light_generated_current"
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",
@@ -85,14 +87,20 @@ def convert_json(d, convert_function):
 
         new_key = convert_function(k)
 
+        if convert_function == camel_to_snake:
+            if k == "lightGeneratedCurrent":
+                pass
+
         # manual fixes
         for key, val in MANUAL_KEY_FIXES[convert_function.__name__].iteritems():
             if key in new_key:
-                new_key = new_key.replace(key, val)
+                if not key == "d_c" and new_key == "light_generated_current":       # edge case
+                    new_key = new_key.replace(key, val)
 
         # this removes the underscore given to a snake case when the first character in the camel case is capital
         new_key = new_key[1:] if new_key[0] == "_" else new_key
 
         new[new_key] = new_v
+
 
     return new
