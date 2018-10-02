@@ -1,6 +1,6 @@
 import json
 import requests
-from plantpredict import settings
+from plantpredict.settings import BASE_URL, TOKEN
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel
@@ -18,34 +18,42 @@ class Weather(PlantPredictEntity):
 
         Creates a new Weather entity.
 
-        .. csv-table:: Minimum required attributes for successful Weather creation
-            :delim: ;
-            :header: Field, Type, Description
-            :stub-columns: 1
+        .. container:: toggle
 
-            name; str; Name of weather file
-            country_code; str; Country code of the Weather's location (ex. US for United States, AUS for Australia, etc.) :py:meth:`plantpredict.Geo.get_location_info` will return this information.
-            country; str; Full name of the country of the Weather's location. :py:meth:`plantpredict.Geo.get_location_info` will return this information.
-            latitude; float; North-South coordinate of the Weather location (in decimal degrees).
-            longitude; float; East-West coordinate of the Weather location (in decimal degrees).
-            data_provider; int; Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.weather_data_provider_enum` for a list of options.
-            weather_details; list of dict; The code block below contains an example of one timestamp (array element) of this field, as well as information on which dictionary keys are required.
+            .. container:: header
 
-        .. code-block:: python
+                **Required Attributes**
 
-            weather_details[109] = {
-                "index": 110,                           # REQUIRED | is equal to the list index + 1
-                "time_stamp": "2018-01-01T1:00:00",     # REQUIRED
-                "global_horizontal_irradiance": 139.3,  # REQUIRED if no 'plane_of_array_irradiance' | [W/m^2]
-                "diffuse_horizontal_irradiance": 139.3, # [W/m^2]
-                "direct_normal_irradiance": 0.0,        # [W/m^2]
-                "beam_horizontal_irradiance": 0.0,      # [W/m^2]
-                "plane_of_array_irradiance": 100.0,     # REQUIRED if no 'global_horizontal_irradiance' | [W/m^2]
-                "temperature": 1.94,                    # REQUIRED | [degrees-Celsius]
-                "relative_humidity": 74.5,              # [%]
-                "precipitable_water": 2.0,              # [cm]
-                "soiling_loss": 0.19                    # [%]
-            }
+            .. container:: required_attributes
+
+                .. csv-table:: Minimum required attributes for successful Weather creation
+                    :delim: ;
+                    :header: Field, Type, Description
+                    :stub-columns: 1
+
+                    name; str; Name of weather file
+                    country_code; str; Country code of the Weather's location (ex. US for United States, AUS for Australia, etc.) :py:meth:`plantpredict.Geo.get_location_info` will return this information.
+                    country; str; Full name of the country of the Weather's location. :py:meth:`plantpredict.Geo.get_location_info` will return this information.
+                    latitude; float; North-South coordinate of the Weather location (in decimal degrees).
+                    longitude; float; East-West coordinate of the Weather location (in decimal degrees).
+                    data_provider; int; Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.weather_data_provider_enum` for a list of options.
+                    weather_details; list of dict; The code block below contains an example of one timestamp (array element) of this field, as well as information on which dictionary keys are required.
+
+                .. code-block:: python
+
+                    weather_details[109] = {
+                        "index": 110,                           # REQUIRED | is equal to the list index + 1
+                        "time_stamp": "2018-01-01T1:00:00",     # REQUIRED
+                        "global_horizontal_irradiance": 139.3,  # REQUIRED if no 'plane_of_array_irradiance' | [W/m^2]
+                        "diffuse_horizontal_irradiance": 139.3, # [W/m^2]
+                        "direct_normal_irradiance": 0.0,        # [W/m^2]
+                        "beam_horizontal_irradiance": 0.0,      # [W/m^2]
+                        "plane_of_array_irradiance": 100.0,     # REQUIRED if no 'global_horizontal_irradiance' | [W/m^2]
+                        "temperature": 1.94,                    # REQUIRED | [degrees-Celsius]
+                        "relative_humidity": 74.5,              # [%]
+                        "precipitable_water": 2.0,              # [cm]
+                        "soiling_loss": 0.19                    # [%]
+                    }
 
         :return: A dictionary containing the weather id.
         :rtype: dict
@@ -116,8 +124,8 @@ class Weather(PlantPredictEntity):
         :rtype: list of dicts
         """
         return requests.get(
-            url=settings.BASE_URL + "/Weather/{}/Detail".format(self.id),
-            headers={"Authorization": "Bearer " + settings.TOKEN}
+            url=BASE_URL + "/Weather/{}/Detail".format(self.id),
+            headers={"Authorization": "Bearer " + TOKEN}
         )
 
     @staticmethod
@@ -138,8 +146,8 @@ class Weather(PlantPredictEntity):
         """
 
         response = requests.get(
-            url=settings.BASE_URL + "/Weather/Search",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=BASE_URL + "/Weather/Search",
+            headers={"Authorization": "Bearer " + TOKEN},
             params=convert_json({
                 'latitude': latitude,
                 'longitude': longitude,
@@ -167,8 +175,8 @@ class Weather(PlantPredictEntity):
         :rtype: dict
         """
         response = requests.post(
-            url=settings.BASE_URL + "/Weather/Download/{}".format(provider),
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=BASE_URL + "/Weather/Download/{}".format(provider),
+            headers={"Authorization": "Bearer " + TOKEN},
             params={'latitude': latitude, 'longitude': longitude}
         )
 

@@ -1,5 +1,5 @@
 import requests
-from plantpredict import settings
+from plantpredict.settings import BASE_URL, TOKEN
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 
 
@@ -28,8 +28,8 @@ class Geo(object):
             }
         """
         return requests.get(
-            url=settings.BASE_URL + "/Geo/{}/{}/Location".format(latitude, longitude),
-            headers={"Authorization": "Bearer " + settings.TOKEN}
+            url=BASE_URL + "/Geo/{}/{}/Location".format(latitude, longitude),
+            headers={"Authorization": "Bearer " + TOKEN}
         )
 
     @staticmethod

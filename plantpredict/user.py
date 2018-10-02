@@ -1,6 +1,5 @@
-import json
 import requests
-from plantpredict import settings
+from plantpredict.settings import BASE_URL, TOKEN
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 
 
@@ -17,8 +16,8 @@ class User(object):
         :return:
         """
         return requests.get(
-            url=settings.BASE_URL + "/User/Queue",
-            headers={"Authorization": "Bearer " + settings.TOKEN}
+            url=BASE_URL + "/User/Queue",
+            headers={"Authorization": "Bearer " + TOKEN}
         )
 
     def __init__(self):
