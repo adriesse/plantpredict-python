@@ -34,7 +34,8 @@ module.generate_single_diode_parameters_default()
 # user can tune the module's single diode parameters to achieve (close to) a desired effective irradiance
 # response (EIR)/low-light performance. the first step is to define target relative efficiencies at specified
 # irradiance. Important note: the attribute "effective_irradiance_response" is only used for tuning the module
-# performance. It is not persisted to the database. Furthermore, this attribute does not represent the final EIR of
+# performance (and defining at which temperature/irradiance conditions to calculate. # TODO rewrite
+#  It is not persisted to the database. Furthermore, this attribute does not represent the final EIR of
 # the module's modeled performance - it only represents the user-specified target EIR.
 module.effective_irradiance_response = [
     {'temperature': 25, 'irradiance': 1000, 'relative_efficiency': 1.0},
