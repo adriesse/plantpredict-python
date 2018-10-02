@@ -82,6 +82,7 @@ class Module(PlantPredictEntity):
                 Populate the Module's require attributes by either directly assigning them...
 
                 .. code-block:: python
+
                     from plantpredict.enumerations import cell_technology_type_enum, pv_model_type_enum, construction_type_enum_type
 
                     module_to_create.name = "Test Module"
