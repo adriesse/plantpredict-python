@@ -170,9 +170,9 @@ class Module(PlantPredictEntity):
         self.linear_temp_dependence_on_isc = self.stc_short_circuit_current_temp_coef
 
         # if values that are simply calculated from required parameters are not specified, calculate them
-        if self.area is 0:
+        if not hasattr(self, 'area') or self.area == 0:
             self.area = (self.length/1000.0)*(self.width/1000.0)
-        if self.stc_efficiency is 0:
+        if not hasattr(self, 'stc_efficiency') or self.stc_efficiency == 0:
             self.stc_efficiency = self.stc_max_power / (self.area * 1000.0)
 
         super(Module, self).create()
@@ -471,7 +471,7 @@ class Module(PlantPredictEntity):
         Calculates the relative efficiency a set of irradiances with respect to the STC efficiency. Detailed
         documentation on this calculation can be found `here
         <https://plantpredict.com/algorithm/module-file-generator/#effective-irradiance-response-eir-calculation>`_.
-        Unlike other of the :py:mod:`plantpredict.Module` related to generating module files, this method only returns
+        Unlike other of the :py:mod:`plantpredict.Module` methods related to generating module files, this method only returns
         a dictionary, and does not also auto-assign any attributes to the local object.
 
         .. container:: toggle
@@ -584,7 +584,7 @@ class Module(PlantPredictEntity):
         :py:attr:`series_resistance_at_stc`. Detailed documentation on the algorithm used to accomplish this can be
         found `here
         <https://plantpredict.com/algorithm/module-file-generator/#optimize-series-resistance-to-match-eir-algorithm>`_.
-         An example of using this method in practice can be found in :ref:`example_usage`.
+        An example of using this method in practice can be found in :ref:`example_usage`.
 
         .. container:: toggle
 

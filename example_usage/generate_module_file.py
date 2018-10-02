@@ -2,8 +2,7 @@
 documentation located at https://plantpredict-python.readthedocs.io."""
 
 import plantpredict
-from plantpredict.enumerations import cell_technology_type_enum, pv_model_type_enum, library_status_enum, \
-    construction_type_enum
+from plantpredict.enumerations import cell_technology_type_enum, pv_model_type_enum, construction_type_enum
 
 # authenticate with client credentials and assign TOKEN variable in plantpredict/settings.py
 plantpredict.OAuth2.token(client_id=plantpredict.settings.CLIENT_ID, client_secret=plantpredict.settings.CLIENT_SECRET)
@@ -33,10 +32,7 @@ module.generate_single_diode_parameters_default()
 # at this point, the user could simply add the remaining required fields and save the new Module. alternatively, the
 # user can tune the module's single diode parameters to achieve (close to) a desired effective irradiance
 # response (EIR)/low-light performance. the first step is to define target relative efficiencies at specified
-# irradiance. Important note: the attribute "effective_irradiance_response" is only used for tuning the module
-# performance (and defining at which temperature/irradiance conditions to calculate. # TODO rewrite
-#  It is not persisted to the database. Furthermore, this attribute does not represent the final EIR of
-# the module's modeled performance - it only represents the user-specified target EIR.
+# irradiance
 module.effective_irradiance_response = [
     {'temperature': 25, 'irradiance': 1000, 'relative_efficiency': 1.0},
     {'temperature': 25, 'irradiance': 800, 'relative_efficiency': 1.0029},
@@ -45,7 +41,7 @@ module.effective_irradiance_response = [
     {'temperature': 25, 'irradiance': 200, 'relative_efficiency': 0.944}
 ]
 
-# the by which a user tunes the module's performance is relatively open-ended, but a good place to start is using
+# how a user tunes the module's performance is relatively open-ended, but a good place to start is using
 # PlantPredict's "Optimize Series Resistance" algorithm (see https://plantpredict.com/algorithm/module-file-generator/
 # for more information). this will automatically change the series resistance to generate an EIR closer to the target.
 module.optimize_series_resistance()
@@ -71,9 +67,9 @@ new_eir = module.calculate_effective_irradiance_response()
 module.name = "Test Module"
 module.model = "Test Module"
 module.manufacturer = "Solar Company"
+module.length = 2009
+module.width = 1232
 module.heat_absorption_coef_alpha_t = 0.9
-
-# assign additional metadata, for example...
 module.construction_type = construction_type_enum.GLASS_GLASS
 
 # create module in the PlantPredict database
