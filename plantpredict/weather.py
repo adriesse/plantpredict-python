@@ -3,7 +3,7 @@ import requests
 from plantpredict.settings import BASE_URL, TOKEN
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
-from plantpredict.utilities import decorate_all_methods, convert_json, camel_to_snake, snake_to_camel
+from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel
 
 
 class Weather(PlantPredictEntity):

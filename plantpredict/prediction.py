@@ -14,7 +14,6 @@ class Prediction(PlantPredictEntity):
     "GET /Project/{ProjectId}/Prediction/{PredictionId}" in `the general PlantPredict API documentation
     <http://app.plantpredict.com/swagger/ui/index#!/Project/Project_GetPrediction>`_.
     """
-
     def create(self, name=None, project_id=None, status=DRAFT_PRIVATE, year_repeater=1):
         """POST /Project/{ProjectId}/Prediction
 
