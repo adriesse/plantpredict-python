@@ -365,9 +365,9 @@ The initial series resistance optimization might not achieve an EIR close enough
 any parameter, re-optimize series resistance or just recalculate dependent parameters, and check EIR repeatedly.
 This is the open-ended portion of module file generation. Important Note: after modifying parameters, if the user
 does not re-optimize series resistance, :py:meth:`plantpredict.Module.generate_single_diode_parameters_advanced` must
-be called to re-calculate :py:attr:`saturation_current_at_stc`, :py:attr:`diode_ideality_factor_at_stc,
+be called to re-calculate :py:attr:`saturation_current_at_stc`, :py:attr:`diode_ideality_factor_at_stc`,
 :py:attr:`light_generated_current`, :py:attr:`linear_temperature_dependence_on_gamma`,
-:py:attr:`maximum_series_resistance` and py:attr:`maximum_recombination_parameter` (if applicable).
+:py:attr:`maximum_series_resistance` and :py:attr:`maximum_recombination_parameter` (if applicable).
 
 .. code-block:: python
 
