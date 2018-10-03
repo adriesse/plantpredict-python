@@ -87,10 +87,6 @@ def convert_json(d, convert_function):
 
         new_key = convert_function(k)
 
-        if convert_function == camel_to_snake:
-            if k == "lightGeneratedCurrent":
-                pass
-
         # manual fixes
         for key, val in MANUAL_KEY_FIXES[convert_function.__name__].iteritems():
             if key in new_key:
@@ -101,6 +97,5 @@ def convert_json(d, convert_function):
         new_key = new_key[1:] if new_key[0] == "_" else new_key
 
         new[new_key] = new_v
-
 
     return new
