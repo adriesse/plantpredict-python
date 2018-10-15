@@ -7,3 +7,4 @@ from plantpredict.project import Project
 from plantpredict.user import User
 from plantpredict.weather import Weather
 from plantpredict.oauth2 import OAuth2
+from plantpredict.error_handlers import APIError

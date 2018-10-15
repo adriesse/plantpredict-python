@@ -91,7 +91,7 @@ def convert_json(d, convert_function):
         # manual fixes
         for key, val in MANUAL_KEY_FIXES[convert_function.__name__].iteritems():
             if key in new_key:
-                if not key == "d_c" and new_key == "light_generated_current":       # edge case
+                if not (key == "d_c" and new_key == "light_generated_current"):       # edge case
                     new_key = new_key.replace(key, val)
 
         # this removes the underscore given to a snake case when the first character in the camel case is capital
