@@ -1,5 +1,5 @@
 import requests
-from plantpredict.settings import BASE_URL, TOKEN
+import plantpredict
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.powerplant import PowerPlant
 from plantpredict.user import User
@@ -117,8 +117,8 @@ class Prediction(PlantPredictEntity):
         """
 
         response = requests.post(
-            url=BASE_URL + "/Project/{}/Prediction/{}/Run".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + TOKEN},
+            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/Run".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             json=convert_json(export_options, snake_to_camel) if export_options else None
         )
 
@@ -133,8 +133,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/ResultSummary"""
 
         return requests.get(
-            url=BASE_URL + "/Project/{}/Prediction/{}/ResultSummary".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + TOKEN}
+            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/ResultSummary".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN}
         )
 
     @handle_refused_connection
@@ -143,8 +143,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/ResultDetails"""
 
         return requests.get(
-            url=BASE_URL + "/Project/{}/Prediction/{}/ResultDetails".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + TOKEN}
+            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/ResultDetails".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN}
         )
 
     @handle_refused_connection
@@ -153,8 +153,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/NodalJson"""
 
         return requests.get(
-            url=BASE_URL + "/Project/{}/Prediction/{}/NodalJson".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + TOKEN},
+            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/NodalJson".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             params=convert_json(params, snake_to_camel)
         )
 

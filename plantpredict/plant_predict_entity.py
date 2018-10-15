@@ -48,8 +48,8 @@ class PlantPredictEntity(object):
         """Generic PUT request."""
 
         return requests.put(
-            url=plantpredict.BASE_URL + self.update_url_suffix,
-            headers={"Authorization": "Bearer " + plantpredict.TOKEN},
+            url=plantpredict.settings.BASE_URL + self.update_url_suffix,
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
