@@ -1,0 +1,4 @@
+ERBS = 0
+REINDL = 1
+DIRINT = 2
+NONE = 3

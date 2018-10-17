@@ -11,7 +11,7 @@ from plantpredict.error_handlers import handle_refused_connection, handle_error_
 
 class Module(PlantPredictEntity):
     """
-    The Module entity models all of the characteristics of a photovoltaic solar module (panel).
+    The :py:mod:`plantpredict.Module` entity models all of the characteristics of a photovoltaic solar module (panel).
     """
     def create(self):
         """
@@ -148,7 +148,6 @@ class Module(PlantPredictEntity):
                         "recombination_parameter": 0.9
                     }
 
-
                 Create a new module in the PlantPredict database, and observe that the Module now has a unique database
                 identifier.
 
@@ -156,7 +155,7 @@ class Module(PlantPredictEntity):
 
                     module_to_create.create()
 
-                    print module.id
+                    print module_to_create.id
 
         :return: A dictionary containing the module id.
         :rtype: dict
