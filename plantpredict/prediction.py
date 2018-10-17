@@ -5,39 +5,92 @@ from plantpredict.powerplant import PowerPlant
 from plantpredict.user import User
 from plantpredict.utilities import convert_json, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
-from plantpredict.enumerations.prediction_status_enum import *
 
 
 class Prediction(PlantPredictEntity):
     """
-    The full contents of the Prediction database entity (in JSON) can be found under
-    "GET /Project/{ProjectId}/Prediction/{PredictionId}" in `the general PlantPredict API documentation
-    <http://app.plantpredict.com/swagger/ui/index#!/Project/Project_GetPrediction>`_.
+    The :py:mod:`plantpredict.Prediction` entity models a single energy prediction within a
+    :py:mod:`plantpredict.Project`.
     """
-    def create(self, name=None, project_id=None, status=DRAFT_PRIVATE, year_repeater=1):
-        """POST /Project/{ProjectId}/Prediction
+    def create(self):
+        """
+        **POST** */Project/ :py:attr:`project_id` /Prediction*
 
-        Creates a new Prediction entity in PlantPredict and assigns the uid of the newly created Prediction to self.id
-        in the local object instance. Any attributes (including but not limited to those also assignable via the inputs
-        to this method) assigned prior to calling this method will be recorded in the new Prediction entity in
-        PlantPredict. The input variables to this method are those required for successful Prediction creation.
+        Creates a new :py:mod:`plantpredict.Prediction` entity in the PlantPredict database using the attributes
+        assigned to the local object instance. Automatically assigns the resulting :py:attr:`id` to the local object
+        instance. See the minimum required attributes (below) necessary to successfully create a new
+        :py:mod:`plantpredict.Prediction`. Note that the full scope of attributes is not limited to the minimum
+        required set. **Important Note:** the minimum required attributes necessary to create a
+        :py:mod:`plantpredict.Prediction` is not sufficient to successfully call :py:meth:`plantpredict.Prediction.run`.
 
-        :param name: The name of the Prediction.
-        :type name: str
-        :param project_id: Unique identifier of the Project (parent) with which the Prediction (child) should be associated.
-        :type project_id: int
-        :param status: The Prediction's status enumeration (defaulted to DRAFT-PRIVATE), defined and imported in plantpredict.enumerations.prediction_status_enum.
-        :type status: int
-        :param year_repeater: Number of years of power plant operation to be simulated (defaulted to 1 year).
-        :type year_repeater: int
+        .. container:: toggle
+
+            .. container:: header
+
+                **Required Attributes**
+
+            .. container:: required_attributes
+
+                .. csv-table:: Minimum required attributes for successful Prediction creation
+                    :delim: ;
+                    :header: Field, Type, Description
+                    :stub-columns: 1
+
+                    name; str; Name of prediction
+                    project_id; int; ID of project within which to contain the prediction
+                    status; int; Represents the Prediction status (Draft-Private, Draft-Shared, Analysis, etc). Use :py:mod:`plantpredict.enumerations.prediction_status_enum`.
+                    year_repeater; int; Must be between :py:data:`1` and :py:data:`50` - unitless.
+
+        .. container:: toggle
+
+            .. container:: header
+
+                **Example Code**
+
+            .. container:: example_code
+
+                First, import the plantpredict library and receive an authentication plantpredict.settings.TOKEN in your
+                Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Prediction.
+                object.
+
+                .. code-block:: python
+
+                    module_to_create = plantpredict.Prediction()
+
+                Populate the Prediction's require attributes by either directly assigning them...
+
+                .. code-block:: python
+
+                    from plantpredict.enumerations import prediction_status_enum
+
+                    prediction_to_create.name = "Test Prediction"
+                    prediction_to_create.project_id = 1000
+                    prediction_to_create.status = prediction_status_enum.DRAFT_SHARED
+                    prediction_to_create.year_repeater = 1
+
+                ...OR via dictionary assignment.
+
+                .. code-block:: python
+
+                    prediction_to_create.__dict__ = {
+                        "name": "Test Prediction",
+                        "model": "Test Module",
+                        "status": prediction_status_enum.DRAFT_SHARED,
+                        "year_repeater": 1,
+                    }
+
+                Create a new prediction in the PlantPredict database, and observe that the Module now has a unique
+                database identifier.
+
+                .. code-block:: python
+
+                    prediction_to_create.create()
+
+                    print prediction_to_create.id
 
         :return: A dictionary containing the prediction id.
         :rtype: dict
         """
-        self.name = name if name is not None else self.name
-        self.project_id = project_id if project_id is not None else self.project_id
-        self.status = status if self.status is None else self.status
-        self.year_repeater = year_repeater if self.year_repeater is None else self.year_repeater
 
         self.create_url_suffix = "/Project/{}/Prediction".format(self.project_id)
 
@@ -93,7 +146,8 @@ class Prediction(PlantPredictEntity):
     def _wait_for_prediction(self):
         is_complete = False
         while not is_complete:
-            task_queue = User.get_queue()
+            # code not deleted because testing alternate solution
+            """task_queue = User.get_queue()
             try:
                 prediction_task = (task for task in task_queue if task['predictionId'] == self.id).next()
             except (StopIteration, TypeError):
@@ -102,6 +156,10 @@ class Prediction(PlantPredictEntity):
             # Processing Status Enum (Success = 3)
             # TODO 4 is error but works for module file stuff
             if prediction_task['prediction']['processingStatus'] in [3, 4]:
+                is_complete = True"""
+
+            self.get()
+            if self.processing_status == 3:
                 is_complete = True
 
     @handle_refused_connection
@@ -115,7 +173,6 @@ class Prediction(PlantPredictEntity):
         :param export_options: Contains options for exporting
         :return:
         """
-
         response = requests.post(
             url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/Run".format(self.project_id, self.id),
             headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
