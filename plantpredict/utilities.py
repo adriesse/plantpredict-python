@@ -56,7 +56,10 @@ MANUAL_KEY_FIXES = {
         "time_stamp": "timestamp",
         "i_v": "iv",
         "po_a_insolation": "poa_insolation",
-        "light_generatedcurrent": "light_generated_current"
+        "light_generatedcurrent": "light_generated_current",
+        "bo_s": "bos",
+        "sandiaconductive": "sandia_conductive",
+        "sandiaconvective": "sandia_convective"
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",
