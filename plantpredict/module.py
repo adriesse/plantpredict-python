@@ -363,7 +363,7 @@ class Module(PlantPredictEntity):
                     maximum_recombination_parameter; float; units :py:data:`[V]`
                     shunt_resistance_at_stc; float; units :py:data:`[Ohms]`
                     exponential_dependency_on_shunt_resistance; float; Defaulted to 5.5 - unitless
-                    dark_shunt_resistnace; float; units :py:data:`[Ohms]`
+                    dark_shunt_resistance; float; units :py:data:`[Ohms]`
                     saturation_current_at_stc; float; units :py:data:`[A]`
                     diode_ideality_factor_at_stc; float; unitless
                     linear_temp_dependence_on_gamma; float; units :py:data:`[%/deg-C]`
