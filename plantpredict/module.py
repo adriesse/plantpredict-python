@@ -578,7 +578,10 @@ class Module(PlantPredictEntity):
         """
         **POST** */Module/Generator/OptimizeSeriesResistance*
 
-        Automatically "tunes" :py:attr:`series_resistance_at_stc` to bring the model-calculated effective irradiance
+        While this method can be called independently, it is most commonly used after first calling
+        :py:meth:`plantpredict.Module.generate_single_diode_parameters_advanced` or
+        :py:meth:`plantpredict.Module.generate_single_diode_parameters_default`. Automatically "tunes"
+        :py:attr:`series_resistance_at_stc` to bring the model-calculated effective irradiance
         (EIR) response close to a user-specified target EIR. Also recalculates single-diode parameters dependent on
         :py:attr:`series_resistance_at_stc`. Detailed documentation on the algorithm used to accomplish this can be
         found `here
@@ -780,7 +783,7 @@ class Module(PlantPredictEntity):
 
             .. container:: generated_parameters
 
-                The following parameters are automatically assigned as attributes to the local instance of :py:meth:`plantpredict.Module`.
+                The following parameters are automatically assigned as attributes to the local instance of :py:class:`plantpredict.Module`.
 
                 .. csv-table:: Generated Parameters
                     :delim: ;
