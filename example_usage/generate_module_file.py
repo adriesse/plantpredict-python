@@ -5,7 +5,7 @@ import plantpredict
 from plantpredict.enumerations import cell_technology_type_enum, pv_model_type_enum, construction_type_enum
 
 # authenticate with client credentials and assign TOKEN variable in plantpredict/settings.py
-plantpredict.OAuth2.token(client_id=plantpredict.settings.CLIENT_ID, client_secret=plantpredict.settings.CLIENT_SECRET)
+plantpredict.OAuth2.token()
 
 # instantiate a local Module object
 module = plantpredict.Module()

@@ -5,7 +5,7 @@ import plantpredict
 from plantpredict.enumerations.weather_data_provider_enum import *
 
 # authenticate with client credentials and assign TOKEN variable in plantpredict/settings.py
-plantpredict.OAuth2.token(client_id=plantpredict.settings.CLIENT_ID, client_secret=plantpredict.settings.CLIENT_SECRET)
+plantpredict.OAuth2.token()
 
 # instantiate the prediction of interest specifying its ID and project ID (visible in the URL of that prediction
 # in a web browser '.../projects/{project_id}/prediction/{id}/'). do the same for the project of interest.

@@ -8,7 +8,7 @@ from plantpredict.enumerations import prediction_status_enum, transposition_mode
     tracking_type_enum, backtracking_type_enum
 
 # authenticate with client credentials and assign TOKEN variable in plantpredict/settings.py
-plantpredict.OAuth2.token(client_id=plantpredict.settings.CLIENT_ID, client_secret=plantpredict.settings.CLIENT_SECRET)
+plantpredict.OAuth2.token()
 
 # Create the initial prediction, assigning it a Project using "prediction.project_id"
 # (assuming the Project already exists).
