@@ -4,11 +4,11 @@
 Authentication (OAuth2)
 #######################
 
-PlantPredict uses the `OAuth 2.0 <https://oauth.net/2/>`_ authorization protocol for administering and managing
-access tokens. If you are a first time user of the PlantPredict API, you need a set of client credentials (client
-ID and client secret). The way in which you generate/receive your client credentials depends on the scenario.
+PlantPredict uses the `Okta OpenID Connect & OAuth 2.0 API <https://developer.okta.com/docs/api/resources/oidc#token>`_
+for administering and managing access tokens. If you are a first time user of the PlantPredict API, you need a set of
+client credentials (username, password, client ID, and client secret).
 
-Step 1: Generate/receive client ID and client secret.
+Step 1: Generate/receive client credentials.
 ======================================================
 
 "I have never used PlantPredict and need an account".
@@ -34,12 +34,12 @@ for, and click on their name.
 .. image:: _images/search_for_name.png
     :align: center
 
-Click on "Generate Client Credentials" on the top right of the next page.
+Click on "Generate API Credentials" on the top right of the next page.
 
-.. image:: _images/generate_client_credentials_button.png
+.. image:: _images/generate_api_credentials_button.png
     :align: center
 
-Copy the Client ID and Client Secret to your clipboard to be pasted into :file:`plantpredict.settings` in step 2.
+Copy each credential to your clipboard to be pasted into :file:`plantpredict.settings` in step 2.
 
 .. image:: _images/client_credentials.png
     :align: center
@@ -56,15 +56,17 @@ Contact the person in your organization who is the company admin, and provide to
 Step 2: Paste your client credentials into the settings.py file.
 ==========================================================================
 
-Paste the client ID and client secret into :file:`plantpredict.settings`.
+Paste the username, password, client ID, and client secret into :file:`plantpredict.settings`.
 
 .. code-block:: python
 
-    # SETTINGS.PY FILE - MANUALLY ENTER IN CLIENT_ID AND CLIENT_SECRET.
+    # SETTINGS.PY FILE - MANUALLY ENTER IN USERNAME, PASSWORD, CLIENT_ID, AND CLIENT_SECRET.
     # TOKEN IS STORED HERE ONCE GENERATED.
 
     BASE_URL = "https://api.plantpredict.com/"
 
+    USERNAME = "INSERT USERNAME HERE"
+    PASSWORD = "INSERT PASSWORD HERE"
     CLIENT_ID = "INSERT CLIENT ID HERE"
     CLIENT_SECRET = "INSERT CLIENT SECRET HERE"
 
@@ -79,9 +81,7 @@ Execute the following code to authenticate and receive an access token.
 
     import plantpredict
 
-    plantpredict.OAuth2.token(
-        client_id=plantpredict.settings.CLIENT_ID, client_secret=plantpredict.settings.CLIENT_SECRET
-    )
+    plantpredict.OAuth2.token()
 
 This code will automatically assign the generated access token to the TOKEN variable in
 :file:`plantpredict.settings`. Every API call you make after this step will automatically reference
@@ -89,6 +89,5 @@ the access token and authenticate without any additional client-side code.
 
 .. warning::
 
-    The access token will expire after 1 hour. The current version of the SDK does not include any functionality
-    to handle refreshing the token. While this feature is under development, if your code takes longer than an
-    hour to execute, consider any novel solution to generate a new token before it expires.
+    The access token will expire after 1 hour. If your script requires more than one hour to complete, the SDK will
+    automatically generate a new token using a refresh token.

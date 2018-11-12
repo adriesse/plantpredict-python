@@ -6,7 +6,7 @@ import numpy as np
 
 
 # authenticate with client credentials and assign TOKEN variable in plantpredict/settings.py
-plantpredict.OAuth2.token(client_id=plantpredict.settings.CLIENT_ID, client_secret=plantpredict.settings.CLIENT_SECRET)
+plantpredict.OAuth2.token()
 
 # load JSON file containing weather time series
 with open('example_usage_files/weather_details.json', 'rb') as json_file:

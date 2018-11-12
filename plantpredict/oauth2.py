@@ -5,20 +5,20 @@ import plantpredict
 
 class OAuth2(object):
     @staticmethod
-    def token(client_id, client_secret):
+    def token():
         """
-
-        :param client_id:
-        :param client_secret:
         :return:
         """
         response = requests.post(
-            url=plantpredict.settings.BASE_URL + "/oauth2/token",
+            url="https://afse.okta.com/oauth2/aus3jzhulkrINTdnc356/v1/token",
             headers={"content-type": "application/x-www-form-urlencoded"},
-            data={
-                "client_id": client_id,
-                "client_secret": client_secret,
-                "grant_type": "client_credentials"
+            params={
+                "grant_type": "password",
+                "scope": "openid offline_access",
+                "username": plantpredict.settings.USERNAME,
+                "password": plantpredict.settings.PASSWORD,
+                "client_id": plantpredict.settings.CLIENT_ID,
+                "client_secret": plantpredict.settings.CLIENT_SECRET
             }
         )
 
@@ -34,11 +34,14 @@ class OAuth2(object):
     @staticmethod
     def refresh():
         response = requests.post(
-            url=plantpredict.settings.BASE_URL + "/oauth2/token",
+            url="https://afse.okta.com/oauth2/aus3jzhulkrINTdnc356/v1/token",
             headers={"content-type": "application/x-www-form-urlencoded"},
             data={
                 "refresh_token": plantpredict.settings.REFRESH_TOKEN,
-                "grant_type": "refresh_token"
+                "grant_type": "refresh_token",
+                "scope": "offline_access",
+                "client_id": plantpredict.settings.CLIENT_ID,
+                "client_secret": plantpredict.settings.CLIENT_SECRET
             }
         )
 
@@ -53,4 +56,3 @@ class OAuth2(object):
 
     def __init__(self):
         pass
-

@@ -4,7 +4,7 @@ documentation located at https://plantpredict-python.readthedocs.io."""
 import plantpredict
 
 # authenticate with client credentials and assign TOKEN variable in plantpredict/settings.py
-plantpredict.OAuth2.token(client_id=plantpredict.settings.CLIENT_ID, client_secret=plantpredict.settings.CLIENT_SECRET)
+plantpredict.OAuth2.token()
 
 # instantiate a prediction, specifying its ID and project ID (visible in the URL of that prediction in a web browser
 # '.../projects/{project_id}/prediction/{id}/').

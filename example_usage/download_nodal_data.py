@@ -4,7 +4,7 @@ at https://plantpredict-python.readthedocs.io."""
 import plantpredict
 
 # authenticate with client credentials and assign TOKEN variable in plantpredict/settings.py
-plantpredict.OAuth2.token(client_id=plantpredict.settings.CLIENT_ID, client_secret=plantpredict.settings.CLIENT_SECRET)
+plantpredict.OAuth2.token()
 
 # assign the nodal for which level(s) of the power plant hierarchy you desire.
 export_options = {

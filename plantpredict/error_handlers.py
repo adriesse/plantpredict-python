@@ -37,7 +37,6 @@ def handle_error_response(function):
 
                 # if the response contains content, return it
                 if response.content:
-                    # TODO this accommodates camel case currently in prediction._wait_for_prediction, fix
                     if "Queue" in response.url:
                         return json.loads(response.content)
 
