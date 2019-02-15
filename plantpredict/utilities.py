@@ -59,7 +59,9 @@ MANUAL_KEY_FIXES = {
         "light_generatedcurrent": "light_generated_current",
         "bo_s": "bos",
         "sandiaconductive": "sandia_conductive",
-        "sandiaconvective": "sandia_convective"
+        "sandiaconvective": "sandia_convective",
+        "l_i_d": "lid",
+        "at25": "at_25"
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",
