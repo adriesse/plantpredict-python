@@ -59,6 +59,13 @@ Inverter
     :undoc-members:
     :show-inheritance:
 
+Helpers
+=======
+
+.. automodule:: plantpredict.helpers
+    :members:
+    :undoc-members:
+
 Utilities
 ===========
 
