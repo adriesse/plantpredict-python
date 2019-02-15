@@ -1,6 +1,6 @@
 import requests
 import json
-from plantpredict.settings import BASE_URL, TOKEN
+import plantpredict
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 from plantpredict.utilities import convert_json, camel_to_snake
@@ -110,8 +110,8 @@ class Project(PlantPredictEntity):
         """
 
         return requests.get(
-            url=BASE_URL + "/Project/{}/Prediction".format(self.id),
-            headers={"Authorization": "Bearer " + TOKEN}
+            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction".format(self.id),
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN}
         )
 
     @staticmethod
@@ -129,8 +129,8 @@ class Project(PlantPredictEntity):
         :return: TODO
         """
         response = requests.get(
-            url=BASE_URL + "/Project/Search",
-            headers={"Authorization": "Bearer " + TOKEN},
+            url=plantpredict.settings.BASE_URL + "/Project/Search",
+            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
             params={'latitude': latitude, 'longitude': longitude, 'searchRadius': search_radius}
         )
 
