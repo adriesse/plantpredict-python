@@ -1,5 +1,6 @@
 from plantpredict.plant_predict_entity import PlantPredictEntity
-
+from plantpredict.error_handlers import handle_refused_connection, handle_error_response
+import copy
 
 class PowerPlant(PlantPredictEntity):
     """
@@ -29,3 +30,18 @@ class PowerPlant(PlantPredictEntity):
         self.update_url_suffix = "/Project/{}/Prediction/{}/PowerPlant".format(self.project_id, self.prediction_id)
 
         return super(PowerPlant, self).update()
+
+    @handle_refused_connection
+    @handle_error_response
+    def clone_block(self, block_id_to_clone):
+        """
+
+        :return:
+        """
+        block_to_clone = [b for b in self.blocks if b['id'] == block_id_to_clone][0]
+        block_copy = copy.deepcopy(block_to_clone)
+        block_copy["name"] = len(self.blocks)
+        self.blocks.append(block_copy)
+        self.update()
+
+        return self.blocks[-1]
