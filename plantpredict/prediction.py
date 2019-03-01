@@ -1,8 +1,7 @@
 import requests
-import plantpredict
+from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.powerplant import PowerPlant
-from plantpredict.user import User
 from plantpredict.utilities import convert_json, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 
@@ -146,18 +145,6 @@ class Prediction(PlantPredictEntity):
     def _wait_for_prediction(self):
         is_complete = False
         while not is_complete:
-            # code not deleted because testing alternate solution
-            """task_queue = User.get_queue()
-            try:
-                prediction_task = (task for task in task_queue if task['predictionId'] == self.id).next()
-            except (StopIteration, TypeError):
-                continue
-
-            # Processing Status Enum (Success = 3)
-            # TODO 4 is error but works for module file stuff
-            if prediction_task['prediction']['processingStatus'] in [3, 4]:
-                is_complete = True"""
-
             self.get()
             if self.processing_status == 3:
                 is_complete = True
@@ -174,8 +161,8 @@ class Prediction(PlantPredictEntity):
         :return:
         """
         response = requests.post(
-            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/Run".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Project/{}/Prediction/{}/Run".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             json=convert_json(export_options, snake_to_camel) if export_options else None
         )
 
@@ -190,8 +177,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/ResultSummary"""
 
         return requests.get(
-            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/ResultSummary".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN}
+            url=settings.BASE_URL + "/Project/{}/Prediction/{}/ResultSummary".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + settings.TOKEN}
         )
 
     @handle_refused_connection
@@ -200,8 +187,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/ResultDetails"""
 
         return requests.get(
-            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/ResultDetails".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN}
+            url=settings.BASE_URL + "/Project/{}/Prediction/{}/ResultDetails".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + settings.TOKEN}
         )
 
     @handle_refused_connection
@@ -210,8 +197,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/NodalJson"""
 
         return requests.get(
-            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/NodalJson".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Project/{}/Prediction/{}/NodalJson".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             params=convert_json(params, snake_to_camel)
         )
 

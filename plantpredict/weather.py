@@ -1,6 +1,6 @@
 import json
 import requests
-import plantpredict
+from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel
@@ -124,8 +124,8 @@ class Weather(PlantPredictEntity):
         :rtype: list of dicts
         """
         return requests.get(
-            url=plantpredict.settings.BASE_URL + "/Weather/{}/Detail".format(self.id),
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN}
+            url=settings.BASE_URL + "/Weather/{}/Detail".format(self.id),
+            headers={"Authorization": "Bearer " + settings.TOKEN}
         )
 
     @staticmethod
@@ -146,8 +146,8 @@ class Weather(PlantPredictEntity):
         """
 
         response = requests.get(
-            url=plantpredict.settings.BASE_URL + "/Weather/Search",
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Weather/Search",
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             params=convert_json({
                 'latitude': latitude,
                 'longitude': longitude,
@@ -175,8 +175,8 @@ class Weather(PlantPredictEntity):
         :rtype: dict
         """
         response = requests.post(
-            url=plantpredict.settings.BASE_URL + "/Weather/Download/{}".format(provider),
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Weather/Download/{}".format(provider),
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             params={'latitude': latitude, 'longitude': longitude}
         )
 
