@@ -3,7 +3,7 @@ import requests
 import pandas
 from operator import itemgetter
 from itertools import groupby
-import plantpredict
+from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
@@ -334,8 +334,8 @@ class Module(PlantPredictEntity):
                     cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
                     pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
                     number_of_cells_in_series; int; Number of cells in one string of cells - unitless
-                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`.
-                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`.
+                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`. However, the calculation is always made at :py:data:`1000 W/m^2`.
+                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`. However, the calculation is always made at :py:data:`25 deg-C`.
                     stc_max_power; float; Must be between :py:data:`0.0` and :py:data:`1000.0` - units :py:data:`[W]`.
                     stc_short_circuit_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
                     stc_open_circuit_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
@@ -373,8 +373,8 @@ class Module(PlantPredictEntity):
         :rtype: dict
         """
         response = requests.post(
-            url=plantpredict.settings.BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersDefault",
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersDefault",
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -411,8 +411,8 @@ class Module(PlantPredictEntity):
                     cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
                     pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
                     number_of_cells_in_series; int; Number of cells in one string of cells - unitless
-                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`.
-                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`.
+                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`. However, the calculation is always made at :py:data:`1000 W/m^2`.
+                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`. However, the calculation is always made at :py:data:`25 deg-C`.
                     stc_max_power; float; Must be between :py:data:`0.0` and :py:data:`1000.0` - units :py:data:`[W]`.
                     stc_short_circuit_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
                     stc_open_circuit_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
@@ -452,8 +452,8 @@ class Module(PlantPredictEntity):
         :rtype: dict
         """
         response = requests.post(
-            url=plantpredict.settings.BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersAdvanced",
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersAdvanced",
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -467,7 +467,7 @@ class Module(PlantPredictEntity):
         """
         **POST** */Module/Generator/CalculateEffectiveIrradianceResponse*
 
-        Calculates the relative efficiency a set of irradiances with respect to the STC efficiency. Detailed
+        Calculates the relative efficiency for any number of irradiance conditions with respect to performance at :py:data:`1000 W/m^2` for a given temperature. Detailed
         documentation on this calculation can be found `here
         <https://plantpredict.com/algorithm/module-file-generator/#effective-irradiance-response-eir-calculation>`_.
         Unlike other of the :py:mod:`plantpredict.Module` methods related to generating module files, this method only returns
@@ -490,8 +490,8 @@ class Module(PlantPredictEntity):
                     cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
                     pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
                     number_of_cells_in_series; int; Number of cells in one string of cells - unitless
-                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`.
-                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`.
+                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`. However, only the irradiance values provided in :py:attr:`effective_irradiance_response are used in this calculation.
+                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`. However, only the temperature values provided in :py:attr:`effective_irradiance_response are used in this calculation.
                     stc_max_power; float; Must be between :py:data:`0.0` and :py:data:`1000.0` - units :py:data:`[W]`.
                     stc_short_circuit_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
                     stc_open_circuit_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
@@ -567,8 +567,8 @@ class Module(PlantPredictEntity):
         :rtype: list of dict
         """
         return requests.post(
-            url=plantpredict.settings.BASE_URL + "/Module/Generator/CalculateEffectiveIrradianceResponse",
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Module/Generator/CalculateEffectiveIrradianceResponse",
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -605,8 +605,8 @@ class Module(PlantPredictEntity):
                     cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
                     pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
                     number_of_cells_in_series; int; Number of cells in one string of cells - unitless
-                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`.
-                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`.
+                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`. While required, this value isn't used in the calculation.
+                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`. While required, this value isn't used in the calculation.
                     stc_max_power; float; Must be between :py:data:`0.0` and :py:data:`1000.0` - units :py:data:`[W]`.
                     stc_short_circuit_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
                     stc_open_circuit_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
@@ -630,8 +630,8 @@ class Module(PlantPredictEntity):
         :rtype: dict
         """
         response = requests.post(
-            url=plantpredict.settings.BASE_URL + "/Module/Generator/OptimizeSeriesResistance",
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Module/Generator/OptimizeSeriesResistance",
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -847,8 +847,8 @@ class Module(PlantPredictEntity):
             key_iv_points_data = self._parse_key_iv_points_template(file_path)
 
         response = requests.post(
-            url=plantpredict.settings.BASE_URL + "/Module/Generator/ProcessKeyIVPoints",
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Module/Generator/ProcessKeyIVPoints",
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             json=[convert_json(d, snake_to_camel) for d in key_iv_points_data]
         )
 
@@ -979,8 +979,8 @@ class Module(PlantPredictEntity):
             full_iv_curve_data = self._parse_full_iv_curves_template(file_path)
 
         response = requests.post(
-            url=plantpredict.settings.BASE_URL + "/Module/Generator/ProcessIVCurves",
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Module/Generator/ProcessIVCurves",
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             json=[convert_json(d, snake_to_camel) for d in full_iv_curve_data]
         )
 
@@ -1010,8 +1010,8 @@ class Module(PlantPredictEntity):
                     cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
                     pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
                     number_of_cells_in_series; int; Number of cells in one string of cells - unitless
-                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`.
-                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`.
+                    reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`. The IV curve will represent this irradiance.
+                    reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`. The IV curve will represent this temperature.
                     stc_max_power; float; Must be between :py:data:`0.0` and :py:data:`1000.0` - units :py:data:`[W]`.
                     stc_short_circuit_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
                     stc_open_circuit_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
@@ -1055,7 +1055,7 @@ class Module(PlantPredictEntity):
         self.num_iv_points = num_iv_points
 
         return requests.post(
-            url=plantpredict.settings.BASE_URL + "/Module/Generator/GenerateIVCurve",
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Module/Generator/GenerateIVCurve",
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
