@@ -56,7 +56,7 @@ of the weather file.
     prediction.end = weather.end_date
 
 Import all of the enumeration files relevant to prediction settings. Set ALL of the following model options on the
-prediction using the enumerations library in :py:module:`plantpredict.enumerations` similar to the code below, but to
+prediction using the enumerations library in :py:mod:`plantpredict.enumerations` similar to the code below, but to
 your preferences.
 
 .. code-block:: python
