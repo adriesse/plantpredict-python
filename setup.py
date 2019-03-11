@@ -9,5 +9,9 @@ setup(
     author_email='',
     license=None,
     packages=['plantpredict'],
+    install_requires=[
+        'requests',
+        'pandas'
+    ],
     zip_safe=False
 )

@@ -1,10 +1,10 @@
 import requests
-import plantpredict
+from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.powerplant import PowerPlant
-from plantpredict.user import User
 from plantpredict.utilities import convert_json, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
+from plantpredict.enumerations import prediction_status_enum, entity_type_enum
 
 
 class Prediction(PlantPredictEntity):
@@ -12,7 +12,8 @@ class Prediction(PlantPredictEntity):
     The :py:mod:`plantpredict.Prediction` entity models a single energy prediction within a
     :py:mod:`plantpredict.Project`.
     """
-    def create(self):
+    def create(self, error_spa_var=2.0, error_model_acc=2.9, error_int_ann_var=3.0,
+               error_sens_acc=5.0, error_mon_acc=2.0, year_repeater=1, status=prediction_status_enum.DRAFT_PRIVATE):
         """
         **POST** */Project/ :py:attr:`project_id` /Prediction*
 
@@ -94,6 +95,14 @@ class Prediction(PlantPredictEntity):
 
         self.create_url_suffix = "/Project/{}/Prediction".format(self.project_id)
 
+        self.error_spa_var = error_spa_var
+        self.error_model_acc = error_model_acc
+        self.error_int_ann_var = error_int_ann_var
+        self.error_sens_acc = error_sens_acc
+        self.error_mon_acc = error_mon_acc
+        self.year_repeater = year_repeater
+        self.status = status
+
         return super(Prediction, self).create()
 
     def delete(self):
@@ -146,18 +155,6 @@ class Prediction(PlantPredictEntity):
     def _wait_for_prediction(self):
         is_complete = False
         while not is_complete:
-            # code not deleted because testing alternate solution
-            """task_queue = User.get_queue()
-            try:
-                prediction_task = (task for task in task_queue if task['predictionId'] == self.id).next()
-            except (StopIteration, TypeError):
-                continue
-
-            # Processing Status Enum (Success = 3)
-            # TODO 4 is error but works for module file stuff
-            if prediction_task['prediction']['processingStatus'] in [3, 4]:
-                is_complete = True"""
-
             self.get()
             if self.processing_status == 3:
                 is_complete = True
@@ -174,10 +171,11 @@ class Prediction(PlantPredictEntity):
         :return:
         """
         response = requests.post(
-            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/Run".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Project/{}/Prediction/{}/Run".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             json=convert_json(export_options, snake_to_camel) if export_options else None
         )
+        # TODO why didn't this return an error? it only returned when I stopped the script
 
         # observes task queue to wait for prediction run to complete
         self._wait_for_prediction()
@@ -190,8 +188,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/ResultSummary"""
 
         return requests.get(
-            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/ResultSummary".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN}
+            url=settings.BASE_URL + "/Project/{}/Prediction/{}/ResultSummary".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + settings.TOKEN}
         )
 
     @handle_refused_connection
@@ -200,8 +198,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/ResultDetails"""
 
         return requests.get(
-            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/ResultDetails".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN}
+            url=settings.BASE_URL + "/Project/{}/Prediction/{}/ResultDetails".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + settings.TOKEN}
         )
 
     @handle_refused_connection
@@ -210,8 +208,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/NodalJson"""
 
         return requests.get(
-            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction/{}/NodalJson".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Project/{}/Prediction/{}/NodalJson".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             params=convert_json(params, snake_to_camel)
         )
 
@@ -273,13 +271,40 @@ class Prediction(PlantPredictEntity):
 
         return new_prediction_id
 
-    def __init__(self, id=None, project_id=None):
+    @handle_refused_connection
+    @handle_error_response
+    def change_prediction_status(self, new_status, note=""):
+        """
+
+        :param new_status:
+        :param note:
+        :return:
+        """
+        return requests.post(
+            url=settings.BASE_URL + "/Project/{}/Prediction/Status".format(self.project_id),
+            headers={"Authorization": "Bearer " + settings.TOKEN},
+            json=[{
+                "name": self.name,
+                "id": self.id,
+                "type": entity_type_enum.PREDICTION,
+                "status": new_status,
+                "note": note
+            }]
+        )
+
+    def __init__(self, id=None, project_id=None, name=None):
         if id:
             self.id = id
         self.project_id = project_id
+        self.name = name
 
-        self.name = None
         self.status = None
         self.year_repeater = None
+
+        self.error_spa_var = None
+        self.error_model_acc = None
+        self.error_int_ann_var = None
+        self.error_sens_acc = None
+        self.error_mon_acc = None
 
         super(Prediction, self).__init__()

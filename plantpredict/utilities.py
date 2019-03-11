@@ -31,7 +31,7 @@ MANUAL_KEY_FIXES = {
         "back_side": "backside",
         "transformerkva": "transformer_kva",
         "inverterkva": "inverter_kva",
-        "usek_v_a": "use_kva",
+        "usek_v_a": "use_kva_",
         "k_v_a": "kva",
         "m_v": "mv",
         "e_s_s": "ess",

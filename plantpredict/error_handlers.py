@@ -2,7 +2,6 @@ import time
 import requests
 import json
 from plantpredict.utilities import convert_json, camel_to_snake
-from plantpredict.oauth2 import OAuth2
 
 
 def handle_refused_connection(function):
@@ -26,6 +25,7 @@ def handle_error_response(function):
         try:
             # if the authorization is invalid, refresh the API access token
             if response.status_code == 401:
+                from plantpredict.oauth2 import OAuth2
                 OAuth2.refresh()
 
             # if there is a sever side error, return the error message

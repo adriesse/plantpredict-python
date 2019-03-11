@@ -1,56 +1,50 @@
 import requests
 import json
-import plantpredict
+from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 from plantpredict.utilities import convert_json, camel_to_snake
+from plantpredict.geo import Geo
 
 
 class Project(PlantPredictEntity):
     """
     The Project entity in PlantPredict defines the location info and serves as a container for any number of Predictions.
     """
-    def create(self, name=None, latitude=None, longitude=None, country=None, country_code=None, elevation=None,
-               standard_offset_from_utc=None):
-        """HTTP Request: POST /Project
-
-        Creates a new Project entity in PlantPredict and assigns the uid of the newly created Project` to self.id in
-        the local object instance. Any attributes (including but not limited to those also assignable via the inputs to
-        this method) assigned prior to calling this method will be recorded in the new Project entity in PlantPredict.
-        The input variables to this method are those required for successful Project creation.
-
-        The following variables can be obtained via the methods belonging to plantpredict.Geo: country
-        and country_code (plantpredict.Geo.get_location_info), elevation (plantpredict.Geo.get_elevation), and
-        standard_offset_from_utc (plantpredict.Geo.get_timezone).
-
-        :param name: The name of the Project.
-        :type name: str
-        :param latitude: North-South coordinate of the Project location, in decimal degrees.
-        :type latitude: float
-        :param longitude: East-West coordinate of the Project location, in decimal degrees.
-        :type longitude: float
-        :param country: Full name of the country of the Project's location.
-        :type country: str
-        :param country_code: Country code of the Project's location (ex. US for United States, AUS for Australia, etc.)
-        :type country_code: str
-        :param elevation: The elevation of the Project location above sea level in units meters.
-        :type elevation: float
-        :param standard_offset_from_utc: Time zone with respect to Greenwich Mean Time (GMT) in +/- hours offset.
-        :type standard_offset_from_utc: float
-
-        :return: A dictionary containing the project id.
-        :rtype: dict
+    def create(self):
         """
+        **POST** */Project/*
 
-        self.name = name if name is not None else self.name
-        self.latitude = latitude if latitude is not None else self.latitude
-        self.longitude = longitude if longitude is not None else self.longitude
-        self.country = country if country is not None else self.country
-        self.country_code = country_code if country_code is not None else self.country_code
-        self.elevation = elevation if elevation is not None else self.elevation
-        self.standard_offset_from_utc = standard_offset_from_utc if standard_offset_from_utc is not None \
-            else self.standard_offset_from_utc
+        Creates a new :py:mod:`plantpredict.Project` entity in the PlantPredict database using the attributes
+        assigned to the local object instance. Automatically assigns the resulting :py:attr:`id` to the local object
+        instance. See the minimum required attributes (below) necessary to successfully create a new
+        :py:mod:`plantpredict.Project`. Note that the full scope of attributes is not limited to the minimum
+        required set.
 
+        Use :py:meth:`plantpredict.Project.assign_location_attributes` to automatically assign all required (and
+        non-required) location-related/geological attributes.
+
+        .. container:: toggle
+
+            .. container:: header
+
+                **Required Attributes**
+
+            .. container:: required_attributes
+
+                .. csv-table:: Minimum required attributes for successful Prediction creation
+                    :delim: ;
+                    :header: Field, Type, Description
+                    :stub-columns: 1
+
+                    name; str; Name of the project
+                    latitude; float; North-South GPS coordinate of the Project location. Must be between :py:data:`-90` and :py:data:`90` - units :py:data:`[decimal degrees]`.
+                    longitude; float; East-West coordinate of the Project location, in decimal degrees. Must be between :py:data:`-180` and :py:data:`180` units :py:data:`[decimal degrees]`.
+                    country; str; Full name of the country of the Project's location.
+                    country_code; str; Country code of the Project's location (ex. US for United States, AUS for Australia, etc.)
+                    elevation; float; The elevation of the Project location above seal level units :py:data:`[m]`.
+                    standard_offset_from_utc; float; Time zone with respect to Greenwich Mean Time (GMT) in +/- hours offset.
+        """
         self.create_url_suffix = "/Project"
 
         return super(Project, self).create()
@@ -110,8 +104,8 @@ class Project(PlantPredictEntity):
         """
 
         return requests.get(
-            url=plantpredict.settings.BASE_URL + "/Project/{}/Prediction".format(self.id),
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN}
+            url=settings.BASE_URL + "/Project/{}/Prediction".format(self.id),
+            headers={"Authorization": "Bearer " + settings.TOKEN}
         )
 
     @staticmethod
@@ -129,8 +123,8 @@ class Project(PlantPredictEntity):
         :return: TODO
         """
         response = requests.get(
-            url=plantpredict.settings.BASE_URL + "/Project/Search",
-            headers={"Authorization": "Bearer " + plantpredict.settings.TOKEN},
+            url=settings.BASE_URL + "/Project/Search",
+            headers={"Authorization": "Bearer " + settings.TOKEN},
             params={'latitude': latitude, 'longitude': longitude, 'searchRadius': search_radius}
         )
 
@@ -138,15 +132,40 @@ class Project(PlantPredictEntity):
 
         return [convert_json(p, camel_to_snake) for p in project_list]
 
-    def __init__(self, id=None):
+    @handle_refused_connection
+    @handle_error_response
+    def assign_location_attributes(self):
+        """
+
+        :return:
+        """
+        geo = Geo(latitude=self.latitude, longitude=self.longitude)
+        geo.get_location_info()
+        geo.get_elevation()
+        geo.get_time_zone()
+
+        self.locality = geo.locality
+        self.state_province_code = geo.state_province_code
+        self.state_province = geo.state_province
+        self.country_code = geo.country_code
+        self.country = geo.country
+        self.region = geo.region
+        self.elevation = geo.elevation
+        self.standard_offset_from_utc = geo.time_zone
+
+    def __init__(self, id=None, name=None, latitude=None, longitude=None):
         if id:
             self.id = id
+        self.name = name
+        self.latitude = latitude
+        self.longitude = longitude
 
-        self.name = None
-        self.latitude = None
-        self.longitude = None
-        self.country = None
+        self.locality = None
+        self.state_province_code = None
+        self.state_province = None
         self.country_code = None
+        self.country = None
+        self.region = None
         self.elevation = None
         self.standard_offset_from_utc = None
 
