@@ -976,12 +976,12 @@ class Module(PlantPredictEntity):
 
         # if the user specifies a file_path to the .xlsx template, parse it
         elif file_path:
-            full_iv_curve_data = self._parse_full_iv_curves_template(file_path)
+            iv_curve_data = self._parse_full_iv_curves_template(file_path)
 
         response = requests.post(
             url=settings.BASE_URL + "/Module/Generator/ProcessIVCurves",
             headers={"Authorization": "Bearer " + settings.TOKEN},
-            json=[convert_json(d, snake_to_camel) for d in full_iv_curve_data]
+            json=[convert_json(d, snake_to_camel) for d in iv_curve_data]
         )
 
         return [convert_json(d, camel_to_snake) for d in json.loads(response.content)]
@@ -1059,3 +1059,16 @@ class Module(PlantPredictEntity):
             headers={"Authorization": "Bearer " + settings.TOKEN},
             json=convert_json(self.__dict__, snake_to_camel)
         )
+
+    @handle_error_response
+    @handle_refused_connection
+    def calculate_basic_data_at_conditions(self, temperature, irradiance):
+        """
+
+        :return:
+        """
+        return self.process_iv_curves(iv_curve_data=[{
+            "temperature": temperature,
+            "irradiance": irradiance,
+            "data_points": self.generate_iv_curve()
+        }])
