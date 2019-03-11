@@ -57,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'plantpredict-python'
-copyright = u'2018, Stephen Kaplan'
+copyright = u'2019, Stephen Kaplan'
 author = u'Stephen Kaplan'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -65,7 +65,7 @@ author = u'Stephen Kaplan'
 # built documents.
 #
 # The short X.Y version.
-version = u'0.6.0'
+version = u'0.7.0'
 # The full version, including alpha/beta/rc tags.
 release = version
 
