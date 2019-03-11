@@ -71,3 +71,9 @@ class Geo(object):
             setattr(self, key, attr[key])
 
         return response
+
+    def __init__(self, latitude=None, longitude=None):
+        self.latitude = latitude
+        self.longitude = longitude
+
+        super(Geo, self).__init__()
