@@ -1,5 +1,4 @@
 import requests
-from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.powerplant import PowerPlant
 from plantpredict.utilities import convert_json, snake_to_camel
@@ -50,7 +49,7 @@ class Prediction(PlantPredictEntity):
 
             .. container:: example_code
 
-                First, import the plantpredict library and receive an authentication plantpredict.settings.TOKEN in your
+                First, import the plantpredict library and receive an authentication [EDIT THIS] plantpredict.self.api.access_token in your
                 Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Prediction.
                 object.
 
@@ -171,8 +170,8 @@ class Prediction(PlantPredictEntity):
         :return:
         """
         response = requests.post(
-            url=settings.BASE_URL + "/Project/{}/Prediction/{}/Run".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=self.api.base_url + "/Project/{}/Prediction/{}/Run".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + self.api.access_token},
             json=convert_json(export_options, snake_to_camel) if export_options else None
         )
         # TODO why didn't this return an error? it only returned when I stopped the script
@@ -188,8 +187,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/ResultSummary"""
 
         return requests.get(
-            url=settings.BASE_URL + "/Project/{}/Prediction/{}/ResultSummary".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + settings.TOKEN}
+            url=self.api.base_url + "/Project/{}/Prediction/{}/ResultSummary".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + self.api.access_token}
         )
 
     @handle_refused_connection
@@ -198,8 +197,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/ResultDetails"""
 
         return requests.get(
-            url=settings.BASE_URL + "/Project/{}/Prediction/{}/ResultDetails".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + settings.TOKEN}
+            url=self.api.base_url + "/Project/{}/Prediction/{}/ResultDetails".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + self.api.access_token}
         )
 
     @handle_refused_connection
@@ -208,8 +207,8 @@ class Prediction(PlantPredictEntity):
         """GET /Project/{ProjectId}/Prediction/{Id}/NodalJson"""
 
         return requests.get(
-            url=settings.BASE_URL + "/Project/{}/Prediction/{}/NodalJson".format(self.project_id, self.id),
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=self.api.base_url + "/Project/{}/Prediction/{}/NodalJson".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + self.api.access_token},
             params=convert_json(params, snake_to_camel)
         )
 
@@ -281,8 +280,8 @@ class Prediction(PlantPredictEntity):
         :return:
         """
         return requests.post(
-            url=settings.BASE_URL + "/Project/{}/Prediction/Status".format(self.project_id),
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=self.api.base_url + "/Project/{}/Prediction/Status".format(self.project_id),
+            headers={"Authorization": "Bearer " + self.api.access_token},
             json=[{
                 "name": self.name,
                 "id": self.id,
@@ -292,7 +291,7 @@ class Prediction(PlantPredictEntity):
             }]
         )
 
-    def __init__(self, id=None, project_id=None, name=None):
+    def __init__(self, api, id=None, project_id=None, name=None):
         if id:
             self.id = id
         self.project_id = project_id
@@ -307,4 +306,4 @@ class Prediction(PlantPredictEntity):
         self.error_sens_acc = None
         self.error_mon_acc = None
 
-        super(Prediction, self).__init__()
+        super(Prediction, self).__init__(api)

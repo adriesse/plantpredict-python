@@ -281,11 +281,11 @@ class PowerPlant(PlantPredictEntity):
         # convert field dc power from kW to W
         return 1000 * field_dc_power / (planned_module_rating * modules_wired_in_series)
 
-    def __init__(self, project_id=None, prediction_id=None):
+    def __init__(self, api, project_id=None, prediction_id=None):
         self.project_id = project_id
         self.prediction_id = prediction_id
 
         self.power_factor = None
         self.blocks = None
 
-        super(PowerPlant, self).__init__()
+        super(PowerPlant, self).__init__(api)
