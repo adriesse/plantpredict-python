@@ -203,13 +203,13 @@ class Prediction(PlantPredictEntity):
 
     @handle_refused_connection
     @handle_error_response
-    def get_nodal_data(self, params):
+    def get_nodal_data(self, params=None):
         """GET /Project/{ProjectId}/Prediction/{Id}/NodalJson"""
 
         return requests.get(
             url=self.api.base_url + "/Project/{}/Prediction/{}/NodalJson".format(self.project_id, self.id),
             headers={"Authorization": "Bearer " + self.api.access_token},
-            params=convert_json(params, snake_to_camel)
+            params=convert_json(params, snake_to_camel) if params else {}
         )
 
     @handle_refused_connection
@@ -226,7 +226,7 @@ class Prediction(PlantPredictEntity):
 
         """
         # clone prediction
-        new_prediction = Prediction()
+        new_prediction = self.api.prediction()
         self.get()
         original_prediction_id = self.id
 
@@ -246,8 +246,8 @@ class Prediction(PlantPredictEntity):
         new_prediction_id = new_prediction.id
 
         # clone powerplant and attach to new prediction
-        new_powerplant = PowerPlant()
-        powerplant = PowerPlant(project_id=self.project_id, prediction_id=original_prediction_id)
+        new_powerplant = self.api.powerplant()
+        powerplant = self.api.powerplant(project_id=self.project_id, prediction_id=original_prediction_id)
         powerplant.get()
         new_powerplant.__dict__ = powerplant.__dict__
         new_powerplant.prediction_id = new_prediction_id

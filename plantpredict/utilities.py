@@ -73,15 +73,20 @@ MANUAL_KEY_FIXES = {
 
 def convert_json(d, convert_function):
     """
-    Convert a nested dictionary from one convention to another.
+    Convert a nested dictionary from one convention to another. Prepares payload for http request.
     Args:
         d (dict): dictionary (nested or not) to be converted.
         convert_function (func): function that takes the string in one convention and returns it in the other one.
     Returns:
         Dictionary with the new keys.
+
     """
+    # "api" object is not serializable, so remove it from http request
+    dict_copy = d.copy()
+    dict_copy.pop("api", None)
+
     new = {}
-    for k, v in d.iteritems():
+    for k, v in dict_copy.iteritems():
         new_v = v
         if isinstance(v, dict):
             new_v = convert_json(v, convert_function)
@@ -105,3 +110,39 @@ def convert_json(d, convert_function):
         new[new_key] = new_v
 
     return new
+
+
+def convert_json_list(l, convert_function):
+    new_list = []
+    for d in l:
+        # "api" object is not serializable, so remove it from http request
+        dict_copy = d.copy()
+        dict_copy.pop("api", None)
+
+        new = {}
+        for k, v in dict_copy.iteritems():
+            new_v = v
+            if isinstance(v, dict):
+                new_v = convert_json(v, convert_function)
+            elif isinstance(v, list):
+                new_v = list()
+                for x in v:
+                    if isinstance(x, dict):
+                        new_v.append(convert_json(x, convert_function))
+
+            new_key = convert_function(k)
+
+            # manual fixes
+            for key, val in MANUAL_KEY_FIXES[convert_function.__name__].iteritems():
+                if key in new_key:
+                    if not (key == "d_c" and new_key == "light_generated_current"):       # edge case
+                        new_key = new_key.replace(key, val)
+
+            # this removes the underscore given to a snake case when the first character in the camel case is capital
+            new_key = new_key[1:] if new_key[0] == "_" else new_key
+
+            new[new_key] = new_v
+
+        new_list.append(new)
+
+    return new_list

@@ -294,7 +294,7 @@ project ID (visible in the URL of that prediction in a web browser '.../projects
 
     project_id = 7178   # CHANGE TO YOUR PROJECT ID
     prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
-    prediction = plantpredict.Prediction(id=prediction_id, project_id=project_id)
+    prediction = api.prediction(id=prediction_id, project_id=project_id)
 
 Retrieve the prediction in order to extract its power plant ID. Then instantiate a :py:class:`~plantpredict.PowerPlant`
 with that ID and retrieve all of its attributes.
@@ -302,23 +302,25 @@ with that ID and retrieve all of its attributes.
 .. code-block:: python
 
     prediction.get()
-    power_plant = plantpredict.PowerPlant(prediction_id=prediction_id, project_id=project_id)
-    power_plant.get()
+    powerplant = api.powerplant(prediction_id=prediction_id, project_id=project_id)
+    powerplant.get()
 
 Specify the ID of the module you want to replace the power plant's current module with (visible in the URL
-of that module in a web browser '.../module/{id}/').
+of that module in a web browser '.../module/{id}/'). Retrieve the module.
 
 .. code-block:: python
 
     new_module_id = 1645
+    new_module = api.module()
+    new_module.get()
 
 In order to change the module in Block 1 --> Array 1 --> Inverter A --> DC Field 1,
-nullify the previous module's data structure, replace the module id, and update the power plant with the
+replace the previous module's data structure, replace the module id, and update the power plant with the
 the :py:func:`~plantpredict.Prediction.update` method.
 
 .. code-block:: python
 
-    power_plant.blocks[0]['arrays'][0]['inverters'][0]['dc_fields'][0]['module'] = None
+    power_plant.blocks[0]['arrays'][0]['inverters'][0]['dc_fields'][0]['module'] = new_module.__dict__
     power_plant.blocks[0]['arrays'][0]['inverters'][0]['dc_fields'][0]['module_id'] = new_module_id
     power_plant.update()
 

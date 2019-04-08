@@ -48,12 +48,13 @@ class PowerPlant(PlantPredictEntity):
         """
         block_to_clone = [b for b in self.blocks if b['id'] == block_id_to_clone][0]
         block_copy = copy.deepcopy(block_to_clone)
-        block_copy["name"] = len(self.blocks)
+        block_copy["name"] = len(self.blocks) + 1
         self.blocks.append(block_copy)
         self.update()
 
         return self.blocks[-1]
 
+    # TODO none of this stuff accounts for duplicate names, or out of order names, etc
     @handle_refused_connection
     @handle_error_response
     def add_block(self, use_energization_date=False, energization_date=""):

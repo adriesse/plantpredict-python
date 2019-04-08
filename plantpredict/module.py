@@ -4,7 +4,7 @@ import pandas
 from operator import itemgetter
 from itertools import groupby
 from plantpredict.plant_predict_entity import PlantPredictEntity
-from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel
+from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel, convert_json_list
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 
 
@@ -1071,3 +1071,31 @@ class Module(PlantPredictEntity):
             "irradiance": irradiance,
             "data_points": self.generate_iv_curve()
         }])
+
+    @handle_error_response
+    @handle_refused_connection
+    def generate_single_diode_parameters_advanced_bulk(self, modules):
+        """
+
+        :param modules:
+        :return:
+        """
+        return requests.post(
+            url=self.api.base_url + "/Module/Generator/GenerateSingleDiodeParametersAdvancedBulk",
+            headers={"Authorization": "Bearer " + self.api.access_token},
+            json=convert_json_list(modules, snake_to_camel)
+        )
+
+    @handle_error_response
+    @handle_refused_connection
+    def optimize_series_resistance_bulk(self, modules):
+        """
+
+        :param modules:
+        :return:
+        """
+        return requests.post(
+            url=self.api.base_url + "/Module/Generator/OptimizeSeriesResistanceBulk",
+            headers={"Authorization": "Bearer " + self.api.access_token},
+            json=convert_json_list(modules, snake_to_camel)
+        )
