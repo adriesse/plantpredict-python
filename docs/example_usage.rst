@@ -5,7 +5,7 @@ Example Usage
 
 The code snippets below are practical examples of useful tasks accomplished via PlantPredict's API. All of the code
 used in the examples below is available via `the source code on Github
-<https://github.com/stephenkaplan/plantpredict-python/tree/master/example_usage>`_. Feel free to use and/or modify the
+<https://github.com/stephenkaplan/plantpredict-python/tree/master/example_usage>`_. Feel free to use and modify the
 code in your local environment.
 
 Every example assumes that you have first imported the plantpredict module and received an authentication token in your
@@ -14,27 +14,27 @@ Python session, as shown in Step 3 of :ref:`authentication_oauth2`.
 Create Project and Prediction from scratch.
 -------------------------------------------
 
-Instantiate a local instance of :py:class:`~plantpredict.Project`, assigning :py:attr:`name`, :py:attr:`latitude`, and
-:py:attr:`longitude`.
+Instantiate a local instance of :py:class:`~plantpredict.project.Project`, assigning :py:attr:`name`,
+:py:attr:`latitude`, and :py:attr:`longitude`.
 
 .. code-block:: python
 
-    project = plantpredict.Project(name="Area 51 Alien Power Plant", latitude=37.23, longitude=-115.80)
+    project = api.project(name="Area 51 Alien Power Plant", latitude=37.23, longitude=-115.80)
 
-Assign location attributes with helper method :py:meth:`~plantpredict.Project.assign_location_attributes`, and create
-as the local instance of :py:class:`~plantpredict.Project` a new entity in the PlantPredict database.
+Assign location attributes with helper method :py:meth:`~plantpredict.project.Project.assign_location_attributes`, and
+create as the local instance of :py:class:`~plantpredict.project.Project` a new entity in the PlantPredict database.
 
 .. code-block:: python
 
     project.assign_location_attributes()
     project.create()
 
-Instantiate a local instance of :py:class:`~plantpredict.Prediction`, assigning :py:attr:`project_id` (from the newly
-created project) and :py:attr:`name`.
+Instantiate a local instance of :py:class:`~plantpredict.prediction.Prediction`, assigning :py:attr:`project_id` (from
+the newly created project) and :py:attr:`name`.
 
 .. code-block:: python
 
-    prediction = plantpredict.Prediction(project_id=project.id, name="Area 51 - Contracted")
+    prediction = api.prediction(project_id=project.id, name="Area 51 - Contracted")
 
 Assign the :py:attr:`weather_id` corresponding to the weather file you want to use (assuming it already exists in the
 PlantPredict database).
@@ -48,7 +48,7 @@ of the weather file.
 
 .. code-block:: python
 
-    weather = plantpredict.Weather(id=prediction.weather_id)
+    weather = api.weather(id=prediction.weather_id)
     weather.get()
     prediction.start_date = weather.start_date
     prediction.end_date = weather.end_date
@@ -103,25 +103,25 @@ Create the prediction in the PlantPredict database.
 
     prediction.create()
 
-Change the prediction's status to :py:data:`prediction_status_enum.DRAFT-SHARED` to make it accessible to other members
-of your team (or to another relevant status).
+Change the prediction's status to :py:data:`prediction_status_enum.DRAFT-SHARED` to make it
+accessible to other members of your team (or to another relevant status).
 
 .. code-block:: python
 
     prediction.change_prediction_status(new_status=prediction_status_enum.DRAFT_SHARED, note="Changed for tutorial.")
 
-Instantiate a local instance of :py:class:`~plantpredict.PowerPlant`, assigning its :py:data:`project_id` and
+Instantiate a local instance of :py:class:`~plantpredict.powerplant.PowerPlant`, assigning its :py:data:`project_id` and
 :py:data:`prediction_id`.
 
 .. code-block:: python
 
-    powerplant = plantpredict.PowerPlant(project_id=project.id, prediction_id=prediction.id)
+    powerplant = api.powerplant(project_id=project.id, prediction_id=prediction.id)
 
-Add a fixed tilt block, array, inverter, and dc field using :py:meth:`~plantpredict.PowerPlant.add_block`,
-:py:meth:`~plantpredict.PowerPlant.add_array`, :py:meth:`~plantpredict.PowerPlant.add_inverter` and
-:py:meth:`~plantpredict.PowerPlant.add_dc_field`, respectively. In this example, the minimum required fields are
-selected, and the rest are defaulted. Refer to each method's documentation for information on what other power plant
-attributes can be configured. Additionally, refer to the `PlantPredict User Guide
+Add a fixed tilt block, array, inverter, and dc field using :py:meth:`~plantpredict.powerplant.PowerPlant.add_block`,
+:py:meth:`~plantpredict.powerplant.PowerPlant.add_array`, :py:meth:`~plantpredict.powerplant.PowerPlant.add_inverter`
+and :py:meth:`~plantpredict.powerplant.PowerPlant.add_dc_field`, respectively. In this example, the minimum required
+fields are selected, and the rest are defaulted. Refer to each method's documentation for information on what other
+power plant attributes can be configured. Additionally, refer to the `PlantPredict User Guide
 <https://plantpredict.com/user_manual/predictions/#power-plant-builder>`_ for documentation on power plant
 hierarchy.
 
@@ -182,9 +182,9 @@ example of adding a block with a dc field that uses single-axis tracking.
         number_of_rows=100
     )
 
-Create the local instance of :py:class:`~plantpredict.PowerPlant` as a new entity in the PlantPredict database. Since
-the id's of the project and prediction created previously were assigned to the PowerPlant, it will automatically attach
-to the prediction in PlantPredict.
+Create the local instance of :py:class:`~plantpredict.powerplant.PowerPlant` as a new entity in the PlantPredict
+database. Since the id's of the project and prediction created previously were assigned to the PowerPlant, it will
+automatically attach to the prediction in PlantPredict.
 
 .. code-block:: python
 
@@ -200,8 +200,8 @@ Download nodal data.
 ---------------------
 
 First, set up a dictionary containing the nodal data export options. Set the values to True according to which nodes
-in the :py:class:`~plantpredict.PowerPlant` hierarchy you are interested in exporting nodal data. For each block in
-'blockExportOptions', specify the block number.
+in the :py:class:`~plantpredict.powerplant.PowerPlant` hierarchy you are interested in exporting nodal data. For each
+block in :py:data:`block_export_options`, specify the block number.
 
 .. code-block:: python
 
@@ -216,14 +216,14 @@ in the :py:class:`~plantpredict.PowerPlant` hierarchy you are interested in expo
         }]
     }
 
-Instantiate a new prediction using the :py:class:`~plantpredict.Prediction` class, specifying its ID and project ID
-(visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
+Instantiate a new prediction using the :py:class:`~plantpredict.prediction.Prediction` class, specifying its ID and
+project ID (visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
 
 .. code-block:: python
 
     project_id = 7178   # CHANGE TO YOUR PROJECT ID
     prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
-    prediction = plantpredict.Prediction(id=prediction_id, project_id=project_id)
+    prediction = api.prediction(id=prediction_id, project_id=project_id)
 
 Run the prediction.
 
@@ -249,20 +249,21 @@ the lowest node (power plant hierarchy-wise) in the input dictionary specifies t
     })
 
 The nodal data returned will be returned as JSON serializable data, as detailed in the documentation for
-:py:func:`~plantpredict.Prediction.get_nodal_data`.
+:py:func:`~plantpredict.prediction.Prediction.get_nodal_data`.
 
 
 Clone a prediction.
 -------------------
 
-Instantiate the prediction you wish to clone using the :py:class:`~plantpredict.Prediction` class, specifying its ID and project ID
-(visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
+Instantiate the prediction you wish to clone using the :py:class:`~plantpredict.prediction.Prediction` class, specifying
+its ID and project ID (visible in the URL of that prediction in a web browser
+'.../projects/{project_id}/prediction/{id}/').
 
 .. code-block:: python
 
     project_id = 7178   # CHANGE TO YOUR PROJECT ID
     prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
-    prediction_to_clone = plantpredict.Prediction(id=prediction_id, project_id=project_id)
+    prediction_to_clone = api.prediction(id=prediction_id, project_id=project_id)
 
 
 Clone the prediction, passing in a name for the new prediction. This will create a new prediction within the same
@@ -272,15 +273,16 @@ project that is an exact copy (other than the name) of the original prediction.
 
     new_prediction_id = prediction_to_clone.clone(new_prediction_name='Cloned Prediction')
 
-If you wish to change something about the new prediction, instantiate a new :py:class:`~plantpredict.Prediction` with
-the returned prediction ID, change an attribute, and call the :py:meth:`~plantpredict.Prediction.update` method.
+If you wish to change something about the new prediction, instantiate a new
+:py:class:`~plantpredict.prediction.Prediction` with the returned prediction ID, change an attribute, and call the
+:py:meth:`~plantpredict.prediction.Prediction.update` method.
 
 .. code-block:: python
 
-    new_prediction = plantpredict.Prediction(id=new_prediction_id, project_id=project_id)
+    new_prediction = api.prediction(id=new_prediction_id, project_id=project_id)
     new_prediction.get()
-    from plantpredict.enumerations.transposition_model_enum import *    # import at the top of the file
-    new_prediction.transposition_model = HAY
+    from plantpredict.enumerations import transposition_model_enum    # import at the top of the file
+    new_prediction.transposition_model = transposition_model_enum.HAY
     new_prediction.update()
 
 

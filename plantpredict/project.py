@@ -3,7 +3,6 @@ import json
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 from plantpredict.utilities import convert_json, camel_to_snake
-from plantpredict.geo import Geo
 
 
 class Project(PlantPredictEntity):
@@ -137,7 +136,7 @@ class Project(PlantPredictEntity):
 
         :return:
         """
-        geo = Geo(latitude=self.latitude, longitude=self.longitude)
+        geo = self.api.geo(latitude=self.latitude, longitude=self.longitude)
         geo.get_location_info()
         geo.get_elevation()
         geo.get_time_zone()

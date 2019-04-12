@@ -3,18 +3,18 @@ documentation located at https://plantpredict-python.readthedocs.io."""
 
 import plantpredict
 
-# authenticate
+# authenticate using API credentials
 api = plantpredict.Api(
-    username="username",
-    password="password",
-    client_id="client_id",
-    client_secret="client_secret"
+    username="insert username here",
+    password="insert password here",
+    client_id="insert client_id here",
+    client_secret="insert client_secret here"
 )
 
 # instantiate a prediction, specifying its ID and project ID (visible in the URL of that prediction in a web browser
 # '.../projects/{project_id}/prediction/{id}/').
-project_id = 7178   # CHANGE TO YOUR PROJECT ID
-prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
+project_id = 13161   # CHANGE TO YOUR PROJECT ID
+prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
 prediction = api.prediction(id=prediction_id, project_id=project_id)
 
 # get the prediction in order to extract its powerplant ID
@@ -26,8 +26,9 @@ powerplant.get()
 
 # get the ID of the module you want to replace the powerplant's current module with (visible in the URL
 # of that module in a web browser '.../module/{id}/'), and retrieve the module
-new_module_id = 1645
-new_module = api.module()
+new_module_id = 3047
+new_module = api.module(id=new_module_id)
+new_module.get()
 
 # in order to change the module in Block 1 --> Array 1 --> Inverter A --> DC Field 1,
 # replace the previous module's data structure, replace the module id, and update the power plant

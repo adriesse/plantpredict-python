@@ -1,8 +1,5 @@
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
-from plantpredict.module import Module
-from plantpredict.inverter import Inverter
-from plantpredict.project import Project
 from plantpredict.enumerations import module_orientation_enum
 import copy
 
@@ -126,7 +123,7 @@ class PowerPlant(PlantPredictEntity):
         :param repeater:
         :return:
         """
-        inverter = Inverter(id=inverter_id)
+        inverter = self.api.inverter(id=inverter_id)
         inverter.get()
 
         self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"].append({
@@ -152,7 +149,7 @@ class PowerPlant(PlantPredictEntity):
                      light_induced_degradation=None, tracker_load_loss=0.0, dc_wiring_loss_at_stc=0.0,
                      dc_health=0.0, array_based_shading=False):
 
-        m = Module(id=module_id)
+        m = self.api.module(id=module_id)
         m.get()
         module_orientation = module_orientation if module_orientation else m.default_orientation
         collector_bandwidth = self.calculate_collector_bandwidth(
@@ -169,7 +166,7 @@ class PowerPlant(PlantPredictEntity):
         number_of_rows = number_of_rows if number_of_rows else number_of_series_strings_wired_in_parallel
 
         # azimuth faces south if project is above equator
-        p = Project(id=self.project_id)
+        p = self.api.project(id=self.project_id)
         p.get()
         module_azimuth = module_azimuth if module_azimuth else (
             180.0 if p.latitude >= 0.0 else 0.0

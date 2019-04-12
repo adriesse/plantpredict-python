@@ -7,18 +7,23 @@ from plantpredict.enumerations import prediction_status_enum, transposition_mode
     air_mass_model_type_enum, direct_beam_shading_model_enum, soiling_model_type_enum, degradation_model_enum, \
     tracking_type_enum, backtracking_type_enum, diffuse_shading_model_enum
 
-# authenticate with client credentials and assign TOKEN variable in plantpredict/settings.py
-plantpredict.OAuth2.token()
+# authenticate using API credentials
+api = plantpredict.Api(
+    username="insert username here",
+    password="insert password here",
+    client_id="insert client_id here",
+    client_secret="insert client_secret here"
+)
 
 # instantiate a local instance of Project, assigning name, latitude, and longitude
-project = plantpredict.Project(name="Area 51 Alien Power Plant", latitude=37.23, longitude=-115.80)
+project = api.project(name="Area 51 Alien Power Plant", latitude=37.23, longitude=-115.80)
 
 # assign location attributes with helper method, and create in the PlantPredict database
 project.assign_location_attributes()
 project.create()
 
 # instantiate a local instance of Prediction, assigning project_id (from the newly created project) and name
-prediction = plantpredict.Prediction(project_id=project.id, name="Area 51 - Contracted")
+prediction = api.prediction(project_id=project.id, name="Area 51 - Contracted")
 
 # assign the weather_id corresponding to the weather file you want to use (assuming it already exists in the
 # PlantPredict database).
@@ -26,7 +31,7 @@ prediction.weather_id = 13628
 
 # instantiate and retrieve the weather file and ensure that the two pairs of prediction start/end attributes match those
 # of the weather file.
-weather = plantpredict.Weather(id=prediction.weather_id)
+weather = api.weather(id=prediction.weather_id)
 weather.get()
 prediction.start_date = weather.start_date
 prediction.end_date = weather.end_date
@@ -74,7 +79,7 @@ prediction.create()
 prediction.change_prediction_status(new_status=prediction_status_enum.DRAFT_SHARED, note="Changed for tutorial.")
 
 # instantiate a local instance of PowerPlant, assigning project_id and prediction_id
-powerplant = plantpredict.PowerPlant(project_id=project.id, prediction_id=prediction.id)
+powerplant = api.powerplant(project_id=project.id, prediction_id=prediction.id)
 
 # add fixed tilt array
 fixed_tilt_block_name = powerplant.add_block()

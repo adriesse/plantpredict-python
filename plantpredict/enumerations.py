@@ -184,10 +184,10 @@ pv_model_type_enum.ONE_DIODE = 1
 pv_model_type_enum.ONE_DIODE_RECOMBINATION_NONLINEAR = 3
 
 # Soiling Model
-soiling_model_enum = PlantPredictEnum()
-soiling_model_enum.CONSTANT_MONTHLY = 0
-soiling_model_enum.WEATHER_FILE = 1
-soiling_model_enum.NONE = 2
+soiling_model_type_enum = PlantPredictEnum()
+soiling_model_type_enum.CONSTANT_MONTHLY = 0
+soiling_model_type_enum.WEATHER_FILE = 1
+soiling_model_type_enum.NONE = 2
 
 # Spectral Shift Model
 spectral_shift_model_enum = PlantPredictEnum()
