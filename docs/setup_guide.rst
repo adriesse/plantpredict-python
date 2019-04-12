@@ -46,7 +46,8 @@ described in the Python documentation as follows
     applications."
 
 This concept is implemented slightly differently between standard Python and Anaconda. First create a directory for your
-project, then follow the relevant instructions:
+project, then follow the relevant instructions (Note - many development environments (ex. PyCharm) have a GUI for setting
+up virtualenv/conda env, which is an option too. Refer to your preferred IDE's documentation):
 
 Instructions for Anaconda 2
 ----------------------------
@@ -61,13 +62,12 @@ Instructions for Python
 ------------------------
 
 Open a terminal/command prompt, navigate to your new project's directory, and follow the instructions for
-`installing and using virtualenv <https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv>`_.
+`installing and activating a virtualenv <https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv>`_.
 
 4. Install plantpredict via pip
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-While in an activated virtualenv/conda enviornment, install the :py:mod:`plantpredict` package via the command
-:code:`pip install plantpredict`.
+Install the :py:mod:`plantpredict` package via the command :code:`pip install plantpredict`.
 
 5. Get client credentials (link to OAuth2).
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
