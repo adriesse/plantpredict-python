@@ -1,3 +1,5 @@
+.. _sdk_reference:
+
 ################
 SDK Reference
 ################
