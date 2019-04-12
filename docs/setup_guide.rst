@@ -37,13 +37,13 @@ PIP is a Python package (library) manager. Follow these
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 While not required, it is recommend that you use a virtual environment (or conda environment). A "virtual env" is
-described in the Python documentation as follows::
+described in the Python documentation as follows
 
     "virtualenv allows you to manage separate package installations for different projects. It essentially allows you to
     create a 'virtual' isolated Python installation and install packages into that virtual installation. When you switch
     projects, you can simply create a new virtual environment and not have to worry about breaking the packages
     installed in the other environments. It is always recommended to use a virtualenv while developing Python
-    applications.
+    applications."
 
 This concept is implemented slightly differently between standard Python and Anaconda. First create a directory for your
 project, then follow the relevant instructions:
@@ -66,12 +66,8 @@ Open a terminal/command prompt, navigate to your new project's directory, and fo
 4. Install plantpredict via pip
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-While in an activated virtualenv/conda enviornment, install the :py:mod:`plantpredict` package via pip:
-
-.. code-block::
-
-    pip install plantpredict
-
+While in an activated virtualenv/conda enviornment, install the :py:mod:`plantpredict` package via the command
+:code:`pip install plantpredict`.
 
 5. Get client credentials (link to OAuth2).
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
