@@ -201,12 +201,13 @@ Download nodal data.
 
 First, set up a dictionary containing the nodal data export options. Set the values to True according to which nodes
 in the :py:class:`~plantpredict.powerplant.PowerPlant` hierarchy you are interested in exporting nodal data. For each
-block in :py:data:`block_export_options`, specify the block number.
+block in :py:data:`block_export_options`, specify the block number. You can add export options for multiple blocks,
+but in this example we just do one.
 
 .. code-block:: python
 
     export_options = {
-        'export_system': False,
+        'export_system': True,
         'block_export_options': [{
             "name": 1,
             "export_block": False,
@@ -221,8 +222,8 @@ project ID (visible in the URL of that prediction in a web browser '.../projects
 
 .. code-block:: python
 
-    project_id = 7178   # CHANGE TO YOUR PROJECT ID
-    prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
+    project_id = 13161   # CHANGE TO YOUR PROJECT ID
+    prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
     prediction = api.prediction(id=prediction_id, project_id=project_id)
 
 Run the prediction.
@@ -248,6 +249,12 @@ the lowest node (power plant hierarchy-wise) in the input dictionary specifies t
         'dc_field_number': 1
     })
 
+For System-level nodal data, call the method with no inputs.
+
+.. code-block:: python
+
+    nodal_data_system = prediction.get_nodal_data()
+
 The nodal data returned will be returned as JSON serializable data, as detailed in the documentation for
 :py:func:`~plantpredict.prediction.Prediction.get_nodal_data`.
 
@@ -261,8 +268,8 @@ its ID and project ID (visible in the URL of that prediction in a web browser
 
 .. code-block:: python
 
-    project_id = 7178   # CHANGE TO YOUR PROJECT ID
-    prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
+    project_id = 13161   # CHANGE TO YOUR PROJECT ID
+    prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
     prediction_to_clone = api.prediction(id=prediction_id, project_id=project_id)
 
 
@@ -289,17 +296,17 @@ If you wish to change something about the new prediction, instantiate a new
 Change the module in a power plant.
 -----------------------------------
 
-Instantiate the prediction of interest using the :py:class:`~plantpredict.Prediction` class, specifying its ID and
-project ID (visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
+Instantiate the prediction of interest using the :py:class:`~plantpredict.prediction.Prediction` class, specifying its
+ID and project ID (visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
 
 .. code-block:: python
 
-    project_id = 7178   # CHANGE TO YOUR PROJECT ID
-    prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
+    project_id = 13161   # CHANGE TO YOUR PROJECT ID
+    prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
     prediction = api.prediction(id=prediction_id, project_id=project_id)
 
-Retrieve the prediction in order to extract its power plant ID. Then instantiate a :py:class:`~plantpredict.PowerPlant`
-with that ID and retrieve all of its attributes.
+Retrieve the prediction in order to extract its power plant ID. Then instantiate a
+:py:class:`~plantpredict.powerplant.PowerPlant` with that ID and retrieve all of its attributes.
 
 .. code-block:: python
 
@@ -312,13 +319,13 @@ of that module in a web browser '.../module/{id}/'). Retrieve the module.
 
 .. code-block:: python
 
-    new_module_id = 1645
+    new_module_id = 3047
     new_module = api.module()
     new_module.get()
 
 In order to change the module in Block 1 --> Array 1 --> Inverter A --> DC Field 1,
 replace the previous module's data structure, replace the module id, and update the power plant with the
-the :py:func:`~plantpredict.Prediction.update` method.
+the :py:func:`~plantpredict.prediction.Prediction.update` method.
 
 .. code-block:: python
 
@@ -336,10 +343,10 @@ Do the same for the project of interest using the :py:class:`~plantpredict.Proje
 
 .. code-block:: python
 
-    project_id = 7178   # CHANGE TO YOUR PROJECT ID
-    prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
-    prediction = plantpredict.Prediction(id=prediction_id, project_id=project_id)
-    project = plantpredict.Project(id=project_id)
+    project_id = 13161   # CHANGE TO YOUR PROJECT ID
+    prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
+    prediction = api.prediction(id=prediction_id, project_id=project_id)
+    project = api.project(id=project_id)
 
 Retrieve the project and prediction's attributes.
 
@@ -354,14 +361,17 @@ coordinates.
 
 .. code-block:: python
 
-    weathers = plantpredict.Weather.search(project.latitude, project.longitude, search_radius=5)
+    w = api.weather()
+    weathers = w.search(project.latitude, project.longitude, search_radius=5)
 
 Filter the results by only Meteonorm weather files.
 
 .. code-block:: python
 
-    from plantpredict.enumerations.weather_data_provider_enum import *  # should import at the top of your file
-    weathers_meteo = [weather for weather in weathers if int(weather['data_provider']) == METEONORM]
+    from plantpredict.enumerations import weather_data_provider_enum  # should import at the top of your file
+    weathers_meteo = [
+        weather for weather in weathers if int(weather['data_provider']) == weather_data_provider_enum.METEONORM
+       ]
 
 If there is a weather file that meets the criteria, used the most recently created weather file's ID. If no weather file
 meets the criteria, download a new Meteonorm weather file and use that ID.
@@ -374,15 +384,15 @@ meets the criteria, download a new Meteonorm weather file and use that ID.
         idx = [w['created_date'] for w in weathers_meteo].index(created_dates[-1])
         weather_id = weathers_meteo[idx]['id']
     else:
-        weather = plantpredict.Weather()
-        response = weather.download(project.latitude, project.longitude, provider=METEONORM)
+        weather = api.weather()
+        response = weather.download(project.latitude, project.longitude, provider=weather_data_provider_enum.METEONORM)
         weather_id = weather.id
 
 Instantiate weather using the weather ID and retrieve all of its attributes.
 
 .. code-block:: python
 
-    weather = plantpredict.Weather(id=weather_id)
+    weather = api.weather(id=weather_id)
     weather.get()
 
 Ensure that the prediction start/end attributes match those of the weather file.
@@ -419,23 +429,24 @@ and loads pre-processed data from :download:`this JSON file <_static/weather_det
         weather_details = json.load(json_file)
 
 Using the known latitude and longitude of the weather data location, call
-:py:meth:`~plantpredict.Geo.get_location_info` query crucial location info necessary to populate the weather file's
+:py:meth:`~plantpredict.geo.Geo.get_location_info` query crucial location info necessary to populate the weather file's
 metadata.
 
 .. code-block:: python
 
     latitude = 35.0
     longitude = -119.0
-    location_info = plantpredict.Geo.get_location_info(latitude=latitude, longitude=longitude)
+    geo = api.geo(latitude=latitude, longitude=longitude)
+    location_info = geo.get_location_info()
 
-Initialize the :py:class:`~plantpredict.Weather` entity and populate with the minimum fields required by
-:py:meth:`~plantpredict.Weather.create`. Note that the weather details time series data loaded in the first step
+Initialize the :py:class:`~plantpredict.weather.Weather` entity and populate with the minimum fields required by
+:py:meth:`~plantpredict.weather.Weather.create`. Note that the weather details time series data loaded in the first step
 is assigned to `weather.weather_details` at this point.
 
 .. code-block:: python
 
     from plantpredict.enumerations import weather_data_provider_enum
-    weather = plantpredict.Weather()
+    weather = api.weather()
     weather.name = "Python SDK Test Weather"
     weather.latitude = 35.0
     weather.longitude = -119.0
@@ -448,12 +459,12 @@ Assign additional metadata fields.
 
 .. code-block:: python
 
-    weather.elevation = round(plantpredict.Geo.get_elevation(latitude=latitude, longitude=longitude)['elevation'], 2)
+    weather.elevation = round(geo.get_elevation()["elevation"], 2)
     weather.locality = location_info['locality']
     weather.region = location_info['region']
     weather.state_province = location_info['state_province']
     weather.state_province_code = location_info['state_province_code']
-    weather.time_zone = plantpredict.Geo.get_time_zone(latitude=latitude, longitude=longitude)['time_zone']
+    weather.time_zone = geo.get_time_zone()['time_zone']
     weather.status = library_status_enum.DRAFT_PRIVATE
     weather.data_type = weather_data_type_enum.MEASURED
     weather.p_level = weather_plevel_enum.P95
@@ -472,7 +483,7 @@ Assign additional metadata fields.
     weather.average_wind_speed = np.round(np.mean([w['windspeed'] for w in weather_details]), 2)
     weather.max_air_temperature = np.round(max([w['temperature'] for w in weather_details]), 2)
 
-Create the weather file in PlantPredict with :py:meth:`~plantpredict.Weather.create`.
+Create the weather file in PlantPredict with :py:meth:`~plantpredict.weather.Weather.create`.
 
 .. code-block:: python
 
@@ -482,11 +493,11 @@ Create the weather file in PlantPredict with :py:meth:`~plantpredict.Weather.cre
 Generate a module file.
 ------------------------
 
-Instantiate a local :py:mod:`plantpredict.Module` object.
+Instantiate a local :py:mod:`plantpredict.module.Module` object.
 
 .. code-block:: python
 
-    module = plantpredict.Module()
+    module = api.module()
 
 Assign basic module parameters from the manufacturer's datasheet or similar data source.
 
@@ -553,8 +564,8 @@ An IV curve can be generated for the module for reference.
 The initial series resistance optimization might not achieve an EIR close enough to the target. the user can modify
 any parameter, re-optimize series resistance or just recalculate dependent parameters, and check EIR repeatedly.
 This is the open-ended portion of module file generation. Important Note: after modifying parameters, if the user
-does not re-optimize series resistance, :py:meth:`plantpredict.Module.generate_single_diode_parameters_advanced` must
-be called to re-calculate :py:attr:`saturation_current_at_stc`, :py:attr:`diode_ideality_factor_at_stc`,
+does not re-optimize series resistance, :py:meth:`plantpredict.module.Module.generate_single_diode_parameters_advanced`
+must be called to re-calculate :py:attr:`saturation_current_at_stc`, :py:attr:`diode_ideality_factor_at_stc`,
 :py:attr:`light_generated_current`, :py:attr:`linear_temperature_dependence_on_gamma`,
 :py:attr:`maximum_series_resistance` and :py:attr:`maximum_recombination_parameter` (if applicable).
 
@@ -578,7 +589,7 @@ Once the user is satisfied with the module parameters and performance, assign ot
     module.heat_absorption_coef_alpha_t = 0.9
     module.construction_type = construction_type_enum.GLASS_GLASS
 
-Create a new :py:mod:`plantpredict.Module` in the PlantPredict database.
+Create a new :py:mod:`plantpredict.module.Module` in the PlantPredict database.
 
 .. code-block:: python
 
