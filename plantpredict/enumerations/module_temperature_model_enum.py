@@ -1,2 +1,0 @@
-HEAT_BALANCE = 0
-SANDIA = 1

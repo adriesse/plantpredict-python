@@ -1,6 +1,5 @@
 import requests
 from plantpredict.plant_predict_entity import PlantPredictEntity
-from plantpredict.powerplant import PowerPlant
 from plantpredict.utilities import convert_json, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 from plantpredict.enumerations import prediction_status_enum, entity_type_enum
