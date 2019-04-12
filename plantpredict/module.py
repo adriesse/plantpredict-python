@@ -3,9 +3,8 @@ import requests
 import pandas
 from operator import itemgetter
 from itertools import groupby
-from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
-from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel
+from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel, convert_json_list
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 
 
@@ -373,8 +372,8 @@ class Module(PlantPredictEntity):
         :rtype: dict
         """
         response = requests.post(
-            url=settings.BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersDefault",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=self.api.base_url + "/Module/Generator/GenerateSingleDiodeParametersDefault",
+            headers={"Authorization": "Bearer " + self.api.access_token},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -452,8 +451,8 @@ class Module(PlantPredictEntity):
         :rtype: dict
         """
         response = requests.post(
-            url=settings.BASE_URL + "/Module/Generator/GenerateSingleDiodeParametersAdvanced",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=self.api.base_url + "/Module/Generator/GenerateSingleDiodeParametersAdvanced",
+            headers={"Authorization": "Bearer " + self.api.access_token},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -567,8 +566,8 @@ class Module(PlantPredictEntity):
         :rtype: list of dict
         """
         return requests.post(
-            url=settings.BASE_URL + "/Module/Generator/CalculateEffectiveIrradianceResponse",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=self.api.base_url + "/Module/Generator/CalculateEffectiveIrradianceResponse",
+            headers={"Authorization": "Bearer " + self.api.access_token},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -630,8 +629,8 @@ class Module(PlantPredictEntity):
         :rtype: dict
         """
         response = requests.post(
-            url=settings.BASE_URL + "/Module/Generator/OptimizeSeriesResistance",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=self.api.base_url + "/Module/Generator/OptimizeSeriesResistance",
+            headers={"Authorization": "Bearer " + self.api.access_token},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -847,8 +846,8 @@ class Module(PlantPredictEntity):
             key_iv_points_data = self._parse_key_iv_points_template(file_path)
 
         response = requests.post(
-            url=settings.BASE_URL + "/Module/Generator/ProcessKeyIVPoints",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=self.api.base_url + "/Module/Generator/ProcessKeyIVPoints",
+            headers={"Authorization": "Bearer " + self.api.access_token},
             json=[convert_json(d, snake_to_camel) for d in key_iv_points_data]
         )
 
@@ -979,8 +978,8 @@ class Module(PlantPredictEntity):
             iv_curve_data = self._parse_full_iv_curves_template(file_path)
 
         response = requests.post(
-            url=settings.BASE_URL + "/Module/Generator/ProcessIVCurves",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=self.api.base_url + "/Module/Generator/ProcessIVCurves",
+            headers={"Authorization": "Bearer " + self.api.access_token},
             json=[convert_json(d, snake_to_camel) for d in iv_curve_data]
         )
 
@@ -1055,8 +1054,8 @@ class Module(PlantPredictEntity):
         self.num_iv_points = num_iv_points
 
         return requests.post(
-            url=settings.BASE_URL + "/Module/Generator/GenerateIVCurve",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=self.api.base_url + "/Module/Generator/GenerateIVCurve",
+            headers={"Authorization": "Bearer " + self.api.access_token},
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
@@ -1072,3 +1071,31 @@ class Module(PlantPredictEntity):
             "irradiance": irradiance,
             "data_points": self.generate_iv_curve()
         }])
+
+    @handle_error_response
+    @handle_refused_connection
+    def generate_single_diode_parameters_advanced_bulk(self, modules):
+        """
+
+        :param modules:
+        :return:
+        """
+        return requests.post(
+            url=self.api.base_url + "/Module/Generator/GenerateSingleDiodeParametersAdvancedBulk",
+            headers={"Authorization": "Bearer " + self.api.access_token},
+            json=convert_json_list(modules, snake_to_camel)
+        )
+
+    @handle_error_response
+    @handle_refused_connection
+    def optimize_series_resistance_bulk(self, modules):
+        """
+
+        :param modules:
+        :return:
+        """
+        return requests.post(
+            url=self.api.base_url + "/Module/Generator/OptimizeSeriesResistanceBulk",
+            headers={"Authorization": "Bearer " + self.api.access_token},
+            json=convert_json_list(modules, snake_to_camel)
+        )

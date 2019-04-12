@@ -3,74 +3,84 @@
 Setup Guide
 ============
 
-This SDK is written for Python 2.7. Future work includes developing a Python 3 version
-
-"I'm a first time Python user."
--------------------------------
-
-1. Install Python via Anaconda
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Install the **Python 2.7 version** of the Anaconda Distribution `here <https://www.anaconda.com/download/>`_.
-Anaconda Distribution is a quick way to download the Python programming language bundled with useful data
-and science libraries.
-
-2. Install PyCharm Community Edition.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Install PyCharm Community Edition (free) `here <https://www.jetbrains.com/pycharm/download/#section=windows>`_. PyCharm is
-an "Integrated Development Environment" (IDE) - it is a software package that allows for writing, editing, running,
-and debugging code, and much more. The PyCharm website contains a lot of useful documentation, such as a
-`QuickStart Guide <https://www.jetbrains.com/help/pycharm/quick-start-guide.html>`_.
+This SDK is written for Python 2.7.x Future work includes developing a Python 3 version.
 
 
-3. Configure PyCharm project interpreter.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. Install Python
+^^^^^^^^^^^^^^^^^^^
 
-Follow `these steps <https://www.jetbrains.com/help/pycharm/configuring-local-python-interpreters.html>`_. to
-configure your Project Interpreter in PyCharm. It is recommended that you follow the steps for
-"Configuring System Interpreter" if you have less experience with using a virtualenv or Conda environment.
-In simple terms, this is how you "tell" PyCharm to use your preferred installation of Python (Anaconda, in this case).
+If you do not already have Python 2.7.x on your computer you must install the Python programming language or the
+Anaconda distribution of Python (both are free). If you are a scientist, engineer, researcher, or student, Anaconda is
+recommended. It comes bundled with many useful Python scientific/numerical libraries, a GUI for managing the libraries,
+and several open-source software development tools. If you want a more straightforward, lightweight software development
+setup, the standard distribution of Python is recommended.
 
-Move onto the next section once you have completed the above steps.
+Installing Python
+-----------------
 
-.. note::
+Install `Python 2.7.16 <https://www.python.org/downloads/release/python-2716/>`_.
 
-    This is just one way to set up your Python environment. It is recommended to those who want a quick, simple
-    'packaged' setup. Some developers might prefer to download Python directly, use pip to install Python packages, and use
-    a text editor with a command line tool.
+Installing Anaconda
+--------------------
 
-Confirm that your project interpreter is properly set up by `running your Python console
-<https://www.jetbrains.com/help/pycharm/running-console.html>`_ or
-`running a file <https://www.jetbrains.com/help/pycharm/creating-and-running-your-first-python-project.html>`_.
+Install the **Python 2.7 version** of the `Anaconda Distribution <https://www.anaconda.com/download/>`_.
 
 
-"I already have my Python environment set up."
-----------------------------------------------
+2. If you chose the standard distribution of Python 2.7, install pip.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. Download plantpredict-python package.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PIP is a Python package (library) manager. Follow these
+`installation instructions <https://pip.pypa.io/en/stable/installing/>`_. (PIP comes with the Anaconda distribution.)
 
-Download the source code for plantpredict-python from `GitHub <https://github.com/stephenkaplan/plantpredict-python>`_.
 
-2. Add the plantpredict python package to your Project Structure in PyCharm.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3. Create a virtual environment or conda environment (optional).
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Add the "plantpredict-python" folder as a separate content root in your current project following
-`these steps <https://www.jetbrains.com/help/pycharm/configuring-content-roots.html#create-content-root>`_.
+While not required, it is recommend that you use a virtual environment (or conda environment). A "virtual env" is
+described in the Python documentation as follows:
 
-.. note::
+::
 
-    You will not be able to successfully :code:`import plantpredict` unless the package is in a separate content root in PyCharm.
+    "virtualenv allows you to manage separate package installations for different projects. It essentially allows you to
+    create a 'virtual' isolated Python installation and install packages into that virtual installation. When you switch
+    projects, you can simply create a new virtual environment and not have to worry about breaking the packages
+    installed in the other environments. It is always recommended to use a virtualenv while developing Python
+    applications.
 
-3. Get client credentials (link to OAuth2).
+This concept is implemented slightly differently between standard Python and Anaconda. First create a directory for your
+project, then follow the relevant instructions:
+
+Instructions for Anaconda 2
+----------------------------
+
+Open the "Anaconda Prompt" terminal that comes with the Anaconda distribution, navigate to your project's directory and
+follow instructions for `creating a conda environment
+<https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_
+and `activating a conda environment
+<https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#activating-an-environment>`_.
+
+Instructions for Python
+------------------------
+
+Open a terminal/command prompt, navigate to your new project's directory, and follow the instructions for
+`installing and using virtualenv <https://docs.python-guide.org/dev/virtualenvs/#lower-level-virtualenv>`_.
+
+4. Install plantpredict via pip
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+While in an activated virtualenv/conda enviornment, install the :py:mod:`plantpredict` package via pip:
+
+.. code-block::
+
+    pip install plantpredict
+
+5. Get client credentials (link to OAuth2).
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Follow the steps in :ref:`authentication_oauth2` to obtain API credentials and authenticate with the server.
 
-
-3. Enjoy automating all of your energy prediction-based analysis!
+6. Enjoy automating all of your energy prediction-based analysis!
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Don't forget to create a folder outside of the plantpredict-python directory to store your code. Add that folder
-as a content root as you did in `2. Add the plantpredict python package to your Project Structure in PyCharm.`_.
+Use the tutorials in :ref:`example_usage` as a starting point for your own scripting and analysis. Detailed
+documentation on each class and method can be found in :ref:`sdk_reference`.

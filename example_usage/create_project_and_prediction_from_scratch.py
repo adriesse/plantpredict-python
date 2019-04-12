@@ -7,18 +7,23 @@ from plantpredict.enumerations import prediction_status_enum, transposition_mode
     air_mass_model_type_enum, direct_beam_shading_model_enum, soiling_model_type_enum, degradation_model_enum, \
     tracking_type_enum, backtracking_type_enum, diffuse_shading_model_enum
 
-# authenticate with client credentials and assign TOKEN variable in plantpredict/settings.py
-plantpredict.OAuth2.token()
+# authenticate using API credentials
+api = plantpredict.Api(
+    username="insert username here",
+    password="insert password here",
+    client_id="insert client_id here",
+    client_secret="insert client_secret here"
+)
 
 # instantiate a local instance of Project, assigning name, latitude, and longitude
-project = plantpredict.Project(name="Area 51 Alien Power Plant", latitude=37.23, longitude=-115.80)
+project = api.project(name="Area 51 Alien Power Plant", latitude=37.23, longitude=-115.80)
 
 # assign location attributes with helper method, and create in the PlantPredict database
 project.assign_location_attributes()
 project.create()
 
 # instantiate a local instance of Prediction, assigning project_id (from the newly created project) and name
-prediction = plantpredict.Prediction(project_id=project.id, name="Area 51 - Contracted")
+prediction = api.prediction(project_id=project.id, name="Area 51 - Contracted")
 
 # assign the weather_id corresponding to the weather file you want to use (assuming it already exists in the
 # PlantPredict database).
@@ -26,7 +31,7 @@ prediction.weather_id = 13628
 
 # instantiate and retrieve the weather file and ensure that the two pairs of prediction start/end attributes match those
 # of the weather file.
-weather = plantpredict.Weather(id=prediction.weather_id)
+weather = api.weather(id=prediction.weather_id)
 weather.get()
 prediction.start_date = weather.start_date
 prediction.end_date = weather.end_date
@@ -74,7 +79,7 @@ prediction.create()
 prediction.change_prediction_status(new_status=prediction_status_enum.DRAFT_SHARED, note="Changed for tutorial.")
 
 # instantiate a local instance of PowerPlant, assigning project_id and prediction_id
-powerplant = plantpredict.PowerPlant(project_id=project.id, prediction_id=prediction.id)
+powerplant = api.powerplant(project_id=project.id, prediction_id=prediction.id)
 
 # add fixed tilt array
 fixed_tilt_block_name = powerplant.add_block()
@@ -88,13 +93,25 @@ fixed_tilt_inverter_name = powerplant.add_inverter(
     inverter_id=619,
     setpoint_kw=720.0
 )
+
+# Assuming there is one dc_field on the inverter, the number of strings can be calculated from a DC AC ratio. If there
+# were two identical dc fields on a single inverter, you would use half of the number of strings. For irregular
+# configurations, perform a custom calculation for number of strings in parallel and field dc power.
+inverter = powerplant.blocks[0]["arrays"][0]["inverters"][0]
+field_dc_power = powerplant.calculate_field_dc_power(dc_ac_ratio=1.20, inverter_setpoint=inverter["setpoint_kw"])
+number_of_series_strings_wired_in_parallel = powerplant.calculate_number_of_series_strings_wired_in_parallel(
+    field_dc_power=field_dc_power,
+    planned_module_rating=115.0,
+    modules_wired_in_series=10
+)
 fixed_tilt_dc_field_name = powerplant.add_dc_field(
     block_name=fixed_tilt_block_name,
     array_name=fixed_tilt_array_name,
     inverter_name=fixed_tilt_inverter_name,
     module_id=298,
     ground_coverage_ratio=0.40,
-    dc_ac_ratio=1.23,
+    number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
+    field_dc_power=field_dc_power,
     tracking_type=tracking_type_enum.FIXED_TILT,
     module_tilt=25.0,
     modules_high=4,
@@ -114,13 +131,17 @@ tracker_inverter_name = powerplant.add_inverter(
     inverter_id=619,
     setpoint_kw=720.0
 )
+
+# Assuming the tracker array uses the same inverter set point, module and DC AC ratio, the number of strings in parallel
+# and field dc power calculated previously can be used.
 tracker_dc_field_name = powerplant.add_dc_field(
     block_name=tracker_block_name,
     array_name=tracker_array_name,
     inverter_name=tracker_inverter_name,
     module_id=298,
     ground_coverage_ratio=0.40,
-    dc_ac_ratio=1.23,
+    number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
+    field_dc_power=field_dc_power,
     tracking_type=tracking_type_enum.HORIZONTAL_TRACKER,
     dc_field_backtracking_type=backtracking_type_enum.TRUE_TRACKING,
     modules_high=4,

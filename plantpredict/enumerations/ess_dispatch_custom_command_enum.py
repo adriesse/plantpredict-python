@@ -1,3 +1,0 @@
-NONE = 0
-DISCHARGE = 1
-CHARGE = 2

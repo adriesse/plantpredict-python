@@ -1,6 +1,5 @@
 import json
 import requests
-from plantpredict import settings
 from plantpredict.utilities import convert_json, camel_to_snake, decorate_all_methods
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 
@@ -27,8 +26,8 @@ class Geo(object):
             }
         """
         response = requests.get(
-            url=settings.BASE_URL + "/Geo/{}/{}/Location".format(self.latitude, self.longitude),
-            headers={"Authorization": "Bearer " + settings.TOKEN}
+            url=self.api.base_url + "/Geo/{}/{}/Location".format(self.latitude, self.longitude),
+            headers={"Authorization": "Bearer " + self.api.access_token}
         )
         attr = convert_json(json.loads(response.content), camel_to_snake)
         for key in attr:
@@ -45,8 +44,8 @@ class Geo(object):
             }
         """
         response = requests.get(
-            url=settings.BASE_URL + "/Geo/{}/{}/Elevation".format(self.latitude, self.longitude),
-            headers={"Authorization": "Bearer " + settings.TOKEN}
+            url=self.api.base_url + "/Geo/{}/{}/Elevation".format(self.latitude, self.longitude),
+            headers={"Authorization": "Bearer " + self.api.access_token}
         )
         attr = convert_json(json.loads(response.content), camel_to_snake)
         for key in attr:
@@ -63,8 +62,8 @@ class Geo(object):
             }
         """
         response = requests.get(
-            url=settings.BASE_URL + "/Geo/{}/{}/TimeZone".format(self.latitude, self.longitude),
-            headers={"Authorization": "Bearer " + settings.TOKEN}
+            url=self.api.base_url + "/Geo/{}/{}/TimeZone".format(self.latitude, self.longitude),
+            headers={"Authorization": "Bearer " + self.api.access_token}
         )
         attr = convert_json(json.loads(response.content), camel_to_snake)
         for key in attr:
@@ -72,7 +71,9 @@ class Geo(object):
 
         return response
 
-    def __init__(self, latitude=None, longitude=None):
+    def __init__(self, api, latitude=None, longitude=None):
+        self.api = api
+
         self.latitude = latitude
         self.longitude = longitude
 

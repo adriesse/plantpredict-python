@@ -4,11 +4,16 @@ documentation located at https://plantpredict-python.readthedocs.io."""
 import plantpredict
 from plantpredict.enumerations import cell_technology_type_enum, pv_model_type_enum, construction_type_enum
 
-# authenticate with client credentials and assign TOKEN variable in plantpredict/settings.py
-plantpredict.OAuth2.token()
+# authenticate using API credentials
+api = plantpredict.Api(
+    username="insert username here",
+    password="insert password here",
+    client_id="insert client_id here",
+    client_secret="insert client_secret here"
+)
 
 # instantiate a local Module object
-module = plantpredict.Module()
+module = api.module()
 
 # assign basic module parameters from the manufacturer's datasheet or similar data source
 module.cell_technology_type = cell_technology_type_enum.CDTE

@@ -1,7 +1,7 @@
 .. _authentication_oauth2:
 
 #######################
-Authentication (OAuth2)
+API Authentication
 #######################
 
 PlantPredict uses the `Okta OpenID Connect & OAuth 2.0 API <https://developer.okta.com/docs/api/resources/oidc#token>`_
@@ -53,39 +53,29 @@ Copy each credential to your clipboard to be pasted into :file:`plantpredict.set
 Contact the person in your organization who is the company admin, and provide to them a link to this page.
 
 
-Step 2: Paste your client credentials into the settings.py file.
-==========================================================================
+Step 2: Store your API credentials securely.
+==============================================
 
-Paste the username, password, client ID, and client secret into :file:`plantpredict.settings`.
-
-.. code-block:: python
-
-    # SETTINGS.PY FILE - MANUALLY ENTER IN USERNAME, PASSWORD, CLIENT_ID, AND CLIENT_SECRET.
-    # TOKEN IS STORED HERE ONCE GENERATED.
-
-    BASE_URL = "https://api.plantpredict.com/"
-
-    USERNAME = "INSERT USERNAME HERE"
-    PASSWORD = "INSERT PASSWORD HERE"
-    CLIENT_ID = "INSERT CLIENT ID HERE"
-    CLIENT_SECRET = "INSERT CLIENT SECRET HERE"
-
-    TOKEN = ""
 
 Step 3: Authenticate and receive a token.
 =========================================
 
-Execute the following code to authenticate and receive an access token.
+At the beginning of any script/Python session, execute the following code to authenticate with the PlantPredict servers
+to generate an access token, which is stored on an :py:class:`~plantpredict.api.Api` object.
 
 .. code-block:: python
 
     import plantpredict
 
-    plantpredict.OAuth2.token()
+    api = plantpredict.Api(
+        username="INSERT USERNAME FROM API CREDENTIALS",
+        password="INSERT PASSWORD FROM API CREDENTIALS",
+        client_id="INSERT CLIENT_ID FROM API CREDENTIALS",
+        client_secret="INSERT CLIENT_SECRET FROM API CREDENTIALS"
+    )
 
-This code will automatically assign the generated access token to the TOKEN variable in
-:file:`plantpredict.settings`. Every API call you make after this step will automatically reference
-the access token and authenticate without any additional client-side code.
+The :py:class:`~plantpredict.api.Api` object is then used to instantiate other PlantPredict entities (see
+:ref:`example_usage`).
 
 .. warning::
 

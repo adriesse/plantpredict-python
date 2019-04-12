@@ -1,8 +1,0 @@
-# Note: cSi = crystalline silicon
-NTYPE_MONO_CSI = 1
-PTYPE_MONO_CSI_PERC = 2
-PTYPE_MONO_CSI_BSF = 3
-POLY_CSI_PERC = 4
-POLY_CSI_BSF = 5
-CDTE = 6
-CIGS = 7

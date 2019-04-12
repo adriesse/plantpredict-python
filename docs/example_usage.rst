@@ -5,7 +5,7 @@ Example Usage
 
 The code snippets below are practical examples of useful tasks accomplished via PlantPredict's API. All of the code
 used in the examples below is available via `the source code on Github
-<https://github.com/stephenkaplan/plantpredict-python/tree/master/example_usage>`_. Feel free to use and/or modify the
+<https://github.com/stephenkaplan/plantpredict-python/tree/master/example_usage>`_. Feel free to use and modify the
 code in your local environment.
 
 Every example assumes that you have first imported the plantpredict module and received an authentication token in your
@@ -14,27 +14,27 @@ Python session, as shown in Step 3 of :ref:`authentication_oauth2`.
 Create Project and Prediction from scratch.
 -------------------------------------------
 
-Instantiate a local instance of :py:class:`~plantpredict.Project`, assigning :py:attr:`name`, :py:attr:`latitude`, and
-:py:attr:`longitude`.
+Instantiate a local instance of :py:class:`~plantpredict.project.Project`, assigning :py:attr:`name`,
+:py:attr:`latitude`, and :py:attr:`longitude`.
 
 .. code-block:: python
 
-    project = plantpredict.Project(name="Area 51 Alien Power Plant", latitude=37.23, longitude=-115.80)
+    project = api.project(name="Area 51 Alien Power Plant", latitude=37.23, longitude=-115.80)
 
-Assign location attributes with helper method :py:meth:`~plantpredict.Project.assign_location_attributes`, and create
-as the local instance of :py:class:`~plantpredict.Project` a new entity in the PlantPredict database.
+Assign location attributes with helper method :py:meth:`~plantpredict.project.Project.assign_location_attributes`, and
+create as the local instance of :py:class:`~plantpredict.project.Project` a new entity in the PlantPredict database.
 
 .. code-block:: python
 
     project.assign_location_attributes()
     project.create()
 
-Instantiate a local instance of :py:class:`~plantpredict.Prediction`, assigning :py:attr:`project_id` (from the newly
-created project) and :py:attr:`name`.
+Instantiate a local instance of :py:class:`~plantpredict.prediction.Prediction`, assigning :py:attr:`project_id` (from
+the newly created project) and :py:attr:`name`.
 
 .. code-block:: python
 
-    prediction = plantpredict.Prediction(project_id=project.id, name="Area 51 - Contracted")
+    prediction = api.prediction(project_id=project.id, name="Area 51 - Contracted")
 
 Assign the :py:attr:`weather_id` corresponding to the weather file you want to use (assuming it already exists in the
 PlantPredict database).
@@ -48,7 +48,7 @@ of the weather file.
 
 .. code-block:: python
 
-    weather = plantpredict.Weather(id=prediction.weather_id)
+    weather = api.weather(id=prediction.weather_id)
     weather.get()
     prediction.start_date = weather.start_date
     prediction.end_date = weather.end_date
@@ -103,25 +103,25 @@ Create the prediction in the PlantPredict database.
 
     prediction.create()
 
-Change the prediction's status to :py:data:`prediction_status_enum.DRAFT-SHARED` to make it accessible to other members
-of your team (or to another relevant status).
+Change the prediction's status to :py:data:`prediction_status_enum.DRAFT-SHARED` to make it
+accessible to other members of your team (or to another relevant status).
 
 .. code-block:: python
 
     prediction.change_prediction_status(new_status=prediction_status_enum.DRAFT_SHARED, note="Changed for tutorial.")
 
-Instantiate a local instance of :py:class:`~plantpredict.PowerPlant`, assigning its :py:data:`project_id` and
+Instantiate a local instance of :py:class:`~plantpredict.powerplant.PowerPlant`, assigning its :py:data:`project_id` and
 :py:data:`prediction_id`.
 
 .. code-block:: python
 
-    powerplant = plantpredict.PowerPlant(project_id=project.id, prediction_id=prediction.id)
+    powerplant = api.powerplant(project_id=project.id, prediction_id=prediction.id)
 
-Add a fixed tilt block, array, inverter, and dc field using :py:meth:`~plantpredict.PowerPlant.add_block`,
-:py:meth:`~plantpredict.PowerPlant.add_array`, :py:meth:`~plantpredict.PowerPlant.add_inverter` and
-:py:meth:`~plantpredict.PowerPlant.add_dc_field`, respectively. In this example, the minimum required fields are
-selected, and the rest are defaulted. Refer to each method's documentation for information on what other power plant
-attributes can be configured. Additionally, refer to the `PlantPredict User Guide
+Add a fixed tilt block, array, inverter, and dc field using :py:meth:`~plantpredict.powerplant.PowerPlant.add_block`,
+:py:meth:`~plantpredict.powerplant.PowerPlant.add_array`, :py:meth:`~plantpredict.powerplant.PowerPlant.add_inverter`
+and :py:meth:`~plantpredict.powerplant.PowerPlant.add_dc_field`, respectively. In this example, the minimum required
+fields are selected, and the rest are defaulted. Refer to each method's documentation for information on what other
+power plant attributes can be configured. Additionally, refer to the `PlantPredict User Guide
 <https://plantpredict.com/user_manual/predictions/#power-plant-builder>`_ for documentation on power plant
 hierarchy.
 
@@ -138,13 +138,28 @@ hierarchy.
         inverter_id=619,
         setpoint_kw=720.0
     )
+
+Assuming there is one dc_field on the inverter, the number of strings can be calculated from a DC AC ratio. If there
+were two identical dc fields on a single inverter, you would use half of the number of strings. For irregular
+configurations, perform a custom calculation for number of strings in parallel and field dc power.
+
+.. code-block:: python
+
+    inverter = powerplant.blocks[0]["arrays"][0]["inverters"][0]
+    field_dc_power = powerplant.calculate_field_dc_power(dc_ac_ratio=1.20, inverter_setpoint=inverter["setpoint_kw"])
+    number_of_series_strings_wired_in_parallel = powerplant.calculate_number_of_series_strings_wired_in_parallel(
+        field_dc_power=field_dc_power,
+        planned_module_rating=115.0,
+        modules_wired_in_series=10
+    )
     fixed_tilt_dc_field_name = powerplant.add_dc_field(
         block_name=fixed_tilt_block_name,
         array_name=fixed_tilt_array_name,
         inverter_name=fixed_tilt_inverter_name,
         module_id=298,
         ground_coverage_ratio=0.40,
-        dc_ac_ratio=1.23,
+        number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
+        field_dc_power=field_dc_power,
         tracking_type=tracking_type_enum.FIXED_TILT,
         module_tilt=25.0,
         modules_high=4,
@@ -168,13 +183,21 @@ example of adding a block with a dc field that uses single-axis tracking.
         inverter_id=619,
         setpoint_kw=720.0
     )
+
+Assuming the tracker array uses the same inverter set point, module and DC AC ratio, the number of strings in parallel
+and field dc power calculated previously can be used.
+
+
+.. code-block:: python
+
     tracker_dc_field_name = powerplant.add_dc_field(
         block_name=tracker_block_name,
         array_name=tracker_array_name,
         inverter_name=tracker_inverter_name,
         module_id=298,
         ground_coverage_ratio=0.40,
-        dc_ac_ratio=1.23,
+        number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
+        field_dc_power=field_dc_power,
         tracking_type=tracking_type_enum.HORIZONTAL_TRACKER,
         dc_field_backtracking_type=backtracking_type_enum.TRUE_TRACKING,
         modules_high=4,
@@ -182,9 +205,9 @@ example of adding a block with a dc field that uses single-axis tracking.
         number_of_rows=100
     )
 
-Create the local instance of :py:class:`~plantpredict.PowerPlant` as a new entity in the PlantPredict database. Since
-the id's of the project and prediction created previously were assigned to the PowerPlant, it will automatically attach
-to the prediction in PlantPredict.
+Create the local instance of :py:class:`~plantpredict.powerplant.PowerPlant` as a new entity in the PlantPredict
+database. Since the id's of the project and prediction created previously were assigned to the PowerPlant, it will
+automatically attach to the prediction in PlantPredict.
 
 .. code-block:: python
 
@@ -200,13 +223,14 @@ Download nodal data.
 ---------------------
 
 First, set up a dictionary containing the nodal data export options. Set the values to True according to which nodes
-in the :py:class:`~plantpredict.PowerPlant` hierarchy you are interested in exporting nodal data. For each block in
-'blockExportOptions', specify the block number.
+in the :py:class:`~plantpredict.powerplant.PowerPlant` hierarchy you are interested in exporting nodal data. For each
+block in :py:data:`block_export_options`, specify the block number. You can add export options for multiple blocks,
+but in this example we just do one.
 
 .. code-block:: python
 
     export_options = {
-        'export_system': False,
+        'export_system': True,
         'block_export_options': [{
             "name": 1,
             "export_block": False,
@@ -216,14 +240,14 @@ in the :py:class:`~plantpredict.PowerPlant` hierarchy you are interested in expo
         }]
     }
 
-Instantiate a new prediction using the :py:class:`~plantpredict.Prediction` class, specifying its ID and project ID
-(visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
+Instantiate a new prediction using the :py:class:`~plantpredict.prediction.Prediction` class, specifying its ID and
+project ID (visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
 
 .. code-block:: python
 
-    project_id = 7178   # CHANGE TO YOUR PROJECT ID
-    prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
-    prediction = plantpredict.Prediction(id=prediction_id, project_id=project_id)
+    project_id = 13161   # CHANGE TO YOUR PROJECT ID
+    prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
+    prediction = api.prediction(id=prediction_id, project_id=project_id)
 
 Run the prediction.
 
@@ -248,21 +272,28 @@ the lowest node (power plant hierarchy-wise) in the input dictionary specifies t
         'dc_field_number': 1
     })
 
+For System-level nodal data, call the method with no inputs.
+
+.. code-block:: python
+
+    nodal_data_system = prediction.get_nodal_data()
+
 The nodal data returned will be returned as JSON serializable data, as detailed in the documentation for
-:py:func:`~plantpredict.Prediction.get_nodal_data`.
+:py:func:`~plantpredict.prediction.Prediction.get_nodal_data`.
 
 
 Clone a prediction.
 -------------------
 
-Instantiate the prediction you wish to clone using the :py:class:`~plantpredict.Prediction` class, specifying its ID and project ID
-(visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
+Instantiate the prediction you wish to clone using the :py:class:`~plantpredict.prediction.Prediction` class, specifying
+its ID and project ID (visible in the URL of that prediction in a web browser
+'.../projects/{project_id}/prediction/{id}/').
 
 .. code-block:: python
 
-    project_id = 7178   # CHANGE TO YOUR PROJECT ID
-    prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
-    prediction_to_clone = plantpredict.Prediction(id=prediction_id, project_id=project_id)
+    project_id = 13161   # CHANGE TO YOUR PROJECT ID
+    prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
+    prediction_to_clone = api.prediction(id=prediction_id, project_id=project_id)
 
 
 Clone the prediction, passing in a name for the new prediction. This will create a new prediction within the same
@@ -272,53 +303,56 @@ project that is an exact copy (other than the name) of the original prediction.
 
     new_prediction_id = prediction_to_clone.clone(new_prediction_name='Cloned Prediction')
 
-If you wish to change something about the new prediction, instantiate a new :py:class:`~plantpredict.Prediction` with
-the returned prediction ID, change an attribute, and call the :py:meth:`~plantpredict.Prediction.update` method.
+If you wish to change something about the new prediction, instantiate a new
+:py:class:`~plantpredict.prediction.Prediction` with the returned prediction ID, change an attribute, and call the
+:py:meth:`~plantpredict.prediction.Prediction.update` method.
 
 .. code-block:: python
 
-    new_prediction = plantpredict.Prediction(id=new_prediction_id, project_id=project_id)
+    new_prediction = api.prediction(id=new_prediction_id, project_id=project_id)
     new_prediction.get()
-    from plantpredict.enumerations.transposition_model_enum import *    # import at the top of the file
-    new_prediction.transposition_model = HAY
+    from plantpredict.enumerations import transposition_model_enum    # import at the top of the file
+    new_prediction.transposition_model = transposition_model_enum.HAY
     new_prediction.update()
 
 
 Change the module in a power plant.
 -----------------------------------
 
-Instantiate the prediction of interest using the :py:class:`~plantpredict.Prediction` class, specifying its ID and
-project ID (visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
+Instantiate the prediction of interest using the :py:class:`~plantpredict.prediction.Prediction` class, specifying its
+ID and project ID (visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
 
 .. code-block:: python
 
-    project_id = 7178   # CHANGE TO YOUR PROJECT ID
-    prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
-    prediction = plantpredict.Prediction(id=prediction_id, project_id=project_id)
+    project_id = 13161   # CHANGE TO YOUR PROJECT ID
+    prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
+    prediction = api.prediction(id=prediction_id, project_id=project_id)
 
-Retrieve the prediction in order to extract its power plant ID. Then instantiate a :py:class:`~plantpredict.PowerPlant`
-with that ID and retrieve all of its attributes.
+Retrieve the prediction in order to extract its power plant ID. Then instantiate a
+:py:class:`~plantpredict.powerplant.PowerPlant` with that ID and retrieve all of its attributes.
 
 .. code-block:: python
 
     prediction.get()
-    power_plant = plantpredict.PowerPlant(prediction_id=prediction_id, project_id=project_id)
-    power_plant.get()
+    powerplant = api.powerplant(prediction_id=prediction_id, project_id=project_id)
+    powerplant.get()
 
 Specify the ID of the module you want to replace the power plant's current module with (visible in the URL
-of that module in a web browser '.../module/{id}/').
+of that module in a web browser '.../module/{id}/'). Retrieve the module.
 
 .. code-block:: python
 
-    new_module_id = 1645
+    new_module_id = 3047
+    new_module = api.module()
+    new_module.get()
 
 In order to change the module in Block 1 --> Array 1 --> Inverter A --> DC Field 1,
-nullify the previous module's data structure, replace the module id, and update the power plant with the
-the :py:func:`~plantpredict.Prediction.update` method.
+replace the previous module's data structure, replace the module id, and update the power plant with the
+the :py:func:`~plantpredict.prediction.Prediction.update` method.
 
 .. code-block:: python
 
-    power_plant.blocks[0]['arrays'][0]['inverters'][0]['dc_fields'][0]['module'] = None
+    power_plant.blocks[0]['arrays'][0]['inverters'][0]['dc_fields'][0]['module'] = new_module.__dict__
     power_plant.blocks[0]['arrays'][0]['inverters'][0]['dc_fields'][0]['module_id'] = new_module_id
     power_plant.update()
 
@@ -332,10 +366,10 @@ Do the same for the project of interest using the :py:class:`~plantpredict.Proje
 
 .. code-block:: python
 
-    project_id = 7178   # CHANGE TO YOUR PROJECT ID
-    prediction_id = 45110   # CHANGE TO YOUR PREDICTION ID
-    prediction = plantpredict.Prediction(id=prediction_id, project_id=project_id)
-    project = plantpredict.Project(id=project_id)
+    project_id = 13161   # CHANGE TO YOUR PROJECT ID
+    prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
+    prediction = api.prediction(id=prediction_id, project_id=project_id)
+    project = api.project(id=project_id)
 
 Retrieve the project and prediction's attributes.
 
@@ -350,14 +384,17 @@ coordinates.
 
 .. code-block:: python
 
-    weathers = plantpredict.Weather.search(project.latitude, project.longitude, search_radius=5)
+    w = api.weather()
+    weathers = w.search(project.latitude, project.longitude, search_radius=5)
 
 Filter the results by only Meteonorm weather files.
 
 .. code-block:: python
 
-    from plantpredict.enumerations.weather_data_provider_enum import *  # should import at the top of your file
-    weathers_meteo = [weather for weather in weathers if int(weather['data_provider']) == METEONORM]
+    from plantpredict.enumerations import weather_data_provider_enum  # should import at the top of your file
+    weathers_meteo = [
+        weather for weather in weathers if int(weather['data_provider']) == weather_data_provider_enum.METEONORM
+       ]
 
 If there is a weather file that meets the criteria, used the most recently created weather file's ID. If no weather file
 meets the criteria, download a new Meteonorm weather file and use that ID.
@@ -370,15 +407,15 @@ meets the criteria, download a new Meteonorm weather file and use that ID.
         idx = [w['created_date'] for w in weathers_meteo].index(created_dates[-1])
         weather_id = weathers_meteo[idx]['id']
     else:
-        weather = plantpredict.Weather()
-        response = weather.download(project.latitude, project.longitude, provider=METEONORM)
+        weather = api.weather()
+        response = weather.download(project.latitude, project.longitude, provider=weather_data_provider_enum.METEONORM)
         weather_id = weather.id
 
 Instantiate weather using the weather ID and retrieve all of its attributes.
 
 .. code-block:: python
 
-    weather = plantpredict.Weather(id=weather_id)
+    weather = api.weather(id=weather_id)
     weather.get()
 
 Ensure that the prediction start/end attributes match those of the weather file.
@@ -415,23 +452,24 @@ and loads pre-processed data from :download:`this JSON file <_static/weather_det
         weather_details = json.load(json_file)
 
 Using the known latitude and longitude of the weather data location, call
-:py:meth:`~plantpredict.Geo.get_location_info` query crucial location info necessary to populate the weather file's
+:py:meth:`~plantpredict.geo.Geo.get_location_info` query crucial location info necessary to populate the weather file's
 metadata.
 
 .. code-block:: python
 
     latitude = 35.0
     longitude = -119.0
-    location_info = plantpredict.Geo.get_location_info(latitude=latitude, longitude=longitude)
+    geo = api.geo(latitude=latitude, longitude=longitude)
+    location_info = geo.get_location_info()
 
-Initialize the :py:class:`~plantpredict.Weather` entity and populate with the minimum fields required by
-:py:meth:`~plantpredict.Weather.create`. Note that the weather details time series data loaded in the first step
+Initialize the :py:class:`~plantpredict.weather.Weather` entity and populate with the minimum fields required by
+:py:meth:`~plantpredict.weather.Weather.create`. Note that the weather details time series data loaded in the first step
 is assigned to `weather.weather_details` at this point.
 
 .. code-block:: python
 
     from plantpredict.enumerations import weather_data_provider_enum
-    weather = plantpredict.Weather()
+    weather = api.weather()
     weather.name = "Python SDK Test Weather"
     weather.latitude = 35.0
     weather.longitude = -119.0
@@ -444,12 +482,12 @@ Assign additional metadata fields.
 
 .. code-block:: python
 
-    weather.elevation = round(plantpredict.Geo.get_elevation(latitude=latitude, longitude=longitude)['elevation'], 2)
+    weather.elevation = round(geo.get_elevation()["elevation"], 2)
     weather.locality = location_info['locality']
     weather.region = location_info['region']
     weather.state_province = location_info['state_province']
     weather.state_province_code = location_info['state_province_code']
-    weather.time_zone = plantpredict.Geo.get_time_zone(latitude=latitude, longitude=longitude)['time_zone']
+    weather.time_zone = geo.get_time_zone()['time_zone']
     weather.status = library_status_enum.DRAFT_PRIVATE
     weather.data_type = weather_data_type_enum.MEASURED
     weather.p_level = weather_plevel_enum.P95
@@ -468,7 +506,7 @@ Assign additional metadata fields.
     weather.average_wind_speed = np.round(np.mean([w['windspeed'] for w in weather_details]), 2)
     weather.max_air_temperature = np.round(max([w['temperature'] for w in weather_details]), 2)
 
-Create the weather file in PlantPredict with :py:meth:`~plantpredict.Weather.create`.
+Create the weather file in PlantPredict with :py:meth:`~plantpredict.weather.Weather.create`.
 
 .. code-block:: python
 
@@ -478,11 +516,11 @@ Create the weather file in PlantPredict with :py:meth:`~plantpredict.Weather.cre
 Generate a module file.
 ------------------------
 
-Instantiate a local :py:mod:`plantpredict.Module` object.
+Instantiate a local :py:mod:`plantpredict.module.Module` object.
 
 .. code-block:: python
 
-    module = plantpredict.Module()
+    module = api.module()
 
 Assign basic module parameters from the manufacturer's datasheet or similar data source.
 
@@ -549,8 +587,8 @@ An IV curve can be generated for the module for reference.
 The initial series resistance optimization might not achieve an EIR close enough to the target. the user can modify
 any parameter, re-optimize series resistance or just recalculate dependent parameters, and check EIR repeatedly.
 This is the open-ended portion of module file generation. Important Note: after modifying parameters, if the user
-does not re-optimize series resistance, :py:meth:`plantpredict.Module.generate_single_diode_parameters_advanced` must
-be called to re-calculate :py:attr:`saturation_current_at_stc`, :py:attr:`diode_ideality_factor_at_stc`,
+does not re-optimize series resistance, :py:meth:`plantpredict.module.Module.generate_single_diode_parameters_advanced`
+must be called to re-calculate :py:attr:`saturation_current_at_stc`, :py:attr:`diode_ideality_factor_at_stc`,
 :py:attr:`light_generated_current`, :py:attr:`linear_temperature_dependence_on_gamma`,
 :py:attr:`maximum_series_resistance` and :py:attr:`maximum_recombination_parameter` (if applicable).
 
@@ -574,7 +612,7 @@ Once the user is satisfied with the module parameters and performance, assign ot
     module.heat_absorption_coef_alpha_t = 0.9
     module.construction_type = construction_type_enum.GLASS_GLASS
 
-Create a new :py:mod:`plantpredict.Module` in the PlantPredict database.
+Create a new :py:mod:`plantpredict.module.Module` in the PlantPredict database.
 
 .. code-block:: python
 

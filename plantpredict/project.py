@@ -1,10 +1,8 @@
 import requests
 import json
-from plantpredict import settings
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 from plantpredict.utilities import convert_json, camel_to_snake
-from plantpredict.geo import Geo
 
 
 class Project(PlantPredictEntity):
@@ -104,12 +102,11 @@ class Project(PlantPredictEntity):
         """
 
         return requests.get(
-            url=settings.BASE_URL + "/Project/{}/Prediction".format(self.id),
-            headers={"Authorization": "Bearer " + settings.TOKEN}
+            url=self.api.base_url + "/Project/{}/Prediction".format(self.id),
+            headers={"Authorization": "Bearer " + self.api.access_token}
         )
 
-    @staticmethod
-    def search(latitude, longitude, search_radius=1.0):
+    def search(self, latitude, longitude, search_radius=1.0):
         """HTTP Request: GET /Project/Search
 
         Searches for all existing Project entities within a search radius of a specified latitude/longitude.
@@ -123,8 +120,8 @@ class Project(PlantPredictEntity):
         :return: TODO
         """
         response = requests.get(
-            url=settings.BASE_URL + "/Project/Search",
-            headers={"Authorization": "Bearer " + settings.TOKEN},
+            url=self.api.base_url + "/Project/Search",
+            headers={"Authorization": "Bearer " + self.api.access_token},
             params={'latitude': latitude, 'longitude': longitude, 'searchRadius': search_radius}
         )
 
@@ -139,7 +136,7 @@ class Project(PlantPredictEntity):
 
         :return:
         """
-        geo = Geo(latitude=self.latitude, longitude=self.longitude)
+        geo = self.api.geo(latitude=self.latitude, longitude=self.longitude)
         geo.get_location_info()
         geo.get_elevation()
         geo.get_time_zone()
@@ -153,7 +150,7 @@ class Project(PlantPredictEntity):
         self.elevation = geo.elevation
         self.standard_offset_from_utc = geo.time_zone
 
-    def __init__(self, id=None, name=None, latitude=None, longitude=None):
+    def __init__(self, api, id=None, name=None, latitude=None, longitude=None):
         if id:
             self.id = id
         self.name = name
@@ -169,4 +166,4 @@ class Project(PlantPredictEntity):
         self.elevation = None
         self.standard_offset_from_utc = None
 
-        super(Project, self).__init__()
+        super(Project, self).__init__(api)
