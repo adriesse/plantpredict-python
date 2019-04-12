@@ -105,8 +105,15 @@ incidence_angle_model_type_enum.ASHRAE = 3
 incidence_angle_model_type_enum.NONE = 4
 incidence_angle_model_type_enum.TABULAR_IAM = 5
 
-# TODO Library Status
-
+# Library Status
+library_status_enum = PlantPredictEnum()
+library_status_enum.UNKNOWN = 0
+library_status_enum.DRAFT_PRIVATE = 1
+library_status_enum.DRAFT_SHARED = 2
+library_status_enum.ACTIVE = 3
+library_status_enum.RETIRED = 4
+library_status_enum.GLOBAL = 5
+library_status_enum.GLOBAL_RETIRED = 6
 
 # Module Degradation Model
 module_degradation_model_enum = PlantPredictEnum()
@@ -119,11 +126,23 @@ module_orientation_enum = PlantPredictEnum()
 module_orientation_enum.LANDSCAPE = 0
 module_orientation_enum.PORTRAIT = 1
 
-# TODO Module Shading Response
+# Module Shading Response
+module_shading_response_enum = PlantPredictEnum()
+module_shading_response_enum.NONE = 0
+module_shading_response_enum.LINEAR = 1
+module_shading_response_enum.FRACTIONAL_EFFECT = 2   # Fractional Electrical Shading
+module_shading_response_enum.CSI_3_DIODE = 3
+module_shading_response_enum.CUSTOM = 4
 
-# TODO Module Temperature Model
+# Module Temperature Model
+module_temperature_model_enum = PlantPredictEnum()
+module_temperature_model_enum.HEAT_BALANCE = 0
+module_temperature_model_enum.SANDIA = 1
 
-# TODO Module Type
+# Module Type
+module_type_enum = PlantPredictEnum()
+module_type_enum.SINGLE_DIODE = 0
+module_type_enum.ADVANCED_DIODE = 1
 
 # Prediction Status
 prediction_status_enum = PlantPredictEnum()
@@ -137,11 +156,26 @@ prediction_status_enum.AS_BUILT = 7
 prediction_status_enum.WARRANTY = 8
 prediction_status_enum.ARCHIVED = 9
 
-# TODO Prediction Version
+# Prediction Version
+prediction_version_enum = PlantPredictEnum()
+prediction_version_enum.VERSION_3 = 3
+prediction_version_enum.VERSION_4 = 4
+prediction_version_enum.VERSION_5 = 5
+prediction_version_enum.VERSION_6 = 6
+prediction_version_enum.VERSION_7 = 7
 
-# TODO Processing Status
+# Processing Status
+processing_status_enum = PlantPredictEnum()
+processing_status_enum.NONE = 0
+processing_status_enum.QUEUED = 1
+processing_status_enum.RUNNING = 2
+processing_status_enum.SUCCESS = 3
+processing_status_enum.ERROR = 4
 
-# TODO Project Status
+# Project Status
+project_status_enum = PlantPredictEnum()
+project_status_enum.ACTIVE = 0
+project_status_enum.ARCHIVED = 1
 
 # PV Model
 pv_model_type_enum = PlantPredictEnum()
@@ -149,7 +183,11 @@ pv_model_type_enum.ONE_DIODE_RECOMBINATION = 0
 pv_model_type_enum.ONE_DIODE = 1
 pv_model_type_enum.ONE_DIODE_RECOMBINATION_NONLINEAR = 3
 
-# TODO Soiling Model
+# Soiling Model
+soiling_model_enum = PlantPredictEnum()
+soiling_model_enum.CONSTANT_MONTHLY = 0
+soiling_model_enum.WEATHER_FILE = 1
+soiling_model_enum.NONE = 2
 
 # Spectral Shift Model
 spectral_shift_model_enum = PlantPredictEnum()
@@ -158,7 +196,12 @@ spectral_shift_model_enum.ONE_PARAM_PWAT_OR_SANDIA = 1
 spectral_shift_model_enum.TWO_PARAM_PWAT_AND_AM = 2
 spectral_shift_model_enum.MONTHLY_OVERRIDE = 3
 
-# TODO Spectral Weather Type
+# Spectral Weather Type
+spectral_weather_type_enum = PlantPredictEnum()
+spectral_weather_type_enum.NONE = 0
+spectral_weather_type_enum.NGAN_PWAT = 1
+spectral_weather_type_enum.NGAN_RH = 2
+spectral_weather_type_enum.NGAN_DEWPOINT = 3
 
 # Tracking Type
 tracking_type_enum = PlantPredictEnum()
@@ -166,14 +209,76 @@ tracking_type_enum.FIXED_TILT = 0
 tracking_type_enum.HORIZONTAL_TRACKER = 1
 tracking_type_enum.SEASONAL_TILT = 2
 
-# TODO Transposition Model
+# Transposition Model
+transposition_model_enum = PlantPredictEnum()
+transposition_model_enum.HAY = 0
+transposition_model_enum.PEREZ = 1
 
-# TODO Weather Data Provider
+# Weather Data Provider
+weather_data_provider_enum = PlantPredictEnum()
+weather_data_provider_enum.NREL = 1
+weather_data_provider_enum.AWS = 2
+weather_data_provider_enum.WIND_LOGICS = 3
+weather_data_provider_enum.METEONORM = 4
+weather_data_provider_enum.THREE_TIER = 5
+weather_data_provider_enum.CLEAN_POWER_RESEARCH = 6
+weather_data_provider_enum.GEO_MODEL_SOLAR = 7
+weather_data_provider_enum.GEO_SUN_AFRICA = 8
+weather_data_provider_enum.SODA = 9
+weather_data_provider_enum.HELIO_CLIM = 10
+weather_data_provider_enum.SOLAR_RESOURCE_ASSESSMENT = 11
+weather_data_provider_enum.ENERGY_PLUS = 12
+weather_data_provider_enum.OTHER = 13
+weather_data_provider_enum.CUSTOMER = 14
+weather_data_provider_enum.SOLAR_PROSPECTOR = 15
+weather_data_provider_enum.GLOBAL_FED = 16
+weather_data_provider_enum.NSRDB = 17
+weather_data_provider_enum.WHITE_BOX_TECHNOLOGIES = 18
+weather_data_provider_enum.SOLARGIS = 19
+weather_data_provider_enum.NASA = 20
 
-# TODO Weather Data Type
+# Weather Data Type
+weather_data_type_enum = PlantPredictEnum()
+weather_data_type_enum.SYNTHETIC_MONTHLY = 0
+weather_data_type_enum.SATELLITE = 1
+weather_data_type_enum.GROUND_CORRECTED = 2
+weather_data_type_enum.MEASURED = 3
+weather_data_type_enum.MY3 = 4
+weather_data_type_enum.TGY = 5
+weather_data_type_enum.TMY = 6
+weather_data_type_enum.PSM = 7
+weather_data_type_enum.SUNY = 8
+weather_data_type_enum.MTS2 = 9
+weather_data_type_enum.CZ2010 = 10
 
-# TODO Weather File Column Type
+# Weather File Column Type
+weather_file_column_type = PlantPredictEnum()
+weather_file_column_type.GHI = 1
+weather_file_column_type.DNI = 2
+weather_file_column_type.DHI = 3
+weather_file_column_type.TEMP = 4
+weather_file_column_type.WINDSPEED = 5
+weather_file_column_type.RELATIVE_HUMIDITY = 6
+weather_file_column_type.PWAT = 7
+weather_file_column_type.RAIN = 8
+weather_file_column_type.PRESSURE = 9
+weather_file_column_type.DEWPOINT_TEMP = 10
+weather_file_column_type.WIND_DIRECTION = 11
+weather_file_column_type.SOILING_LOSS = 12
+weather_file_column_type.POAI = 13
 
-# TODO Weather P-Level
+# Weather P-Level
+weather_plevel_enum = PlantPredictEnum()
+weather_plevel_enum.P50 = 0
+weather_plevel_enum.P90 = 1
+weather_plevel_enum.P95 = 3
+weather_plevel_enum.P99 = 4
+weather_plevel_enum.NA = 2      # N/A
+weather_plevel_enum.P75 = 5
 
-# TODO Weather Time Resolution
+# Weather Time Resolution
+weather_time_resolution_enum = PlantPredictEnum()
+weather_time_resolution_enum.UNKNOWN = 0
+weather_time_resolution_enum.HALF_HOUR = 1
+weather_time_resolution_enum.HOUR = 2
+weather_time_resolution_enum.MINUTE = 3
