@@ -93,13 +93,25 @@ fixed_tilt_inverter_name = powerplant.add_inverter(
     inverter_id=619,
     setpoint_kw=720.0
 )
+
+# Assuming there is one dc_field on the inverter, the number of strings can be calculated from a DC AC ratio. If there
+# were two identical dc fields on a single inverter, you would use half of the number of strings. For irregular
+# configurations, perform a custom calculation for number of strings in parallel and field dc power.
+inverter = powerplant.blocks[0]["arrays"][0]["inverters"][0]
+field_dc_power = powerplant.calculate_field_dc_power(dc_ac_ratio=1.20, inverter_setpoint=inverter["setpoint_kw"])
+number_of_series_strings_wired_in_parallel = powerplant.calculate_number_of_series_strings_wired_in_parallel(
+    field_dc_power=field_dc_power,
+    planned_module_rating=115.0,
+    modules_wired_in_series=10
+)
 fixed_tilt_dc_field_name = powerplant.add_dc_field(
     block_name=fixed_tilt_block_name,
     array_name=fixed_tilt_array_name,
     inverter_name=fixed_tilt_inverter_name,
     module_id=298,
     ground_coverage_ratio=0.40,
-    dc_ac_ratio=1.23,
+    number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
+    field_dc_power=field_dc_power,
     tracking_type=tracking_type_enum.FIXED_TILT,
     module_tilt=25.0,
     modules_high=4,
@@ -119,13 +131,17 @@ tracker_inverter_name = powerplant.add_inverter(
     inverter_id=619,
     setpoint_kw=720.0
 )
+
+# Assuming the tracker array uses the same inverter set point, module and DC AC ratio, the number of strings in parallel
+# and field dc power calculated previously can be used.
 tracker_dc_field_name = powerplant.add_dc_field(
     block_name=tracker_block_name,
     array_name=tracker_array_name,
     inverter_name=tracker_inverter_name,
     module_id=298,
     ground_coverage_ratio=0.40,
-    dc_ac_ratio=1.23,
+    number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
+    field_dc_power=field_dc_power,
     tracking_type=tracking_type_enum.HORIZONTAL_TRACKER,
     dc_field_backtracking_type=backtracking_type_enum.TRUE_TRACKING,
     modules_high=4,
