@@ -19,7 +19,6 @@ class TestApi(unittest.TestCase):
         self.assertTrue(mock_post.call_count==2)
         # todo: what else can I test for?
 
-
     def test_bad_password(self, mock_post):
         '''todo: this is currently not implemented in plantpredict.Api'''
         mock_post.return_value.ok = False
@@ -29,8 +28,5 @@ class TestApi(unittest.TestCase):
         mock_post.assert_called()
 
 
-
 if __name__ == '__main__':
     unittest.main()
-    
-    

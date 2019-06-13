@@ -2,14 +2,15 @@ from setuptools import setup
 
 setup(
     name='plantpredict',
-    version='0.8.7',
-    description='Python 2.7 SDK for PlantPredict (https://ui.plantpredict.com).',
-    url='http://github.com/storborg/funniest',
+    version='0.9.0',
+    description='Python SDK for PlantPredict (https://ui.plantpredict.com).',
+    url='https://github.com/stephenkaplan/plantpredict-python',
     author='Stephen Kaplan, Performance & Prediction Engineer at First Solar, Inc.',
     author_email='stephen.kaplan@firstsolar.com',
     license='LICENSE.txt',
     long_description=open('README.txt').read(),
     packages=['plantpredict'],
+    python_requires='>=3.7, <4',
     install_requires=[
         'requests',
         'pandas',
@@ -21,5 +22,6 @@ setup(
         'pytz',
         'six',
         'urllib3'
+        'mock'
     ]
 )
