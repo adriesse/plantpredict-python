@@ -8,7 +8,7 @@ setup(
     author='Stephen Kaplan, Performance & Prediction Engineer at First Solar, Inc.',
     author_email='stephen.kaplan@firstsolar.com',
     license='LICENSE.txt',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     packages=['plantpredict'],
     install_requires=[
         'requests',
