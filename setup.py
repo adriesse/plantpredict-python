@@ -23,5 +23,7 @@ setup(
         'six',
         'urllib3',
         'mock',
+        'xlrd',
+        'openpyxl'
     ]
 )
