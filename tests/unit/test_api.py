@@ -24,7 +24,7 @@ class TestApi(unittest.TestCase):
         mock_post.return_value.ok = False
         mock_post.return_value.content = '{"error":"invalid_grant","error_description":"The credentials provided were invalid."}'
         api = plantpredict.Api(username="FS123456@firstsolar.com.plantpredictapi",
-                           password="bad_password", client_id="0oakq", client_secret="IEdpr")
+                                password="bad_password", client_id="0oakq", client_secret="IEdpr")
         mock_post.assert_called()
 
 
