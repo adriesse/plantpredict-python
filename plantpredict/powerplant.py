@@ -58,8 +58,11 @@ class PowerPlant(PlantPredictEntity):
         """
 
         :param use_energization_date:
+        :type use_energization_date: bool
         :param energization_date:
-        :return:
+        :type energization_date: str
+        :return: Block name, which is an integer identifier.
+        :rtype: int
         """
         block = {
             "name": 1 if not self.blocks else len(self.blocks) + 1,

@@ -10,7 +10,7 @@ from plantpredict.error_handlers import handle_refused_connection, handle_error_
 
 class Module(PlantPredictEntity):
     """
-    The :py:mod:`plantpredict.Module` entity models all of the characteristics of a photovoltaic solar module (panel).
+    The :py:mod:`Module` entity models all of the characteristics of a photovoltaic solar module (panel).
     """
     def create(self):
         """
