@@ -10,7 +10,7 @@ setup(
     license='LICENSE.txt',
     long_description=open('README.md').read(),
     packages=['plantpredict'],
-    python_requires='>=3.7, <4',
+    python_requires='>=3.6, <4',
     install_requires=[
         'requests',
         'pandas',
