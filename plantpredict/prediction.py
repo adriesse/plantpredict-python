@@ -85,7 +85,7 @@ class Prediction(PlantPredictEntity):
 
                     prediction_to_create.create()
 
-                    print prediction_to_create.id
+                    print(prediction_to_create.id)
 
         :return: A dictionary containing the prediction id.
         :rtype: dict

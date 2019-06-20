@@ -154,7 +154,7 @@ class Module(PlantPredictEntity):
 
                     module_to_create.create()
 
-                    print module_to_create.id
+                    print(module_to_create.id)
 
         :return: A dictionary containing the module id.
         :rtype: dict
