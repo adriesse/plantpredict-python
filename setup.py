@@ -21,7 +21,7 @@ setup(
         'python-dateutil',
         'pytz',
         'six',
-        'urllib3'
-        'mock'
+        'urllib3',
+        'mock',
     ]
 )

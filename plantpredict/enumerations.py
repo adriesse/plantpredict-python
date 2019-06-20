@@ -276,6 +276,17 @@ weather_plevel_enum.P99 = 4
 weather_plevel_enum.NA = 2      # N/A
 weather_plevel_enum.P75 = 5
 
+# Weather Source Type API (web-service downloadable vendors)
+weather_source_type_api_enum = PlantPredictEnum()
+weather_source_type_api_enum.UNKNOWN = 0   # Default
+weather_source_type_api_enum.METEONORM = 1
+weather_source_type_api_enum.CPR_SOLAR_ANYWHERE = 2
+weather_source_type_api_enum.NSRDB_PSM = 3
+weather_source_type_api_enum.NSRDB_SUNY = 4
+weather_source_type_api_enum.NSRDB_MTS2 = 5
+weather_source_type_api_enum.SOLAR_GIS = 6
+weather_source_type_api_enum.NASA = 7
+
 # Weather Time Resolution
 weather_time_resolution_enum = PlantPredictEnum()
 weather_time_resolution_enum.UNKNOWN = 0
