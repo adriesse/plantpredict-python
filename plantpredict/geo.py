@@ -216,7 +216,7 @@ class Geo(object):
                 .. code-block:: python
 
                     {
-                        "elevation": -7.0
+                        "time_zone": -7.0
                     }
 
         :return: A dictionary with location information as shown in "Example Response".

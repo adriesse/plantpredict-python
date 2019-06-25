@@ -71,3 +71,7 @@ class TestUtilities(unittest.TestCase):
         snake_list = [{"first_item": 1}, {"second_item": 2}, {"third_item": 3}]
         camel_list = utilities.convert_json_list(snake_list, utilities.snake_to_camel)
         self.assertEqual(camel_list, [{"firstItem": 1}, {"secondItem": 2}, {"thirdItem": 3}])
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -59,7 +59,7 @@ class Api(object):
 
         return response
 
-    def __init__(self, username, password, client_id, client_secret, base_url="https://api.plantpredict.com/",
+    def __init__(self, username, password, client_id, client_secret, base_url="https://api.plantpredict.com",
                  okta_auth_url="https://afse.okta.com/oauth2/aus3jzhulkrINTdnc356/v1/token"):
         self.base_url = base_url
         self.__okta_auth_url = okta_auth_url
