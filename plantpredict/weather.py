@@ -58,7 +58,7 @@ class Weather(PlantPredictEntity):
         :rtype: dict
         """
         self.create_url_suffix = "/Weather"
-        super(Weather, self).create()
+        return super(Weather, self).create()
 
     def delete(self):
         """
@@ -86,7 +86,7 @@ class Weather(PlantPredictEntity):
         :rtype: dict
         """
         self.get_url_suffix = "/Weather/{}".format(self.id)
-        super(Weather, self).get()
+        return super(Weather, self).get()
 
     def update(self):
         """
@@ -109,7 +109,7 @@ class Weather(PlantPredictEntity):
         :rtype: dict
         """
         self.update_url_suffix = "/Weather"
-        super(Weather, self).update()
+        return super(Weather, self).update()
 
     @handle_refused_connection
     @handle_error_response

@@ -41,7 +41,7 @@ class Api(object):
         response = requests.post(
             url=self.__okta_auth_url,
             headers={"content-type": "application/x-www-form-urlencoded"},
-            data={
+            params={
                 "refresh_token": self.refresh_token,
                 "grant_type": "refresh_token",
                 "scope": "offline_access",
@@ -68,6 +68,9 @@ class Api(object):
         self.password = password
         self.client_id = client_id
         self.client_secret = client_secret
+
+        self.access_token = None
+        self.refresh_token = None
 
         self.__get_access_token()
 

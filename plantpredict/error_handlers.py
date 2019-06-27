@@ -51,6 +51,7 @@ def handle_error_response(function):
                 # if the response does not contain content, return a generic success message
                 else:
                     return {'is_successful': True}
+
         except AttributeError:
             return response
 

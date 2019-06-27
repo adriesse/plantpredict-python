@@ -1,31 +1,57 @@
 import unittest
 import mock
+
 import plantpredict
+from plantpredict import project, prediction, powerplant, geo, inverter, module, weather
+from tests.mocked_requests import mocked_requests_api
 
-# TODO redo
-# this patch is applied to all methods
-@mock.patch('plantpredict.api.requests.post', autospec=True)
+
 class TestApi(unittest.TestCase):
+    @mock.patch('plantpredict.api.requests.post', new=mocked_requests_api.mocked_requests_post)
+    def setUp(self):
+        self.api = plantpredict.Api(
+            username="dummy username",
+            password="dummy password",
+            client_id="dummy client id",
+            client_secret="dummy client secret"
+        )
 
-    def test_init(self, mock_post):
-        mock_post.return_value.ok = True
-        mock_post.return_value.content = '''{"access_token":"dummy_access_token",
-                                            "refresh_token":"dummy_refresh_token"}'''
-        api = plantpredict.Api(username="FS123456@firstsolar.com.plantpredictapi",
-                               password="0xt2Zf", client_id="0oakq", client_secret="IEdpr")
+    @mock.patch('plantpredict.api.requests.post', new=mocked_requests_api.mocked_requests_post)
+    def test_refresh_access_token(self):
+        self.api.refresh_access_token()
 
-        mock_post.assert_called()
-        api.refresh_access_token()
-        self.assertTrue(mock_post.call_count==2)
-        # todo: what else can I test for?
+        self.assertEqual(self.api.access_token, "dummy access token 2")
+        self.assertEqual(self.api.refresh_token, "dummy refresh token 2")
 
-    def test_bad_password(self, mock_post):
-        '''todo: this is currently not implemented in plantpredict.Api'''
-        mock_post.return_value.ok = False
-        mock_post.return_value.content = '{"error":"invalid_grant","error_description":"The credentials provided were invalid."}'
-        api = plantpredict.Api(username="FS123456@firstsolar.com.plantpredictapi",
-                                password="bad_password", client_id="0oakq", client_secret="IEdpr")
-        mock_post.assert_called()
+    def test_init(self):
+        self.assertEqual(self.api.base_url, "https://api.plantpredict.com")
+        self.assertEqual(self.api.username, "dummy username")
+        self.assertEqual(self.api.password, "dummy password")
+        self.assertEqual(self.api.client_id, "dummy client id")
+        self.assertEqual(self.api.client_secret, "dummy client secret")
+        self.assertEqual(self.api.access_token, "dummy access token")
+        self.assertEqual(self.api.refresh_token, "dummy refresh token")
+
+    def test_project(self):
+        self.assertIsInstance(self.api.project(), project.Project)
+
+    def test_prediction(self):
+        self.assertIsInstance(self.api.prediction(), prediction.Prediction)
+
+    def test_powerplant(self):
+        self.assertIsInstance(self.api.powerplant(), powerplant.PowerPlant)
+
+    def test_geo(self):
+        self.assertIsInstance(self.api.geo(), geo.Geo)
+
+    def test_inverter(self):
+        self.assertIsInstance(self.api.inverter(), inverter.Inverter)
+
+    def test_module(self):
+        self.assertIsInstance(self.api.module(), module.Module)
+
+    def test_weather(self):
+        self.assertIsInstance(self.api.weather(), weather.Weather)
 
 
 if __name__ == '__main__':

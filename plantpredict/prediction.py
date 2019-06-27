@@ -1,8 +1,9 @@
 import requests
+
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.utilities import convert_json, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
-from plantpredict.enumerations import prediction_status_enum, entity_type_enum
+from plantpredict.enumerations import prediction_status_enum, EntityTypeEnum
 
 
 class Prediction(PlantPredictEntity):
@@ -284,7 +285,7 @@ class Prediction(PlantPredictEntity):
             json=[{
                 "name": self.name,
                 "id": self.id,
-                "type": entity_type_enum.PREDICTION,
+                "type": EntityTypeEnum.PREDICTION,
                 "status": new_status,
                 "note": note
             }]

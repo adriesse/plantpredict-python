@@ -173,7 +173,7 @@ class Module(PlantPredictEntity):
         if not hasattr(self, 'stc_efficiency') or self.stc_efficiency == 0:
             self.stc_efficiency = self.stc_max_power / (self.area * 1000.0)
 
-        super(Module, self).create()
+        return super(Module, self).create()
 
     def delete(self):
         """
@@ -208,7 +208,7 @@ class Module(PlantPredictEntity):
         :rtype: dict
         """
         self.delete_url_suffix = "/Module/{}".format(self.id)
-        super(Module, self).delete()
+        return super(Module, self).delete()
 
     def get(self):
         """
@@ -252,7 +252,7 @@ class Module(PlantPredictEntity):
         :rtype: dict
         """
         self.get_url_suffix = "/Module/{}".format(self.id)
-        super(Module, self).get()
+        return (Module, self).get()
 
     def update(self):
         """
@@ -302,8 +302,8 @@ class Module(PlantPredictEntity):
         :return: A dictionary {"is_successful": True}.
         :rtype: dict
         """
-        self.update_url_suffix = "/Module/{}".format(self.id)
-        super(Module, self).update()
+        self.update_url_suffix = "/Module"
+        return super(Module, self).update()
 
     @handle_refused_connection
     @handle_error_response

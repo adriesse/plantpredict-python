@@ -4,11 +4,11 @@ import json
 
 import plantpredict
 from plantpredict.geo import Geo
-from tests import plantpredict_test_case
+from tests import plantpredict_unit_test_case
 from tests.mocked_requests import mocked_requests_geo
 
 
-class TestGeo(plantpredict_test_case.PlantPredictTestCase):
+class TestGeo(plantpredict_unit_test_case.PlantPredictUnitTestCase):
     @mock.patch('plantpredict.geo.requests.get', new=mocked_requests_geo.mocked_requests_get)
     def test_get_location_info(self):
         self._make_mocked_api()
