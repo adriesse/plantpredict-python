@@ -1,4 +1,5 @@
 import mock
+import unittest
 
 from plantpredict.inverter import Inverter
 from tests import plantpredict_unit_test_case
@@ -40,3 +41,7 @@ class TestInverter(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         inverter.update()
         self.assertEqual(inverter.update_url_suffix, "/Inverter")
         self.assertTrue(mocked_update.called)
+
+
+if __name__ == '__main__':
+    unittest.main()

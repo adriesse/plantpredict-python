@@ -1,4 +1,5 @@
 import requests
+import unittest
 
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.utilities import convert_json, snake_to_camel
@@ -232,13 +233,13 @@ class Prediction(PlantPredictEntity):
 
         new_prediction.__dict__ = self.__dict__
         # initialize necessary fields
-        new_prediction.__dict__.pop('prediction_id', None)
+        new_prediction.__dict__.pop('id', None)
         new_prediction.__dict__.pop('created_date', None)
         new_prediction.__dict__.pop('last_modified', None)
         new_prediction.__dict__.pop('last_modified_by', None)
         new_prediction.__dict__.pop('last_modified_by_id', None)
         new_prediction.__dict__.pop('project', None)
-        new_prediction.__dict__.pop('power_plant_id', None)
+        new_prediction.__dict__.pop('powerplant_id', None)
         new_prediction.__dict__.pop('powerplant', None)
 
         new_prediction.name = new_prediction_name
@@ -307,3 +308,7 @@ class Prediction(PlantPredictEntity):
         self.error_mon_acc = None
 
         super(Prediction, self).__init__(api)
+
+
+if __name__ == '__main__':
+    unittest.main()

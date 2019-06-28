@@ -1,5 +1,6 @@
 import mock
 import json
+import unittest
 
 from plantpredict.project import Project
 from tests import plantpredict_unit_test_case
@@ -111,3 +112,7 @@ class TestProject(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self.assertIsNone(project.region)
         self.assertIsNone(project.elevation)
         self.assertIsNone(project.standard_offset_from_utc)
+
+
+if __name__ == '__main__':
+    unittest.main()

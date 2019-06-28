@@ -21,7 +21,7 @@ def load_from_excel(file_path, sheet_name=None):
     return xl.parse(sheet_name, index_col=None).to_dict('records')
 
 
-def export_to_excel(data, file_path, sheet_name="Sheet 1", field_order=None, sorting_fields=None):
+def export_to_excel(data, file_path, sheet_name="Sheet1", field_order=None, sorting_fields=None):
     """
     Writes data from a list of dictionaries to an Excel file, where each dictionary represents a row in the Excel file
     and the keys of each dictionary represent each column header in the Excel file.

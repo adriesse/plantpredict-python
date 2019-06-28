@@ -1,7 +1,8 @@
+import copy
+
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 from plantpredict.enumerations import module_orientation_enum
-import copy
 
 
 class PowerPlant(PlantPredictEntity):
