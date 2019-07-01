@@ -2,7 +2,7 @@
 documentation located at https://plantpredict-python.readthedocs.io."""
 
 import plantpredict
-from plantpredict.enumerations import cell_technology_type_enum, pv_model_type_enum, construction_type_enum
+from plantpredict.enumerations import CellTechnologyTypeEnum, PVModelTypeEnum, ConstructionTypeEnum
 
 # authenticate using API credentials
 api = plantpredict.Api(
@@ -16,9 +16,9 @@ api = plantpredict.Api(
 module = api.module()
 
 # assign basic module parameters from the manufacturer's datasheet or similar data source
-module.cell_technology_type = cell_technology_type_enum.CDTE
+module.cell_technology_type = CellTechnologyTypeEnum.CDTE
 module.number_of_cells_in_series = 264
-module.pv_model = pv_model_type_enum.ONE_DIODE_RECOMBINATION
+module.pv_model = PVModelTypeEnum.ONE_DIODE_RECOMBINATION
 module.reference_temperature = 25
 module.reference_irradiance = 1000
 module.stc_max_power = 430.0
@@ -75,7 +75,7 @@ module.manufacturer = "Solar Company"
 module.length = 2009
 module.width = 1232
 module.heat_absorption_coef_alpha_t = 0.9
-module.construction_type = construction_type_enum.GLASS_GLASS
+module.construction_type = ConstructionTypeEnum.GLASS_GLASS
 
 # create module in the PlantPredict database
 module.create()

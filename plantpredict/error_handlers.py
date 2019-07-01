@@ -1,6 +1,8 @@
+from __future__ import print_function
 import time
 import requests
 import json
+
 from plantpredict.utilities import convert_json, camel_to_snake
 
 
@@ -12,7 +14,7 @@ def handle_refused_connection(function):
                 connection_error = False
                 return function(*args, **kwargs)
             except requests.exceptions.ConnectionError:
-                print('Connection refused, trying again...')
+                print("Connection refused, trying again...")
                 time.sleep(7)
     function_wrapper.__name__ = function.__name__
     function_wrapper.__doc__ = function.__doc__
@@ -25,8 +27,7 @@ def handle_error_response(function):
         try:
             # if the authorization is invalid, refresh the API access token
             if response.status_code == 401:
-                from plantpredict.oauth2 import OAuth2
-                OAuth2.refresh()
+                args[0].api.refresh_access_token()
 
             # if there is a sever side error, return the error message
             elif not 200 <= response.status_code < 300:
@@ -50,6 +51,7 @@ def handle_error_response(function):
                 # if the response does not contain content, return a generic success message
                 else:
                     return {'is_successful': True}
+
         except AttributeError:
             return response
 

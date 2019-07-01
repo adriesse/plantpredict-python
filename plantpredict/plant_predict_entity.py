@@ -1,7 +1,8 @@
 import json
 import requests
+
 from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel, decorate_all_methods
-from plantpredict.error_handlers import handle_refused_connection, handle_error_response
+from plantpredict.error_handlers import handle_refused_connection, handle_error_response, APIError
 
 
 @decorate_all_methods(handle_refused_connection)
@@ -37,7 +38,10 @@ class PlantPredictEntity(object):
             url=self.api.base_url + self.get_url_suffix,
             headers={"Authorization": "Bearer " + self.api.access_token}
         )
-        attr = convert_json(json.loads(response.content), camel_to_snake)
+        if response.status_code == 404:
+            raise APIError(response.status_code, response.content)
+        else:
+            attr = convert_json(json.loads(response.content), camel_to_snake)
         for key in attr:
             setattr(self, key, attr[key])
 

@@ -86,7 +86,7 @@ def convert_json(d, convert_function):
     dict_copy.pop("api", None)
 
     new = {}
-    for k, v in dict_copy.iteritems():
+    for k, v in dict_copy.items():
         new_v = v
         if isinstance(v, dict):
             new_v = convert_json(v, convert_function)
@@ -99,7 +99,7 @@ def convert_json(d, convert_function):
         new_key = convert_function(k)
 
         # manual fixes
-        for key, val in MANUAL_KEY_FIXES[convert_function.__name__].iteritems():
+        for key, val in MANUAL_KEY_FIXES[convert_function.__name__].items():
             if key in new_key:
                 if not (key == "d_c" and new_key == "light_generated_current"):       # edge case
                     new_key = new_key.replace(key, val)
@@ -120,7 +120,7 @@ def convert_json_list(l, convert_function):
         dict_copy.pop("api", None)
 
         new = {}
-        for k, v in dict_copy.iteritems():
+        for k, v in dict_copy.items():
             new_v = v
             if isinstance(v, dict):
                 new_v = convert_json(v, convert_function)
@@ -133,7 +133,7 @@ def convert_json_list(l, convert_function):
             new_key = convert_function(k)
 
             # manual fixes
-            for key, val in MANUAL_KEY_FIXES[convert_function.__name__].iteritems():
+            for key, val in MANUAL_KEY_FIXES[convert_function.__name__].items():
                 if key in new_key:
                     if not (key == "d_c" and new_key == "light_generated_current"):       # edge case
                         new_key = new_key.replace(key, val)

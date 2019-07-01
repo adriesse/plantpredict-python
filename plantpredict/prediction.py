@@ -1,8 +1,10 @@
 import requests
+import unittest
+
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.utilities import convert_json, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
-from plantpredict.enumerations import prediction_status_enum, entity_type_enum
+from plantpredict.enumerations import PredictionStatusEnum, EntityTypeEnum
 
 
 class Prediction(PlantPredictEntity):
@@ -11,7 +13,7 @@ class Prediction(PlantPredictEntity):
     :py:mod:`plantpredict.Project`.
     """
     def create(self, error_spa_var=2.0, error_model_acc=2.9, error_int_ann_var=3.0,
-               error_sens_acc=5.0, error_mon_acc=2.0, year_repeater=1, status=prediction_status_enum.DRAFT_PRIVATE):
+               error_sens_acc=5.0, error_mon_acc=2.0, year_repeater=1, status=PredictionStatusEnum.DRAFT_PRIVATE):
         """
         **POST** */Project/ :py:attr:`project_id` /Prediction*
 
@@ -37,7 +39,6 @@ class Prediction(PlantPredictEntity):
 
                     name; str; Name of prediction
                     project_id; int; ID of project within which to contain the prediction
-                    status; int; Represents the Prediction status (Draft-Private, Draft-Shared, Analysis, etc). Use :py:mod:`plantpredict.enumerations.prediction_status_enum`.
                     year_repeater; int; Must be between :py:data:`1` and :py:data:`50` - unitless.
 
         .. container:: toggle
@@ -60,11 +61,11 @@ class Prediction(PlantPredictEntity):
 
                 .. code-block:: python
 
-                    from plantpredict.enumerations import prediction_status_enum
+                    from plantpredict.enumerations import PredictionStatusEnum
 
                     prediction_to_create.name = "Test Prediction"
                     prediction_to_create.project_id = 1000
-                    prediction_to_create.status = prediction_status_enum.DRAFT_SHARED
+                    prediction_to_create.status = PredictionStatusEnum.DRAFT_SHARED
                     prediction_to_create.year_repeater = 1
 
                 ...OR via dictionary assignment.
@@ -74,7 +75,7 @@ class Prediction(PlantPredictEntity):
                     prediction_to_create.__dict__ = {
                         "name": "Test Prediction",
                         "model": "Test Module",
-                        "status": prediction_status_enum.DRAFT_SHARED,
+                        "status": PredictionStatusEnum.DRAFT_SHARED,
                         "year_repeater": 1,
                     }
 
@@ -85,7 +86,7 @@ class Prediction(PlantPredictEntity):
 
                     prediction_to_create.create()
 
-                    print prediction_to_create.id
+                    print(prediction_to_create.id)
 
         :return: A dictionary containing the prediction id.
         :rtype: dict
@@ -231,13 +232,13 @@ class Prediction(PlantPredictEntity):
 
         new_prediction.__dict__ = self.__dict__
         # initialize necessary fields
-        new_prediction.__dict__.pop('prediction_id', None)
+        new_prediction.__dict__.pop('id', None)
         new_prediction.__dict__.pop('created_date', None)
         new_prediction.__dict__.pop('last_modified', None)
         new_prediction.__dict__.pop('last_modified_by', None)
         new_prediction.__dict__.pop('last_modified_by_id', None)
         new_prediction.__dict__.pop('project', None)
-        new_prediction.__dict__.pop('power_plant_id', None)
+        new_prediction.__dict__.pop('powerplant_id', None)
         new_prediction.__dict__.pop('powerplant', None)
 
         new_prediction.name = new_prediction_name
@@ -284,7 +285,7 @@ class Prediction(PlantPredictEntity):
             json=[{
                 "name": self.name,
                 "id": self.id,
-                "type": entity_type_enum.PREDICTION,
+                "type": EntityTypeEnum.PREDICTION,
                 "status": new_status,
                 "note": note
             }]
@@ -306,3 +307,7 @@ class Prediction(PlantPredictEntity):
         self.error_mon_acc = None
 
         super(Prediction, self).__init__(api)
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -2,10 +2,10 @@
 documentation located at https://plantpredict-python.readthedocs.io."""
 
 import plantpredict
-from plantpredict.enumerations import prediction_status_enum, transposition_model_enum, spectral_shift_model_enum, \
-    diffuse_direct_decomposition_model_enum, module_temperature_model_enum, incidence_angle_model_type_enum, \
-    air_mass_model_type_enum, direct_beam_shading_model_enum, soiling_model_type_enum, degradation_model_enum, \
-    tracking_type_enum, backtracking_type_enum, diffuse_shading_model_enum
+from plantpredict.enumerations import PredictionStatusEnum, TranspositionModelEnum, SpectralShiftModelEnum, \
+    DiffuseDirectDecompositionModelEnum, ModuleTemperatureModelEnum, IncidenceAngleModelTypeEnum, \
+    AirMassModelTypeEnum, DirectBeamShadingModelEnum, SoilingModelTypeEnum, DegradationModelEnum, \
+    TrackingTypeEnum, BacktrackingTypeEnum, DiffuseShadingModelEnum
 
 # authenticate using API credentials
 api = plantpredict.Api(
@@ -40,15 +40,15 @@ prediction.end = weather.end_date
 
 # Set ALL of the model options on the prediction using the enumerations library in plantpredict.enumerations similar to
 # code below, but to your preferences.
-prediction.diffuse_direct_decomp_model = diffuse_direct_decomposition_model_enum.NONE
-prediction.transposition_model = transposition_model_enum.PEREZ
-prediction.mod_temp_model = module_temperature_model_enum.HEAT_BALANCE
-prediction.inc_angle_model = incidence_angle_model_type_enum.TABULAR_IAM
-prediction.spectral_shift_model = spectral_shift_model_enum.TWO_PARAM_PWAT_AND_AM
-prediction.air_mass_model = air_mass_model_type_enum.BIRD_HULSTROM
-prediction.direct_beam_shading_model = direct_beam_shading_model_enum.LINEAR
-prediction.diffuse_shading_model = diffuse_shading_model_enum.SCHAAR_PANCHULA
-prediction.soiling_model = soiling_model_type_enum.CONSTANT_MONTHLY
+prediction.diffuse_direct_decomp_model = DiffuseDirectDecompositionModelEnum.NONE
+prediction.transposition_model = TranspositionModelEnum.PEREZ
+prediction.mod_temp_model = ModuleTemperatureModelEnum.HEAT_BALANCE
+prediction.inc_angle_model = IncidenceAngleModelTypeEnum.TABULAR_IAM
+prediction.spectral_shift_model = SpectralShiftModelEnum.TWO_PARAM_PWAT_AND_AM
+prediction.air_mass_model = AirMassModelTypeEnum.BIRD_HULSTROM
+prediction.direct_beam_shading_model = DirectBeamShadingModelEnum.LINEAR
+prediction.diffuse_shading_model = DiffuseShadingModelEnum.SCHAAR_PANCHULA
+prediction.soiling_model = SoilingModelTypeEnum.CONSTANT_MONTHLY
 prediction.monthly_factors = [
     {"month": 1, "month_name": "Jan", "albedo": 0.2, "soiling_loss": 2.0},
     {"month": 2, "month_name": "Feb", "albedo": 0.2, "soiling_loss": 2.0},
@@ -66,7 +66,7 @@ prediction.monthly_factors = [
 prediction.diffuse_direct_decomp_model_executed = True
 prediction.use_meteo_dni = False
 prediction.use_meteo_poai = False
-prediction.degradation_model = degradation_model_enum.LINEAR_DC
+prediction.degradation_model = DegradationModelEnum.LINEAR_DC
 prediction.linear_degradation_rate = 0.5
 prediction.first_year_degradation = False
 prediction.year_repeater = 3
@@ -76,7 +76,7 @@ prediction.create()
 
 # change the prediction's status to DRAFT-SHARED to make it accessible to other members of your team (or to another
 # relevant status)
-prediction.change_prediction_status(new_status=prediction_status_enum.DRAFT_SHARED, note="Changed for tutorial.")
+prediction.change_prediction_status(new_status=PredictionStatusEnum.DRAFT_SHARED, note="Changed for tutorial.")
 
 # instantiate a local instance of PowerPlant, assigning project_id and prediction_id
 powerplant = api.powerplant(project_id=project.id, prediction_id=prediction.id)
@@ -112,7 +112,7 @@ fixed_tilt_dc_field_name = powerplant.add_dc_field(
     ground_coverage_ratio=0.40,
     number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
     field_dc_power=field_dc_power,
-    tracking_type=tracking_type_enum.FIXED_TILT,
+    tracking_type=TrackingTypeEnum.FIXED_TILT,
     module_tilt=25.0,
     modules_high=4,
     modules_wired_in_series=10,
@@ -142,8 +142,8 @@ tracker_dc_field_name = powerplant.add_dc_field(
     ground_coverage_ratio=0.40,
     number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
     field_dc_power=field_dc_power,
-    tracking_type=tracking_type_enum.HORIZONTAL_TRACKER,
-    dc_field_backtracking_type=backtracking_type_enum.TRUE_TRACKING,
+    tracking_type=TrackingTypeEnum.HORIZONTAL_TRACKER,
+    dc_field_backtracking_type=BacktrackingTypeEnum.TRUE_TRACKING,
     modules_high=4,
     modules_wired_in_series=10,
     number_of_rows=100

@@ -10,7 +10,7 @@ from plantpredict.error_handlers import handle_refused_connection, handle_error_
 
 class Module(PlantPredictEntity):
     """
-    The :py:mod:`plantpredict.Module` entity models all of the characteristics of a photovoltaic solar module (panel).
+    The :py:mod:`Module` entity models all of the characteristics of a photovoltaic solar module (panel).
     """
     def create(self):
         """
@@ -39,9 +39,9 @@ class Module(PlantPredictEntity):
                     manufacturer; str; Module manufacturer
                     length; float; Long side of the module. Must be between :py:data:`0.0` and :py:data:`10000.0` - units :py:data:`[mm]`.
                     width; float; Short side of the module. Must be between :py:data:`0.0` and :py:data:`10000.0` - units :py:data:`[mm]`.
-                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
-                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
-                    construction_type; int; Represents the module construction (Glass-Glass, Glass-Backsheet). Use :py:mod:`plantpredict.enumerations.construction_type_enum`.
+                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.CellTechnologyTypeEnum`.
+                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.PVModelTypeEnum`.
+                    construction_type; int; Represents the module construction (Glass-Glass, Glass-Backsheet). Use :py:mod:`plantpredict.enumerations.ConstructionTypeEnum`.
                     stc_short_circuit_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
                     stc_open_circuit_voltage; float; Must be between :py:data:`0.4` and :py:data:`1000.0` - units :py:data:`[V]`.
                     stc_mpp_current; float; Must be between :py:data:`0.1` and :py:data:`100.0` - units :py:data:`[A]`.
@@ -59,8 +59,8 @@ class Module(PlantPredictEntity):
                     bandgap_voltage; float; Must be between :py:data:`0.5` and :py:data:`4.0` - units :py:data:`[V]`.
                     heat_absorption_coef_alpha_t; float; Must be between :py:data:`0.1` and :py:data:`1.0`.
                     reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`.
-                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
-                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0` - units :py:data:`[V]`
+                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.PVModelTypeEnum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
+                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.PVModelTypeEnum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0` - units :py:data:`[V]`
 
         .. container:: toggle
 
@@ -82,16 +82,16 @@ class Module(PlantPredictEntity):
 
                 .. code-block:: python
 
-                    from plantpredict.enumerations import cell_technology_type_enum, pv_model_type_enum, construction_type_enum_type
+                    from plantpredict.enumerations import CellTechnologyTypeEnum, PVModelTypeEnum, ConstructionTypeEnum
 
                     module_to_create.name = "Test Module"
                     module_to_create.model = "Test Module"
                     module_to_create.manufacturer = "Solar Company"
                     module_to_create.length = 2009
                     module_to_create.width = 1232
-                    module_to_create.cell_technology_type = cell_technology_type_enum.CDTE
-                    module_to_create.pv_model = pv_model_type_enum.ONE_DIODE_RECOMBINATION
-                    module_to_create.construction_type = construction_type_enum.GLASS_GLASS
+                    module_to_create.cell_technology_type = CellTechnologyTypeEnum.CDTE
+                    module_to_create.pv_model = PVModelTypeEnum.ONE_DIODE_RECOMBINATION
+                    module_to_create.construction_type = ConstructionTypeEnum.GLASS_GLASS
                     module_to_create.stc_short_circuit_current = 2.54
                     module_to_create.stc_open_circuit_voltage = 219.2
                     module_to_create.stc_mpp_current = 2.355
@@ -124,9 +124,9 @@ class Module(PlantPredictEntity):
                         "manufacturer": "Solar Company",
                         "length": 2009,
                         "width": 1232,
-                        "cell_technology_type": cell_technology_type_enum.CDTE,
-                        "pv_model": pv_model_type_enum.ONE_DIODE_RECOMBINATION,
-                        "construction_type": construction_type_enum.GLASS_GLASS,
+                        "cell_technology_type": CellTechnologyTypeEnum.CDTE,
+                        "pv_model": PVModelTypeEnum.ONE_DIODE_RECOMBINATION,
+                        "construction_type": ConstructionTypeEnum.GLASS_GLASS,
                         "stc_short_circuit_current": 2.54,
                         "stc_open_circuit_voltage": 219.2,
                         "stc_mpp_current": 2.355,
@@ -154,7 +154,7 @@ class Module(PlantPredictEntity):
 
                     module_to_create.create()
 
-                    print module_to_create.id
+                    print(module_to_create.id)
 
         :return: A dictionary containing the module id.
         :rtype: dict
@@ -173,7 +173,7 @@ class Module(PlantPredictEntity):
         if not hasattr(self, 'stc_efficiency') or self.stc_efficiency == 0:
             self.stc_efficiency = self.stc_max_power / (self.area * 1000.0)
 
-        super(Module, self).create()
+        return super(Module, self).create()
 
     def delete(self):
         """
@@ -208,7 +208,7 @@ class Module(PlantPredictEntity):
         :rtype: dict
         """
         self.delete_url_suffix = "/Module/{}".format(self.id)
-        super(Module, self).delete()
+        return super(Module, self).delete()
 
     def get(self):
         """
@@ -252,7 +252,7 @@ class Module(PlantPredictEntity):
         :rtype: dict
         """
         self.get_url_suffix = "/Module/{}".format(self.id)
-        super(Module, self).get()
+        return super(Module, self).get()
 
     def update(self):
         """
@@ -302,8 +302,8 @@ class Module(PlantPredictEntity):
         :return: A dictionary {"is_successful": True}.
         :rtype: dict
         """
-        self.update_url_suffix = "/Module/{}".format(self.id)
-        super(Module, self).update()
+        self.update_url_suffix = "/Module"
+        return super(Module, self).update()
 
     @handle_refused_connection
     @handle_error_response
@@ -330,8 +330,8 @@ class Module(PlantPredictEntity):
                     :header: Field, Type, Description
                     :stub-columns: 1
 
-                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
-                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
+                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.CellTechnologyTypeEnum`.
+                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.PVModelTypeEnum`.
                     number_of_cells_in_series; int; Number of cells in one string of cells - unitless
                     reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`. However, the calculation is always made at :py:data:`1000 W/m^2`.
                     reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`. However, the calculation is always made at :py:data:`25 deg-C`.
@@ -407,8 +407,8 @@ class Module(PlantPredictEntity):
                     :header: Field, Type, Description
                     :stub-columns: 1
 
-                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
-                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
+                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.CellTechnologyTypeEnum`.
+                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.PVModelTypeEnum`.
                     number_of_cells_in_series; int; Number of cells in one string of cells - unitless
                     reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`. However, the calculation is always made at :py:data:`1000 W/m^2`.
                     reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`. However, the calculation is always made at :py:data:`25 deg-C`.
@@ -422,10 +422,10 @@ class Module(PlantPredictEntity):
                     series_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100.0` - units :py:data:`[Ohms]`
                     shunt_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
                     dark_shunt_resistance; float; Must be between :py:data:`100.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
-                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0`
+                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.PVModelTypeEnum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0`
                     exponential_dependency_on_shunt_resistance; float; Must be between :py:data:`1.0` and :py:data:`100.0` - unitless.
                     bandgap_voltage; float; Must be between :py:data:`0.5` and :py:data:`4.0` - units :py:data:`[V]`.
-                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
+                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.PVModelTypeEnum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
 
         .. container:: toggle
 
@@ -486,8 +486,8 @@ class Module(PlantPredictEntity):
                     :stub-columns: 1
 
                     effective_irradiance_response; list of dict; Contains irradiance/temperature conditions at which to calculate relative efficiency. See example code below for usage.
-                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
-                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
+                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.CellTechnologyTypeEnum`.
+                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.PVModelTypeEnum`.
                     number_of_cells_in_series; int; Number of cells in one string of cells - unitless
                     reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`. However, only the irradiance values provided in :py:attr:`effective_irradiance_response are used in this calculation.
                     reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`. However, only the temperature values provided in :py:attr:`effective_irradiance_response are used in this calculation.
@@ -501,10 +501,10 @@ class Module(PlantPredictEntity):
                     series_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100.0` - units :py:data:`[Ohms]`
                     shunt_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
                     dark_shunt_resistance; float; Must be between :py:data:`100.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
-                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0`
+                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.PVModelTypeEnum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0`
                     exponential_dependency_on_shunt_resistance; float; Must be between :py:data:`1.0` and :py:data:`100.0` - unitless.
                     bandgap_voltage; float; Must be between :py:data:`0.5` and :py:data:`4.0` - units :py:data:`[V]`.
-                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
+                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.PVModelTypeEnum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
                     saturation_current_at_stc; float; Must be between :py:data:`1e-13` and :py:data:`1e-6` - units :py:data:`[A]`.
                     diode_ideality_factor_at_stc; float; Must be between :py:data:`0.1` and :py:data:`5.0` - unitless.
                     linear_temp_dependence_on_gamma; float; Must be between :py:data:`-3.0` and :py:data:`3.0` - units :py:data:`[%/deg-C]`.
@@ -601,8 +601,8 @@ class Module(PlantPredictEntity):
                     :stub-columns: 1
 
                     effective_irradiance_response; list of dict; List of dictionaries each containing temperature, irradiance, and the target efficiency relative to STC at those conditions.
-                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
-                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
+                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.CellTechnologyTypeEnum`.
+                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.PVModelTypeEnum`.
                     number_of_cells_in_series; int; Number of cells in one string of cells - unitless
                     reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`. While required, this value isn't used in the calculation.
                     reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`. While required, this value isn't used in the calculation.
@@ -616,10 +616,10 @@ class Module(PlantPredictEntity):
                     series_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100.0` - units :py:data:`[Ohms]`
                     shunt_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
                     dark_shunt_resistance; float; Must be between :py:data:`100.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
-                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0`
+                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.PVModelTypeEnum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0`
                     exponential_dependency_on_shunt_resistance; float; Must be between :py:data:`1.0` and :py:data:`100.0` - unitless.
                     bandgap_voltage; float; Must be between :py:data:`0.5` and :py:data:`4.0` - units :py:data:`[V]`.
-                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
+                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.PVModelTypeEnum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
                     saturation_current_at_stc; float; Must be between :py:data:`1e-13` and :py:data:`1e-6` - units :py:data:`[A]`.
                     diode_ideality_factor_at_stc; float; Must be between :py:data:`0.1` and :py:data:`5.0` - unitless.
                     linear_temp_dependence_on_gamma; float; Must be between :py:data:`-3.0` and :py:data:`3.0` - units :py:data:`[%/deg-C]`.
@@ -1006,8 +1006,8 @@ class Module(PlantPredictEntity):
                     :header: Field, Type, Description
                     :stub-columns: 1
 
-                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.cell_technology_type_enum`.
-                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.pv_model_type_enum`.
+                    cell_technology_type; int; Represents the cell technology type (CdTe, poly c-Si PERC, etc). Use :py:mod:`plantpredict.enumerations.CellTechnologyTypeEnum`.
+                    pv_model; int; Represents the 1-diode model type (1-Diode, 1-Diode with recombination). Use :py:mod:`plantpredict.enumerations.PVModelTypeEnum`.
                     number_of_cells_in_series; int; Number of cells in one string of cells - unitless
                     reference_irradiance; float; Must be between :py:data:`400.0` and :py:data:`1361.0` - units :py:data:`[W/m^2]`. The IV curve will represent this irradiance.
                     reference_temperature; float; Must be between :py:data:`-20.0` and :py:data:`80.0` - units :py:data:`[deg-C]`. The IV curve will represent this temperature.
@@ -1021,10 +1021,10 @@ class Module(PlantPredictEntity):
                     series_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100.0` - units :py:data:`[Ohms]`
                     shunt_resistance_at_stc; float; Must be between :py:data:`0.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
                     dark_shunt_resistance; float; Must be between :py:data:`100.0` and :py:data:`100000.0` - units :py:data:`[Ohms]`.
-                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0`
+                    recombination_parameter; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.PVModelTypeEnum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`30.0`
                     exponential_dependency_on_shunt_resistance; float; Must be between :py:data:`1.0` and :py:data:`100.0` - unitless.
                     bandgap_voltage; float; Must be between :py:data:`0.5` and :py:data:`4.0` - units :py:data:`[V]`.
-                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.pv_model_type_enum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
+                    built_in_voltage; float; Required only if :py:attr:`pv_model` is :py:data:`plantpredict.enumerations.PVModelTypeEnum.ONE_DIODE_RECOMBINATION`. Must be between :py:data:`0.0` and :py:data:`3.0` - units :py:data:`[V]`.
                     saturation_current_at_stc; float; Must be between :py:data:`1e-13` and :py:data:`1e-6` - units :py:data:`[A]`.
                     diode_ideality_factor_at_stc; float; Must be between :py:data:`0.1` and :py:data:`5.0` - unitless.
                     linear_temp_dependence_on_gamma; float; Must be between :py:data:`-3.0` and :py:data:`3.0` - units :py:data:`[%/deg-C]`.

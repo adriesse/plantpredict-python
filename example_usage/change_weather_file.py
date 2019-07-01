@@ -2,7 +2,7 @@
 section of the documentation located at https://plantpredict-python.readthedocs.io."""
 
 import plantpredict
-from plantpredict.enumerations import weather_data_provider_enum
+from plantpredict.enumerations import WeatherDataProviderEnum
 
 # authenticate using API credentials
 api = plantpredict.Api(
@@ -31,7 +31,7 @@ weathers = w.search(project.latitude, project.longitude, search_radius=5)
 
 # filter the results by only Meteonorm weather files
 weathers_meteo = [
-    weather for weather in weathers if int(weather['data_provider']) == weather_data_provider_enum.METEONORM
+    weather for weather in weathers if int(weather['data_provider']) == WeatherDataProviderEnum.METEONORM
 ]
 
 # if there is a weather file that meets the criteria, used the most recently created weather file's ID.
@@ -43,7 +43,7 @@ if weathers_meteo:
     weather_id = weathers_meteo[idx]['id']
 else:
     weather = api.weather()
-    response = weather.download(project.latitude, project.longitude, provider=weather_data_provider_enum.METEONORM)
+    response = weather.download(project.latitude, project.longitude, provider=WeatherDataProviderEnum.METEONORM)
     weather_id = weather.id
 
 # instantiate weather using the weather ID, and retrieve all of its attributes

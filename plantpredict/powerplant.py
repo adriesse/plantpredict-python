@@ -1,7 +1,8 @@
+import copy
+
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
-from plantpredict.enumerations import module_orientation_enum
-import copy
+from plantpredict.enumerations import ModuleOrientationEnum
 
 
 class PowerPlant(PlantPredictEntity):
@@ -58,8 +59,11 @@ class PowerPlant(PlantPredictEntity):
         """
 
         :param use_energization_date:
+        :type use_energization_date: bool
         :param energization_date:
-        :return:
+        :type energization_date: str
+        :return: Block name, which is an integer identifier.
+        :rtype: int
         """
         block = {
             "name": 1 if not self.blocks else len(self.blocks) + 1,
@@ -230,7 +234,7 @@ class PowerPlant(PlantPredictEntity):
         :param vertical_intermodule_gap:
         :return:
         """
-        module_bandwidth = module_width if module_orientation == module_orientation_enum.LANDSCAPE else module_length
+        module_bandwidth = module_width if module_orientation == ModuleOrientationEnum.LANDSCAPE else module_length
 
         return modules_high * module_bandwidth / 1000 + (modules_high - 1) * vertical_intermodule_gap
 

@@ -2,7 +2,7 @@
 at https://plantpredict-python.readthedocs.io."""
 
 import plantpredict
-from plantpredict.enumerations import transposition_model_enum
+from plantpredict.enumerations import TranspositionModelEnum
 
 # authenticate using API credentials
 api = plantpredict.Api(
@@ -24,5 +24,5 @@ new_prediction_id = prediction_to_clone.clone(new_prediction_name='Cloned Predic
 # update transposition model of new prediction
 new_prediction = api.prediction(id=new_prediction_id, project_id=project_id)
 new_prediction.get()
-new_prediction.transposition_model = transposition_model_enum.HAY
+new_prediction.transposition_model = TranspositionModelEnum.HAY
 new_prediction.update()
