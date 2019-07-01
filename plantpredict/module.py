@@ -70,9 +70,9 @@ class Module(PlantPredictEntity):
 
             .. container:: example_code
 
-                First, import the plantpredict library and receive an authentication plantpredict.settings.TOKEN in your
-                Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
-                object.
+                First, import the plantpredict library and create an instance of :py:mod:`plantpredict.api.Api` in your
+                Python session, to authenticate as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a
+                local :py:mod:`plantpredict.module.Module` object.
 
                 .. code-block:: python
 
@@ -190,9 +190,10 @@ class Module(PlantPredictEntity):
 
             .. container:: example_code
 
-                First, import the plantpredict library and receive an authentication plantpredict.settings.TOKEN in your
-                Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
-                object with the :py:attr:`id` of the target Module in the PlantPredict database.
+                First, import the plantpredict library and create an instance of :py:mod:`plantpredict.api.Api` in your
+                Python session, to authenticate as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a
+                local :py:mod:`plantpredict.module.Module` object with the :py:attr:`id` of the target Module in the
+                PlantPredict database.
 
                 .. code-block:: python
 
@@ -226,9 +227,10 @@ class Module(PlantPredictEntity):
 
             .. container:: example_code
 
-                First, import the plantpredict library and receive an authentication plantpredict.settings.TOKEN in your
-                Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
-                object with the :py:attr:`id` of the target module in the PlantPredict database.
+                First, import the plantpredict library and create an instance of :py:mod:`plantpredict.api.Api` in your
+                Python session, to authenticate as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a
+                local :py:mod:`plantpredict.module.Module` object with the :py:attr:`id` of the target module in the
+                PlantPredict database.
 
                 .. code-block:: python
 
@@ -271,9 +273,10 @@ class Module(PlantPredictEntity):
 
             .. container:: example_code
 
-                First, import the plantpredict library and receive an authentication plantpredict.settings.TOKEN in your
-                Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
-                object with the :py:attr:`id` of the target module in the PlantPredict database.
+                First, import the plantpredict library and create an instance of :py:mod:`plantpredict.api.Api` in your
+                Python session, to authenticate as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a
+                local :py:mod:`plantpredict.module.Module` object with the :py:attr:`id` of the target module in the
+                PlantPredict database.
 
                 .. code-block:: python
 
@@ -518,11 +521,12 @@ class Module(PlantPredictEntity):
 
             .. container:: example_code
 
-                First, import the plantpredict library and receive an authentication plantpredict.settings.TOKEN in your
-                Python session, as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a local Module
-                object as shown in previous examples. Then, assuming that all of the other required attributes have
-                been assigned to the local object, assign the attribute :py:attr:`effective_irradiance_response` as
-                follows (this determines which conditions the relative efficiencies will be calculated at):
+                First, import the plantpredict library and create an instance of :py:mod:`plantpredict.api.Api` in your
+                Python session, to authenticate as shown in Step 3 of :ref:`authentication_oauth2`. Then instantiate a
+                local :py:mod:`plantpredict.module.Module` object as shown in previous examples. Then, assuming that all
+                of the other required attributes have been assigned to the local object, assign the attribute
+                :py:attr:`effective_irradiance_response` as follows (this determines which conditions the relative
+                efficiencies will be calculated at):
 
                 .. code-block:: python
 

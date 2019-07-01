@@ -39,7 +39,7 @@ Click on "Generate API Credentials" on the top right of the next page.
 .. image:: _images/generate_api_credentials_button.png
     :align: center
 
-Copy each credential to your clipboard to be pasted into :file:`plantpredict.settings` in step 2.
+Copy each credential to your clipboard to be stored securely (step 2).
 
 .. image:: _images/client_credentials.png
     :align: center
