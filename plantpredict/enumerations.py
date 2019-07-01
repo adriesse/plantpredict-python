@@ -308,7 +308,10 @@ class WeatherPLevelEnum(object):
 
 
 class WeatherSourceTypeAPIEnum(object):
-    """Weather Source Type API (web-service downloadable vendors)"""
+    """
+    Weather Source Type API (web-service downloadable vendors). This Enum is used when calling
+    :py:meth:`~plantpredict.weather.Weather.download`.
+    """
     UNKNOWN = 0   # Default
     METEONORM = 1
     CPR_SOLAR_ANYWHERE = 2
