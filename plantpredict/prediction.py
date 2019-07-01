@@ -4,7 +4,7 @@ import unittest
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.utilities import convert_json, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
-from plantpredict.enumerations import prediction_status_enum, EntityTypeEnum
+from plantpredict.enumerations import PredictionStatusEnum, EntityTypeEnum
 
 
 class Prediction(PlantPredictEntity):
@@ -13,7 +13,7 @@ class Prediction(PlantPredictEntity):
     :py:mod:`plantpredict.Project`.
     """
     def create(self, error_spa_var=2.0, error_model_acc=2.9, error_int_ann_var=3.0,
-               error_sens_acc=5.0, error_mon_acc=2.0, year_repeater=1, status=prediction_status_enum.DRAFT_PRIVATE):
+               error_sens_acc=5.0, error_mon_acc=2.0, year_repeater=1, status=PredictionStatusEnum.DRAFT_PRIVATE):
         """
         **POST** */Project/ :py:attr:`project_id` /Prediction*
 
@@ -61,11 +61,11 @@ class Prediction(PlantPredictEntity):
 
                 .. code-block:: python
 
-                    from plantpredict.enumerations import prediction_status_enum
+                    from plantpredict.enumerations import PredictionStatusEnum
 
                     prediction_to_create.name = "Test Prediction"
                     prediction_to_create.project_id = 1000
-                    prediction_to_create.status = prediction_status_enum.DRAFT_SHARED
+                    prediction_to_create.status = PredictionStatusEnum.DRAFT_SHARED
                     prediction_to_create.year_repeater = 1
 
                 ...OR via dictionary assignment.
@@ -75,7 +75,7 @@ class Prediction(PlantPredictEntity):
                     prediction_to_create.__dict__ = {
                         "name": "Test Prediction",
                         "model": "Test Module",
-                        "status": prediction_status_enum.DRAFT_SHARED,
+                        "status": PredictionStatusEnum.DRAFT_SHARED,
                         "year_repeater": 1,
                     }
 

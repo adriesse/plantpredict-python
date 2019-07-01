@@ -61,20 +61,20 @@ your preferences.
 
 .. code-block:: python
 
-    from plantpredict.enumerations import prediction_status_enum, transposition_model_enum, spectral_shift_model_enum, \
-        diffuse_direct_decomposition_model_enum, module_temperature_model_enum, incidence_angle_model_type_enum, \
-        air_mass_model_type_enum, direct_beam_shading_model_enum, soiling_model_type_enum, degradation_model_enum, \
-        tracking_type_enum, backtracking_type_enum, diffuse_shading_model_enum
+    from plantpredict.enumerations import PredictionStatusEnum, TranspositionModelEnum, SpectralShiftModelEnum, \
+        DiffuseDirectDecompositionModelEnum, ModuleTemperatureModelEnum, IncidenceAngleModelTypeEnum, \
+        AirMassModelTypeEnum, DirectBeamShadingModelEnum, SoilingModelTypeEnum, DegradationModelEnum, \
+        TrackingTypeEnum, BacktrackingTypeEnum, DiffuseShadingModelEnum
 
-    prediction.diffuse_direct_decomp_model = diffuse_direct_decomposition_model_enum.NONE
-    prediction.transposition_model = transposition_model_enum.PEREZ
-    prediction.mod_temp_model = module_temperature_model_enum.HEAT_BALANCE
-    prediction.inc_angle_model = incidence_angle_model_type_enum.TABULAR_IAM
-    prediction.spectral_shift_model = spectral_shift_model_enum.TWO_PARAM_PWAT_AND_AM
-    prediction.air_mass_model = air_mass_model_type_enum.BIRD_HULSTROM
-    prediction.direct_beam_shading_model = direct_beam_shading_model_enum.LINEAR
-    prediction.diffuse_shading_model = diffuse_shading_model_enum.SCHAAR_PANCHULA
-    prediction.soiling_model = soiling_model_type_enum.CONSTANT_MONTHLY
+    prediction.diffuse_direct_decomp_model = DiffuseDirectDecompositionModelEnum.NONE
+    prediction.transposition_model = TranspositionModelEnum.PEREZ
+    prediction.mod_temp_model = ModuleTemperatureModelEnum.HEAT_BALANCE
+    prediction.inc_angle_model = IncidenceAngleModelTypeEnum.TABULAR_IAM
+    prediction.spectral_shift_model = SpectralShiftModelEnum.TWO_PARAM_PWAT_AND_AM
+    prediction.air_mass_model = AirMassModelTypeEnum.BIRD_HULSTROM
+    prediction.direct_beam_shading_model = DirectBeamShadingModelEnum.LINEAR
+    prediction.diffuse_shading_model = DiffuseShadingModelEnum.SCHAAR_PANCHULA
+    prediction.soiling_model = SoilingModelTypeEnum.CONSTANT_MONTHLY
     prediction.monthly_factors = [
         {"month": 1, "month_name": "Jan", "albedo": 0.2, "soiling_loss": 2.0},
         {"month": 2, "month_name": "Feb", "albedo": 0.2, "soiling_loss": 2.0},
@@ -92,7 +92,7 @@ your preferences.
     prediction.diffuse_direct_decomp_model_executed = True
     prediction.use_meteo_dni = False
     prediction.use_meteo_poai = False
-    prediction.degradation_model = degradation_model_enum.LINEAR_DC
+    prediction.degradation_model = DegradationModelEnum.LINEAR_DC
     prediction.linear_degradation_rate = 0.5
     prediction.first_year_degradation = False
     prediction.year_repeater = 3
@@ -103,12 +103,12 @@ Create the prediction in the PlantPredict database.
 
     prediction.create()
 
-Change the prediction's status to :py:data:`prediction_status_enum.DRAFT-SHARED` to make it
+Change the prediction's status to :py:data:`PredictionStatusEnum.DRAFT-SHARED` to make it
 accessible to other members of your team (or to another relevant status).
 
 .. code-block:: python
 
-    prediction.change_prediction_status(new_status=prediction_status_enum.DRAFT_SHARED, note="Changed for tutorial.")
+    prediction.change_prediction_status(new_status=PredictionStatusEnum.DRAFT_SHARED, note="Changed for tutorial.")
 
 Instantiate a local instance of :py:class:`~plantpredict.powerplant.PowerPlant`, assigning its :py:data:`project_id` and
 :py:data:`prediction_id`.
@@ -160,7 +160,7 @@ configurations, perform a custom calculation for number of strings in parallel a
         ground_coverage_ratio=0.40,
         number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
         field_dc_power=field_dc_power,
-        tracking_type=tracking_type_enum.FIXED_TILT,
+        tracking_type=TrackingTypeEnum.FIXED_TILT,
         module_tilt=25.0,
         modules_high=4,
         modules_wired_in_series=10,
@@ -198,8 +198,8 @@ and field dc power calculated previously can be used.
         ground_coverage_ratio=0.40,
         number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
         field_dc_power=field_dc_power,
-        tracking_type=tracking_type_enum.HORIZONTAL_TRACKER,
-        dc_field_backtracking_type=backtracking_type_enum.TRUE_TRACKING,
+        tracking_type=TrackingTypeEnum.HORIZONTAL_TRACKER,
+        dc_field_backtracking_type=BacktrackingTypeEnum.TRUE_TRACKING,
         modules_high=4,
         modules_wired_in_series=10,
         number_of_rows=100
@@ -311,8 +311,8 @@ If you wish to change something about the new prediction, instantiate a new
 
     new_prediction = api.prediction(id=new_prediction_id, project_id=project_id)
     new_prediction.get()
-    from plantpredict.enumerations import transposition_model_enum    # import at the top of the file
-    new_prediction.transposition_model = transposition_model_enum.HAY
+    from plantpredict.enumerations import TranspositionModelEnum    # import at the top of the file
+    new_prediction.transposition_model = TranspositionModelEnum.HAY
     new_prediction.update()
 
 
@@ -391,9 +391,9 @@ Filter the results by only Meteonorm weather files.
 
 .. code-block:: python
 
-    from plantpredict.enumerations import weather_data_provider_enum  # should import at the top of your file
+    from plantpredict.enumerations import WeatherDataProviderEnum  # should import at the top of your file
     weathers_meteo = [
-        weather for weather in weathers if int(weather['data_provider']) == weather_data_provider_enum.METEONORM
+        weather for weather in weathers if int(weather['data_provider']) == WeatherDataProviderEnum.METEONORM
        ]
 
 If there is a weather file that meets the criteria, used the most recently created weather file's ID. If no weather file
@@ -408,7 +408,7 @@ meets the criteria, download a new Meteonorm weather file and use that ID.
         weather_id = weathers_meteo[idx]['id']
     else:
         weather = api.weather()
-        response = weather.download(project.latitude, project.longitude, provider=weather_data_provider_enum.METEONORM)
+        response = weather.download(project.latitude, project.longitude, provider=WeatherDataProviderEnum.METEONORM)
         weather_id = weather.id
 
 Instantiate weather using the weather ID and retrieve all of its attributes.
@@ -468,14 +468,14 @@ is assigned to `weather.weather_details` at this point.
 
 .. code-block:: python
 
-    from plantpredict.enumerations import weather_data_provider_enum
+    from plantpredict.enumerations import WeatherDataProviderEnum
     weather = api.weather()
     weather.name = "Python SDK Test Weather"
     weather.latitude = 35.0
     weather.longitude = -119.0
     weather.country = location_info['country']
     weather.country_code = location_info['country_code']
-    weather.data_provider = weather_data_provider_enum.METEONORM
+    weather.data_provider = WeatherDataProviderEnum.METEONORM
     weather.weather_details = weather_details
 
 Assign additional metadata fields.
@@ -488,9 +488,9 @@ Assign additional metadata fields.
     weather.state_province = location_info['state_province']
     weather.state_province_code = location_info['state_province_code']
     weather.time_zone = geo.get_time_zone()['time_zone']
-    weather.status = library_status_enum.DRAFT_PRIVATE
-    weather.data_type = weather_data_type_enum.MEASURED
-    weather.p_level = weather_plevel_enum.P95
+    weather.status = LibraryStatusEnum.DRAFT_PRIVATE
+    weather.data_type = WeatherDataTypeEnum.MEASURED
+    weather.p_level = WeatherPLevelEnum.P95
     weather.time_interval = 60  # minutes
     weather.global_horizontal_irradiance_sum = round(
         sum([w['global_horizontal_irradiance'] for w in weather_details])/1000, 2
@@ -526,10 +526,10 @@ Assign basic module parameters from the manufacturer's datasheet or similar data
 
 .. code-block:: python
 
-    from plantpredict.enumerations import cell_technology_type_enum, pv_model_type_enum
-    module.cell_technology_type = cell_technology_type_enum.CDTE
+    from plantpredict.enumerations import CellTechnologyTypeEnum, PVModelTypeEnum
+    module.cell_technology_type = CellTechnologyTypeEnum.CDTE
     module.number_of_cells_in_series = 264
-    module.pv_model = pv_model_type_enum.ONE_DIODE_RECOMBINATION
+    module.pv_model = PVModelTypeEnum.ONE_DIODE_RECOMBINATION
     module.reference_temperature = 25
     module.reference_irradiance = 1000
     module.stc_max_power = 430.0
@@ -603,14 +603,14 @@ Once the user is satisfied with the module parameters and performance, assign ot
 
 .. code-block:: python
 
-    from plantpredict.enumerations import construction_type_enum
+    from plantpredict.enumerations import ConstructionTypeEnum
     module.name = "Test Module"
     module.model = "Test Module"
     module.manufacturer = "Solar Company"
     module.length = 2009
     module.width = 1232
     module.heat_absorption_coef_alpha_t = 0.9
-    module.construction_type = construction_type_enum.GLASS_GLASS
+    module.construction_type = ConstructionTypeEnum.GLASS_GLASS
 
 Create a new :py:mod:`plantpredict.module.Module` in the PlantPredict database.
 

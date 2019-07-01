@@ -35,7 +35,7 @@ class Weather(PlantPredictEntity):
                     country; str; Full name of the country of the Weather's location. :py:meth:`plantpredict.Geo.get_location_info` will return this information.
                     latitude; float; North-South coordinate of the Weather location (in decimal degrees).
                     longitude; float; East-West coordinate of the Weather location (in decimal degrees).
-                    data_provider; int; Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.weather_data_provider_enum` for a list of options.
+                    data_provider; int; Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.WeatherDataProviderEnum` for a list of options.
                     weather_details; list of dict; The code block below contains an example of one timestamp (array element) of this field, as well as information on which dictionary keys are required.
 
                 .. code-block:: python
@@ -167,7 +167,7 @@ class Weather(PlantPredictEntity):
         :type latitude: float
         :param longitude:
         :type longitude: float
-        :param provider: Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.weather_data_provider_enum` for a list of options.
+        :param provider: Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.WeatherDataProviderEnum` for a list of options.
         :type provider: int
         :return: #TODO
         :rtype: dict

@@ -1,7 +1,7 @@
 import json
 import plantpredict
-from plantpredict.enumerations import weather_data_provider_enum, library_status_enum, weather_data_type_enum, \
-    weather_plevel_enum
+from plantpredict.enumerations import WeatherDataProviderEnum, LibraryStatusEnum, WeatherDataTypeEnum, \
+    WeatherPLevelEnum
 import numpy as np
 
 
@@ -30,7 +30,7 @@ weather.latitude = 35.0
 weather.longitude = -119.0
 weather.country = location_info['country']
 weather.country_code = location_info['country_code']
-weather.data_provider = weather_data_provider_enum.METEONORM
+weather.data_provider = WeatherDataProviderEnum.METEONORM
 weather.weather_details = weather_details
 
 # populate additional weather metadata
@@ -40,9 +40,9 @@ weather.region = location_info['region']
 weather.state_province = location_info['state_province']
 weather.state_province_code = location_info['state_province_code']
 weather.time_zone = geo.get_time_zone()['time_zone']
-weather.status = library_status_enum.DRAFT_PRIVATE
-weather.data_type = weather_data_type_enum.MEASURED
-weather.p_level = weather_plevel_enum.P95
+weather.status = LibraryStatusEnum.DRAFT_PRIVATE
+weather.data_type = WeatherDataTypeEnum.MEASURED
+weather.p_level = WeatherPLevelEnum.P95
 weather.time_interval = 60  # minutes
 weather.global_horizontal_irradiance_sum = round(
     sum([w['global_horizontal_irradiance'] for w in weather_details])/1000, 2
