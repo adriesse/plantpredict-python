@@ -252,7 +252,7 @@ class Module(PlantPredictEntity):
         :rtype: dict
         """
         self.get_url_suffix = "/Module/{}".format(self.id)
-        return (Module, self).get()
+        return super(Module, self).get()
 
     def update(self):
         """

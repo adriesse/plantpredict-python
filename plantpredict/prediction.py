@@ -39,7 +39,6 @@ class Prediction(PlantPredictEntity):
 
                     name; str; Name of prediction
                     project_id; int; ID of project within which to contain the prediction
-                    status; int; Represents the Prediction status (Draft-Private, Draft-Shared, Analysis, etc). Use :py:mod:`plantpredict.enumerations.prediction_status_enum`.
                     year_repeater; int; Must be between :py:data:`1` and :py:data:`50` - unitless.
 
         .. container:: toggle
