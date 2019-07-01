@@ -2,7 +2,7 @@
 section of the documentation located at https://plantpredict-python.readthedocs.io."""
 
 import plantpredict
-from plantpredict.enumerations import WeatherDataProviderEnum
+from plantpredict.enumerations import WeatherDataProviderEnum, WeatherSourceTypeAPIEnum
 
 # authenticate using API credentials
 api = plantpredict.Api(
@@ -43,7 +43,7 @@ if weathers_meteo:
     weather_id = weathers_meteo[idx]['id']
 else:
     weather = api.weather()
-    response = weather.download(project.latitude, project.longitude, provider=WeatherDataProviderEnum.METEONORM)
+    response = weather.download(project.latitude, project.longitude, provider=WeatherSourceTypeAPIEnum.METEONORM)
     weather_id = weather.id
 
 # instantiate weather using the weather ID, and retrieve all of its attributes

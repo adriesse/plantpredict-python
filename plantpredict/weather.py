@@ -167,7 +167,7 @@ class Weather(PlantPredictEntity):
         :type latitude: float
         :param longitude:
         :type longitude: float
-        :param provider: Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.WeatherDataProviderEnum` for a list of options.
+        :param provider: Represents a weather data source. See (and/or import) :py:mod:`plantpredict.enumerations.WeatherSourceTypeAPIEnum` for a list of options.
         :type provider: int
         :return: #TODO
         :rtype: dict

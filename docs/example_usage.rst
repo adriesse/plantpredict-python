@@ -401,6 +401,7 @@ meets the criteria, download a new Meteonorm weather file and use that ID.
 
 .. code-block:: python
 
+    from plantpredict.enumerations import WeatherSourceTypeAPIEnum
     if weathers_meteo:
         created_dates = [w['created_date'] for w in weathers_meteo]
         created_dates.sort()
@@ -408,7 +409,7 @@ meets the criteria, download a new Meteonorm weather file and use that ID.
         weather_id = weathers_meteo[idx]['id']
     else:
         weather = api.weather()
-        response = weather.download(project.latitude, project.longitude, provider=WeatherDataProviderEnum.METEONORM)
+        response = weather.download(project.latitude, project.longitude, provider=WeatherSourceTypeAPIEnum.METEONORM)
         weather_id = weather.id
 
 Instantiate weather using the weather ID and retrieve all of its attributes.
