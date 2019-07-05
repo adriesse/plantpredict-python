@@ -881,7 +881,7 @@ class Module(PlantPredictEntity):
         for key, grp in groupby(sorted(xls_data, key=grouper), grouper):
             temp_dict = dict(zip(["Temperature [deg-C]", "Irradiance [W/m2]"], key))
 
-            iv_points = [(item["I [A]"], item["[V]"]) for item in grp]
+            iv_points = [(item["I [A]"], item["V [V]"]) for item in grp]
             full_iv_curves_data.append({
                 "temperature": temp_dict["Temperature [deg-C]"],
                 "irradiance": temp_dict["Irradiance [W/m2]"],
@@ -973,9 +973,7 @@ class Module(PlantPredictEntity):
                 "SDK documentation (https://plantpredict-python.readthedocs.io/en/latest/) for more information."
             )
         elif file_path and iv_curve_data:
-            raise ValueError(
-                "Only one input option may be specified."
-            )
+            raise ValueError("Only one input option may be specified.")
 
         # if the user specifies a file_path to the .xlsx template, parse it
         elif file_path:
@@ -1076,30 +1074,30 @@ class Module(PlantPredictEntity):
             "data_points": self.generate_iv_curve()
         }])
 
-    @handle_error_response
-    @handle_refused_connection
-    def generate_single_diode_parameters_advanced_bulk(self, modules):
-        """
+    # @handle_error_response
+    # @handle_refused_connection
+    # def generate_single_diode_parameters_advanced_bulk(self, modules):
+    #    """
+    #
+    #    :param modules:
+    #    :return:
+    #    """
+    #    return requests.post(
+    #        url=self.api.base_url + "/Module/Generator/GenerateSingleDiodeParametersAdvancedBulk",
+    #        headers={"Authorization": "Bearer " + self.api.access_token},
+    #        json=convert_json_list(modules, snake_to_camel)
+    #    )
 
-        :param modules:
-        :return:
-        """
-        return requests.post(
-            url=self.api.base_url + "/Module/Generator/GenerateSingleDiodeParametersAdvancedBulk",
-            headers={"Authorization": "Bearer " + self.api.access_token},
-            json=convert_json_list(modules, snake_to_camel)
-        )
-
-    @handle_error_response
-    @handle_refused_connection
-    def optimize_series_resistance_bulk(self, modules):
-        """
-
-        :param modules:
-        :return:
-        """
-        return requests.post(
-            url=self.api.base_url + "/Module/Generator/OptimizeSeriesResistanceBulk",
-            headers={"Authorization": "Bearer " + self.api.access_token},
-            json=convert_json_list(modules, snake_to_camel)
-        )
+    #@handle_error_response
+    #@handle_refused_connection
+    #def optimize_series_resistance_bulk(self, modules):
+    #    """
+    #
+    #   :param modules:
+    #    :return:
+    #    """
+    #    return requests.post(
+    #        url=self.api.base_url + "/Module/Generator/OptimizeSeriesResistanceBulk",
+    #        headers={"Authorization": "Bearer " + self.api.access_token},
+    #        json=convert_json_list(modules, snake_to_camel)
+    #    )

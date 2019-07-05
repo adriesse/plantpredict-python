@@ -16,7 +16,7 @@ class PlantPredictEntity(object):
             json=convert_json(self.__dict__, snake_to_camel)
         )
 
-        # power plant is the exception that doesn't have its own id. has a project and prediction id ???
+        # power plant is the exception that doesn't have its own id. has a project and prediction id
         try:
             self.id = json.loads(response.content)['id'] if 200 <= response.status_code < 300 else None
         except ValueError:

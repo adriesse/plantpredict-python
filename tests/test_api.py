@@ -3,11 +3,11 @@ import mock
 
 import plantpredict
 from plantpredict import project, prediction, powerplant, geo, inverter, module, weather
-from tests.mocked_requests import mocked_requests_api
+from tests import mocked_requests
 
 
 class TestApi(unittest.TestCase):
-    @mock.patch('plantpredict.api.requests.post', new=mocked_requests_api.mocked_requests_post)
+    @mock.patch('plantpredict.api.requests.post', new=mocked_requests.mocked_requests_post)
     def setUp(self):
         self.api = plantpredict.Api(
             username="dummy username",
@@ -16,7 +16,7 @@ class TestApi(unittest.TestCase):
             client_secret="dummy client secret"
         )
 
-    @mock.patch('plantpredict.api.requests.post', new=mocked_requests_api.mocked_requests_post)
+    @mock.patch('plantpredict.api.requests.post', new=mocked_requests.mocked_requests_post)
     def test_refresh_access_token(self):
         self.api.refresh_access_token()
 

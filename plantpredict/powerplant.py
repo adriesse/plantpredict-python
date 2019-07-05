@@ -2,7 +2,7 @@ import copy
 
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
-from plantpredict.enumerations import ModuleOrientationEnum
+from plantpredict.enumerations import ModuleOrientationEnum, TrackingTypeEnum
 
 
 class PowerPlant(PlantPredictEntity):
@@ -147,12 +147,18 @@ class PowerPlant(PlantPredictEntity):
                      number_of_series_strings_wired_in_parallel, field_dc_power,
                      tracking_type, modules_high, modules_wired_in_series, module_azimuth=None, number_of_rows=None,
                      lateral_intermodule_gap=0.02, vertical_intermodule_gap=0.02, module_orientation=None,
-                     module_tilt=0.0, dc_field_backtracking_type=None, minimum_tracking_limit_angle_d=-60.0,
+                     module_tilt=None, dc_field_backtracking_type=None, minimum_tracking_limit_angle_d=-60.0,
                      maximum_tracking_limit_angle_d=60.0, sandia_conductive_coef=None, sandia_convective_coef=None,
                      cell_to_module_temp_diff=None, heat_balance_conductive_coef=None,
                      heat_balance_convective_coef=None, module_mismatch_coefficient=None, module_quality=None,
                      light_induced_degradation=None, tracker_load_loss=0.0, dc_wiring_loss_at_stc=0.0,
                      dc_health=0.0, array_based_shading=False):
+
+        # if tracking type is fixed tilt module tilt is required
+        if (tracking_type == TrackingTypeEnum.FIXED_TILT) and not module_tilt:
+            raise ValueError("The input module_tilt is required for a fixed tilt DC field.")
+        elif (tracking_type == TrackingTypeEnum.HORIZONTAL_TRACKER) and not dc_field_backtracking_type:
+            raise ValueError("The input dc_field_backtracking_type is required for a horizontal tracker DC field.")
 
         m = self.api.module(id=module_id)
         m.get()

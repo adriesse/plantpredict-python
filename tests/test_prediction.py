@@ -3,8 +3,7 @@ import json
 import unittest
 
 from plantpredict.prediction import Prediction
-from tests import plantpredict_unit_test_case
-from tests.mocked_requests import mocked_requests_prediction, mocked_requests_powerplant
+from tests import plantpredict_unit_test_case, mocked_requests
 
 
 class TestPrediction(plantpredict_unit_test_case.PlantPredictUnitTestCase):
@@ -45,17 +44,16 @@ class TestPrediction(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self.assertTrue(mocked_update.called)
 
     @mock.patch('plantpredict.prediction.Prediction._wait_for_prediction')
-    @mock.patch('plantpredict.prediction.requests.post', new=mocked_requests_prediction.mocked_requests_post)
+    @mock.patch('plantpredict.prediction.requests.post', new=mocked_requests.mocked_requests_post)
     def test_run(self, mocked_wait_for_prediction):
         self._make_mocked_api()
         prediction = Prediction(api=self.mocked_api, project_id=710, id=555)
 
-        response = prediction.run()
+        is_success = prediction.run()
         self.assertTrue(mocked_wait_for_prediction.called)
-        self.assertEqual(json.loads(response.content), {})
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(is_success["is_successful"], True)
 
-    @mock.patch('plantpredict.prediction.requests.get', new=mocked_requests_prediction.mocked_requests_get)
+    @mock.patch('plantpredict.prediction.requests.get', new=mocked_requests.mocked_requests_get)
     def test_get_results_summary(self):
         self._make_mocked_api()
         prediction = Prediction(api=self.mocked_api, project_id=710, id=555)
@@ -65,7 +63,7 @@ class TestPrediction(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "prediction_name": "Test Prediction", "block_result_summaries": [{"name": 1}]
         })
 
-    @mock.patch('plantpredict.prediction.requests.get', new=mocked_requests_prediction.mocked_requests_get)
+    @mock.patch('plantpredict.prediction.requests.get', new=mocked_requests.mocked_requests_get)
     def test_get_results_details(self):
         self._make_mocked_api()
         prediction = Prediction(api=self.mocked_api, project_id=710, id=555)
@@ -73,7 +71,7 @@ class TestPrediction(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         response = prediction.get_results_details()
         self.assertEqual(json.loads(response.content), {"prediction_name": "Test Prediction Details"})
 
-    @mock.patch('plantpredict.prediction.requests.get', new=mocked_requests_prediction.mocked_requests_get)
+    @mock.patch('plantpredict.prediction.requests.get', new=mocked_requests.mocked_requests_get)
     def test_get_nodal_data(self):
         self._make_mocked_api()
         prediction = Prediction(api=self.mocked_api, project_id=710, id=555)
@@ -86,8 +84,8 @@ class TestPrediction(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         })
         self.assertEqual(nodal_data_dc_field, {"nodal_data_dc_field": {}})
 
-    @mock.patch('plantpredict.prediction.requests.post', new=mocked_requests_prediction.mocked_requests_post)
-    @mock.patch('plantpredict.prediction.requests.get', new=mocked_requests_prediction.mocked_requests_get)
+    @mock.patch('plantpredict.prediction.requests.post', new=mocked_requests.mocked_requests_post)
+    @mock.patch('plantpredict.prediction.requests.get', new=mocked_requests.mocked_requests_get)
     def test_clone(self):
         self._make_mocked_api()
 

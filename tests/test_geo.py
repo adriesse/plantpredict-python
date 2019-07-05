@@ -4,12 +4,11 @@ import json
 
 import plantpredict
 from plantpredict.geo import Geo
-from tests import plantpredict_unit_test_case
-from tests.mocked_requests import mocked_requests_geo
+from tests import plantpredict_unit_test_case, mocked_requests
 
 
 class TestGeo(plantpredict_unit_test_case.PlantPredictUnitTestCase):
-    @mock.patch('plantpredict.geo.requests.get', new=mocked_requests_geo.mocked_requests_get)
+    @mock.patch('plantpredict.geo.requests.get', new=mocked_requests.mocked_requests_get)
     def test_get_location_info(self):
         self._make_mocked_api()
         geo = Geo(api=self.mocked_api, latitude=39.67, longitude=-105.21)
@@ -30,7 +29,7 @@ class TestGeo(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self.assertEqual(geo.state_province, "Colorado")
         self.assertEqual(geo.state_province_code, "CO")
 
-    @mock.patch('plantpredict.geo.requests.get', new=mocked_requests_geo.mocked_requests_get)
+    @mock.patch('plantpredict.geo.requests.get', new=mocked_requests.mocked_requests_get)
     def test_get_elevation(self):
         self._make_mocked_api()
         geo = Geo(api=self.mocked_api, latitude=39.67, longitude=-105.21)
@@ -39,7 +38,7 @@ class TestGeo(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self.assertEqual(json.loads(response.content), {"elevation": 1965.96})
         self.assertEqual(geo.elevation, 1965.96)
 
-    @mock.patch('plantpredict.geo.requests.get', new=mocked_requests_geo.mocked_requests_get)
+    @mock.patch('plantpredict.geo.requests.get', new=mocked_requests.mocked_requests_get)
     def test_get_time_zone(self):
         self._make_mocked_api()
         geo = Geo(api=self.mocked_api, latitude=39.67, longitude=-105.21)

@@ -3,8 +3,7 @@ import json
 import unittest
 
 from plantpredict.project import Project
-from tests import plantpredict_unit_test_case
-from tests.mocked_requests import mocked_requests_project
+from tests import plantpredict_unit_test_case, mocked_requests
 
 
 class TestProject(plantpredict_unit_test_case.PlantPredictUnitTestCase):
@@ -44,7 +43,7 @@ class TestProject(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self.assertEqual(project.update_url_suffix, "/Project")
         self.assertTrue(mocked_update.called)
 
-    @mock.patch('plantpredict.project.requests.get', new=mocked_requests_project.mocked_requests_get)
+    @mock.patch('plantpredict.project.requests.get', new=mocked_requests.mocked_requests_get)
     def test_get_all_predictions(self):
         self._make_mocked_api()
         project = Project(api=self.mocked_api, id=710)
@@ -56,7 +55,7 @@ class TestProject(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             {"project_id": 3, "name": "Project 3"}
         ])
 
-    @mock.patch('plantpredict.project.requests.get', new=mocked_requests_project.mocked_requests_get)
+    @mock.patch('plantpredict.project.requests.get', new=mocked_requests.mocked_requests_get)
     def test_search(self):
         self._make_mocked_api()
         project = Project(api=self.mocked_api)
