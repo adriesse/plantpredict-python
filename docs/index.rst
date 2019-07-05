@@ -27,7 +27,7 @@ Contents
 .. toctree::
    :maxdepth: 1
 
-   setup_guide
+   installation
    authentication_oauth2
    sdk_reference
    example_usage
