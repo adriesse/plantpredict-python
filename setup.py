@@ -1,4 +1,8 @@
+import os
 from setuptools import setup
+
+__currdir__ = os.getcwd()
+__readme__ = os.path.join(__currdir__, 'README')
 
 setup(
     name='plantpredict',
@@ -8,7 +12,7 @@ setup(
     author='Stephen Kaplan, Performance & Prediction Engineer at First Solar, Inc.',
     author_email='stephen.kaplan@firstsolar.com',
     license='LICENSE.txt',
-    long_description=open('README.md').read(),
+    long_description=open(__readme__).read(),
     packages=['plantpredict'],
     python_requires='>=3.6, <4',
     install_requires=[
