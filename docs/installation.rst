@@ -21,7 +21,7 @@ development tools. Most importantly, just like the standard distribution of Pyth
 1. Install the latest version of the `Anaconda Distribution <https://www.anaconda.com/download/>`_, if not already installed.
 
 
-2. (Optional, but recommended). Open the "Anaconda Prompt" terminal that comes with the Anaconda distribution, navigate to your project's directory and follow instructions for `creating a conda environment<https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_ and `activating a conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#activating-an-environment>`_.
+2. (Optional, but recommended). Open the "Anaconda Prompt" terminal that comes with the Anaconda distribution, navigate to your project's directory and follow instructions for `creating a conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands>`_ and `activating a conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#activating-an-environment>`_.
 
 
 3. Install the :py:mod:`plantpredict` package to your environment by typing the command :code:`pip install plantpredict` into the terminal. (Note: :py:mod:`plantpredict` is not yet available via :code:`conda install`/the Anaconda Navigator GUI, but will be added to `conda-forge <https://conda-forge.org/>`_ in future versions).
