@@ -127,6 +127,8 @@ class Weather(PlantPredictEntity):
             headers={"Authorization": "Bearer " + self.api.access_token}
         )
 
+    @handle_refused_connection
+    @handle_error_response
     def search(self, latitude, longitude, search_radius=1):
         """
         GET /Weather/Search
