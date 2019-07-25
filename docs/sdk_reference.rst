@@ -61,6 +61,14 @@ Inverter
     :undoc-members:
     :show-inheritance:
 
+Geo
+--------------
+
+.. automodule:: plantpredict.geo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Helpers
 =======
 
