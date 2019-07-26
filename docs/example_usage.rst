@@ -343,7 +343,7 @@ of that module in a web browser '.../module/{id}/'). Retrieve the module.
 .. code-block:: python
 
     new_module_id = 3047
-    new_module = api.module()
+    new_module = api.module(id=new_module_id)
     new_module.get()
 
 In order to change the module in Block 1 --> Array 1 --> Inverter A --> DC Field 1,
