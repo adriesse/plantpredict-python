@@ -4,6 +4,7 @@ import unittest
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.utilities import convert_json, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
+from plantpredict.error_handlers import handle_error_response_norename
 from plantpredict.enumerations import PredictionStatusEnum, EntityTypeEnum
 
 
@@ -204,6 +205,17 @@ class Prediction(PlantPredictEntity):
     @handle_refused_connection
     @handle_error_response
     def get_nodal_data(self, params=None):
+        """GET /Project/{ProjectId}/Prediction/{Id}/NodalJson"""
+
+        return requests.get(
+            url=self.api.base_url + "/Project/{}/Prediction/{}/NodalJson".format(self.project_id, self.id),
+            headers={"Authorization": "Bearer " + self.api.access_token},
+            params=convert_json(params, snake_to_camel) if params else {}
+        )
+
+    @handle_refused_connection
+    @handle_error_response_norename
+    def get_nodal_data_norename(self, params=None):
         """GET /Project/{ProjectId}/Prediction/{Id}/NodalJson"""
 
         return requests.get(
