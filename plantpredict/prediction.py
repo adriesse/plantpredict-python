@@ -272,11 +272,14 @@ class Prediction(PlantPredictEntity):
 
     @handle_refused_connection
     @handle_error_response
-    def change_prediction_status(self, new_status, note=""):
+    def change_status(self, new_status, note=""):
         """
+        Change the status (and resulting sharing/privacy settings) of a prediction (ex. from py:attr:`DRAFT_PRIVATE` to
+        py:attr:`DRAFT-SHARED`.
 
-        :param new_status:
-        :param note:
+        :param int new_status: Enumeration representing status to change prediction to. See (or import)
+                               :py:class:`plantpredict.enumerations.PredictionStatusEnum`.
+        :param str note: Description of reason for change.
         :return:
         """
         return requests.post(
