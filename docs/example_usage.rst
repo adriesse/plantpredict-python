@@ -108,7 +108,7 @@ accessible to other members of your team (or to another relevant status).
 
 .. code-block:: python
 
-    prediction.change_prediction_status(new_status=PredictionStatusEnum.DRAFT_SHARED, note="Changed for tutorial.")
+    prediction.change_status(new_status=PredictionStatusEnum.DRAFT_SHARED, note="Changed for tutorial.")
 
 Instantiate a local instance of :py:class:`~plantpredict.powerplant.PowerPlant`, assigning its :py:data:`project_id` and
 :py:data:`prediction_id`.
