@@ -8,8 +8,8 @@ used in the examples below is available via `the source code on Github
 <https://github.com/stephenkaplan/plantpredict-python/tree/master/example_usage>`_. Feel free to use and modify the
 code in your local environment.
 
-Every example assumes that you have first imported the plantpredict module and received an authentication token in your
-Python session, as shown in Step 3 of :ref:`authentication_oauth2`.
+Every example assumes that you first `import plantpredict` and authenticate with :py:class:`plantpredict.Api` as shown
+in Step 3 of :ref:`authentication_oauth2`.
 
 Create Project and Prediction from scratch.
 -------------------------------------------
@@ -241,7 +241,7 @@ but in this example we just do one.
     }
 
 Instantiate a new prediction using the :py:class:`~plantpredict.prediction.Prediction` class, specifying its ID and
-project ID (visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
+project ID (visible in the URL of that prediction in a web browser `.../projects/{project_id}/prediction/{id}/`).
 
 .. code-block:: python
 
@@ -287,7 +287,7 @@ Clone a prediction.
 
 Instantiate the prediction you wish to clone using the :py:class:`~plantpredict.prediction.Prediction` class, specifying
 its ID and project ID (visible in the URL of that prediction in a web browser
-'.../projects/{project_id}/prediction/{id}/').
+`.../projects/{project_id}/prediction/{id}/`).
 
 .. code-block:: python
 
@@ -320,7 +320,7 @@ Change the module in a power plant.
 -----------------------------------
 
 Instantiate the prediction of interest using the :py:class:`~plantpredict.prediction.Prediction` class, specifying its
-ID and project ID (visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
+ID and project ID (visible in the URL of that prediction in a web browser `.../projects/{project_id}/prediction/{id}/`).
 
 .. code-block:: python
 
@@ -361,7 +361,7 @@ Change a prediction's weather file.
 ------------------------------------
 
 Instantiate the prediction of interest using the :py:class:`~plantpredict.Prediction` class, specifying its ID and
-project ID (visible in the URL of that prediction in a web browser '.../projects/{project_id}/prediction/{id}/').
+project ID (visible in the URL of that prediction in a web browser `.../projects/{project_id}/prediction/{id}/`).
 Do the same for the project of interest using the :py:class:`~plantpredict.Project` class.
 
 .. code-block:: python
@@ -618,3 +618,70 @@ Create a new :py:mod:`plantpredict.module.Module` in the PlantPredict database.
 .. code-block:: python
 
     module.create()
+
+
+Set a prediction's monthly factors (albedo, soiling loss, spectral loss).
+---------------------------------------------------------------------------
+
+Monthly albedo, soiling loss [%], and spectral loss [%] can all be set for a prediction with the attribute
+:py:attr:`monthly_factors` (of type `dict`). This can be done upon initial creation of a prediction from scratch
+(see :ref:`Create Project and Prediction from scratch.`), but for the sake of example, we will consider the case of
+updating an existing prediction.
+
+First instantiate the prediction of interest using the :py:class:`~plantpredict.prediction.Prediction` class, specifying
+its ID and project ID (visible in the URL of that prediction in a web browser
+`.../projects/{project_id}/prediction/{id}/`).
+
+.. code-block:: python
+
+    project_id = 13161  # CHANGE TO YOUR PROJECT ID
+    prediction_id = 147813  # CHANGE TO YOUR PREDICTION ID
+    prediction = api.prediction(id=prediction_id, project_id=project_id)
+
+Retrieve the prediction's attributes.
+
+.. code-block:: python
+
+    prediction.get()
+
+This example assumes that the user wants to specify all 3 available `monthly_factors`, and enforce that the prediction
+use monthly soiling loss and spectral loss averages. However, a user can choose to only specify albedo, or albedo and
+soiling loss, or albedo and spectral shift.
+
+Set the `monthly_factors` as such, where albedo is in units `[decimal]`, soiling loss in `[%]`, and spectral loss in
+`[%]`. (Note: for soiling loss and spectral loss, a negative number indicates a gain.) The values below should be
+replaced with those obtained from measurements or otherwise relevant to the project being modeled.
+
+.. code-block:: python
+
+    prediction.monthly_factors = [
+        {"month": 1, "month_name": "Jan", "albedo": 0.4, "soiling_loss": 0.40, "spectral_shift": 0.958},
+        {"month": 2, "month_name": "Feb", "albedo": 0.3, "soiling_loss": 0.24, "spectral_shift": 2.48},
+        {"month": 3, "month_name": "Mar", "albedo": 0.2, "soiling_loss": 0.76, "spectral_shift": 3.58},
+        {"month": 4, "month_name": "Apr", "albedo": 0.2, "soiling_loss": 0.88, "spectral_shift": 3.48},
+        {"month": 5, "month_name": "May", "albedo": 0.2, "soiling_loss": 0.81, "spectral_shift": 2.58},
+        {"month": 6, "month_name": "Jun", "albedo": 0.2, "soiling_loss": 1.01, "spectral_shift": 1.94},
+        {"month": 7, "month_name": "Jul", "albedo": 0.2, "soiling_loss": 1.21, "spectral_shift": 3.7},
+        {"month": 8, "month_name": "Aug", "albedo": 0.2, "soiling_loss": 0.99, "spectral_shift": 4.57},
+        {"month": 9, "month_name": "Sep", "albedo": 0.2, "soiling_loss": 1.34, "spectral_shift": 6.39},
+        {"month": 10, "month_name": "Oct", "albedo": 0.2, "soiling_loss": 0.54, "spectral_shift": 4.16},
+        {"month": 11, "month_name": "Nov", "albedo": 0.3, "soiling_loss": 0.52, "spectral_shift": 0.758},
+        {"month": 12, "month_name": "Dec", "albedo": 0.4, "soiling_loss": 0.33, "spectral_shift": 0.886}
+    ]
+
+In order to enforce that the prediction use monthly average values (rather than soiling time series from a weather
+file, for instance), the `soiling_model` and `spectral_shift_model` must be set with the following code (assuming
+that both soiling loss and spectral shift loss have been specified in `monthly factors`).
+
+.. code-block:: python
+
+    from plantpredict.enumerations import SoilingModelTypeEnum, SpectralShiftModelEnum
+    prediction.soiling_model = SoilingModelTypeEnum.CONSTANT_MONTHLY
+    prediction.spectral_shift_model = SpectralShiftModelEnum.MONTHLY_OVERRIDE
+
+Call the :py:meth:`update` method on the instance of py:class:`plantpredict.prediction.Prediction` to persist these
+changes to PlantPredict.
+
+.. code-block:: python
+
+    prediction.update()
