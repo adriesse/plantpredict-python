@@ -81,22 +81,26 @@ class PowerPlant(PlantPredictEntity):
 
     @handle_refused_connection
     @handle_error_response
-    def add_array(self, block_name, transformer_enabled=True, match_total_inverter_kva=True,
-                  repeater=1, ac_collection_loss=1, das_load=800, cooling_load=0,
-                  transformer_high_side_voltage=34.5, transformer_no_load_loss=0.2, transformer_full_load_loss=0.7):
+    def add_array(self, block_name, transformer_enabled=True, match_total_inverter_kva=True, repeater=1,
+                  ac_collection_loss=1, das_load=800, cooling_load=0, transformer_high_side_voltage=34.5,
+                  transformer_no_load_loss=0.2, transformer_full_load_loss=0.7, description=""):
         """
+        Adds an array to the block specified by `block_name` on the local instance of
+        :py:class:`plantpredict.powerplant.PowerPlant`.
 
-        :param block_name:
-        :param transformer_enabled:
-        :param match_total_inverter_kva:
-        :param repeater:
-        :param ac_collection_loss:
-        :param das_load:
-        :param cooling_load:
-        :param transformer_high_side_voltage:
-        :param transformer_no_load_loss:
-        :param transformer_full_load_loss:
-        :return:
+        :param int block_name:
+        :param bool transformer_enabled:
+        :param bool match_total_inverter_kva:
+        :param int repeater:
+        :param float ac_collection_loss:
+        :param float das_load:
+        :param float cooling_load:
+        :param float transformer_high_side_voltage:
+        :param float transformer_no_load_loss:
+        :param float transformer_full_load_loss:
+        :param float str description:
+        :return: The name of the newly added array.
+        :rtype: int
         """
         self.blocks[block_name - 1]["arrays"].append({
             "name": len(self.blocks[block_name - 1]["arrays"]) + 1,
@@ -109,7 +113,8 @@ class PowerPlant(PlantPredictEntity):
             "transformer_high_side_voltage": transformer_high_side_voltage,
             "transformer_no_load_loss": transformer_no_load_loss,
             "transformer_full_load_loss": transformer_full_load_loss,
-            "inverters": []
+            "inverters": [],
+            "description": description
         })
 
         return self.blocks[block_name - 1]["arrays"][-1]["name"]

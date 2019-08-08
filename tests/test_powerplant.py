@@ -100,7 +100,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self._make_mocked_api()
         self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
         self._init_powerplant_structure()
-        array_name = self.powerplant.add_array(block_name=1)
+        array_name = self.powerplant.add_array(block_name=1, description="testing")
 
         self.assertEqual(len(self.powerplant.blocks[0]["arrays"]), 2)
         self.assertEqual(array_name, 2)
@@ -115,7 +115,8 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "transformer_high_side_voltage": 34.5,
             "transformer_no_load_loss": 0.2,
             "transformer_full_load_loss": 0.7,
-            "inverters": []
+            "inverters": [],
+            "description": "testing"
         })
 
     def test_add_inverter(self):
