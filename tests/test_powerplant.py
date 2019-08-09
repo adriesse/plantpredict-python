@@ -110,6 +110,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "ac_collection_loss": 1,
             "das_load": 800,
             "cooling_load": 0,
+            "additional_losses": 0,
             "transformer_enabled": True,
             "match_total_inverter_kva": True,
             "transformer_high_side_voltage": 34.5,
