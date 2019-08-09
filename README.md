@@ -1,3 +1,5 @@
+<img src="docs/_images/FS_PlantPredict_Logo_Horz_RGB-01.png" width="600">
+
 # plantpredict-python
 
 Install **latest stable version** (0.9.2) via: `pip install plantpredict`.
