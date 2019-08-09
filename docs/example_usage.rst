@@ -8,8 +8,8 @@ used in the examples below is available via `the source code on Github
 <https://github.com/stephenkaplan/plantpredict-python/tree/master/example_usage>`_. Feel free to use and modify the
 code in your local environment.
 
-Every example assumes that you first :code:`import plantpredict` and authenticate with :py:class:`plantpredict.Api` as
-shown in Step 3 of :ref:`authentication_oauth2`.
+Every example assumes that you first :code:`import plantpredict` and authenticate with
+:py:class:`~plantpredict.api.Api` as shown in Step 3 of :ref:`authentication_oauth2`.
 
 Create Project and Prediction from scratch.
 -------------------------------------------
@@ -224,8 +224,8 @@ Download nodal data.
 
 First, set up a dictionary containing the nodal data export options. Set the values to True according to which nodes
 in the :py:class:`~plantpredict.powerplant.PowerPlant` hierarchy you are interested in exporting nodal data. For each
-block in :py:data:`block_export_options`, specify the block number. You can add export options for multiple blocks,
-but in this example we just do one.
+block in :py:data:`block_export_options`, specify the block number (using the field :py:data:`name`).
+You can add export options for multiple blocks, but in this example we just do one.
 
 .. code-block:: python
 
@@ -242,7 +242,7 @@ but in this example we just do one.
 
 Instantiate a new prediction using the :py:class:`~plantpredict.prediction.Prediction` class, specifying its
 :py:attr:`id` and :py:attr:`project_id` (visible in the URL of that prediction in a web browser
-py:data:`.../projects/{project_id}/prediction/{id}/`).
+...:py:data:`.../projects/{project_id}/prediction/{id}/`).
 
 .. code-block:: python
 
@@ -273,7 +273,7 @@ the lowest node (power plant hierarchy-wise) in the input dictionary specifies t
         'dc_field_number': 1
     })
 
-For System-level nodal data, call the method with no inputs.
+For system-level nodal data, call the method with no inputs.
 
 .. code-block:: python
 
@@ -288,7 +288,7 @@ Clone a prediction.
 
 Instantiate the prediction you wish to clone using the :py:class:`~plantpredict.prediction.Prediction` class, specifying
 its :py:attr:`id` and :py:attr:`project_id` (visible in the URL of that prediction in a web browser
-:py:data:`.../projects/{project_id}/prediction/{id}/`).
+...:py:data:`.../projects/{project_id}/prediction/{id}/`).
 
 .. code-block:: python
 
@@ -322,7 +322,7 @@ Change the module in a power plant.
 
 Instantiate the powerplant of the prediction of interest using the
 :py:class:`~plantpredict.powerplant.PowerPlant` class, specifying the :py:attr:`project_id` and :py:attr:`prediction_id`
-(visible in the URL of that prediction in a web browser py:data:`.../projects/{project_id}/prediction/{id}/`).
+(visible in the URL of that prediction in a web browser ...:py:data:`.../projects/{project_id}/prediction/{id}/`).
 
 .. code-block:: python
 
@@ -337,7 +337,7 @@ Retrieve all of its attributes.
     powerplant.get()
 
 Specify the :py:attr:`id` of the module you want to replace the power plant's current module with (visible in the URL
-of that module in a web browser :py:data:`.../module/{id}/`). Retrieve the module.
+of that module in a web browser ...:py:data:`.../module/{id}/`). Retrieve the module.
 
 .. code-block:: python
 
@@ -361,7 +361,7 @@ Change a prediction's weather file.
 
 Instantiate the prediction of interest using the :py:class:`~plantpredict.prediction.Prediction` class, specifying its
 :py:attr:`id` and :py:attr:`project_id` (visible in the URL of that prediction in a web browser
-:py:data:`.../projects/{project_id}/prediction/{id}/`). Do the same for the project of interest using the
+...:py:data:`.../projects/{project_id}/prediction/{id}/`). Do the same for the project of interest using the
 :py:class:`~plantpredict.project.Project` class.
 
 .. code-block:: python
@@ -380,8 +380,7 @@ Retrieve the project and prediction's attributes.
 
 In this particular case, let's say you are looking for the most recent Meteonorm weather file within a 5-mile
 radius of the project site. Search for all weather files within a 5 mile radius of the project's
-:py:attr:`latitude` and :py:attr:`longitude`.
-coordinates.
+:py:attr:`latitude`/:py:attr:`longitude` coordinates.
 
 .. code-block:: python
 
@@ -465,7 +464,7 @@ metadata.
 
 Initialize the :py:class:`~plantpredict.weather.Weather` entity and populate with the minimum fields required by
 :py:meth:`~plantpredict.weather.Weather.create`. Note that the weather details time series data loaded in the first step
-is assigned to py:attr:`weather_details` at this point.
+is assigned to :py:attr:`weather_details` at this point.
 
 .. code-block:: python
 
@@ -630,7 +629,7 @@ consider the case of updating an existing prediction.
 
 First instantiate the prediction of interest using the :py:class:`~plantpredict.prediction.Prediction` class, specifying
 its :py:attr:`id` and :py:attr:`project_id` (visible in the URL of that prediction in a web browser
-py:data:`.../projects/{project_id}/prediction/{id}/`).
+...:py:data:`.../projects/{project_id}/prediction/{id}/`).
 
 .. code-block:: python
 
@@ -682,7 +681,7 @@ following code (assuming that both soiling loss and spectral shift loss have bee
     prediction.spectral_shift_model = SpectralShiftModelEnum.MONTHLY_OVERRIDE
 
 Call the :py:meth:`~plantpredict.prediction.Prediction.update` method on the instance of
-py:class:`~plantpredict.prediction.Prediction` to persist these changes to PlantPredict.
+:py:class:`~plantpredict.prediction.Prediction` to persist these changes to PlantPredict.
 
 .. code-block:: python
 
