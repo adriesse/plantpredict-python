@@ -1,4 +1,4 @@
-<img src="docs/_images/FS_PlantPredict_Logo_Horz_RGB-01.png" width="25%" height="25%">
+<img src="docs/_images/FS_PlantPredict_Logo_Horz_RGB-01.png" width="50%" height="50%">
 
 # plantpredict-python
 
