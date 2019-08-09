@@ -76,9 +76,9 @@ Helpers
     :members:
     :undoc-members:
 
-Utilities
-===========
-
-
 Data Enumerations
 ===================
+
+.. automodule:: plantpredict.enumerations
+    :members:
+    :undoc-members:

@@ -11,17 +11,13 @@ api = plantpredict.Api(
     client_secret="insert client_secret here"
 )
 
-# instantiate a prediction, specifying its ID and project ID (visible in the URL of that prediction in a web browser
+# instantiate a powerplant, specifying its ID and project ID (visible in the URL of that prediction in a web browser
 # '.../projects/{project_id}/prediction/{id}/').
 project_id = 13161   # CHANGE TO YOUR PROJECT ID
 prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
-prediction = api.prediction(id=prediction_id, project_id=project_id)
-
-# get the prediction in order to extract its powerplant ID
-prediction.get()
-
-# instantiate  powerplant and retrieve all of its attributes
 powerplant = api.powerplant(prediction_id=prediction_id, project_id=project_id)
+
+# retrieve all of the powerplant attributes
 powerplant.get()
 
 # get the ID of the module you want to replace the powerplant's current module with (visible in the URL
