@@ -624,7 +624,7 @@ Set a prediction's monthly factors (albedo, soiling loss, spectral loss).
 
 Monthly albedo, soiling loss :py:data:`[%]`, and spectral loss :py:data:`[%]` can all be set for a prediction with the
 attribute :py:attr:`monthly_factors` (a py:data:`dict`). This can be done upon initial creation of a prediction from
-scratch (see the example for "Create Project and Prediction from scratch"), but for the sake of example, we will
+scratch (see the example for `Create Project and Prediction from scratch.`_), but for the sake of example, we will
 consider the case of updating an existing prediction.
 
 First instantiate the prediction of interest using the :py:class:`~plantpredict.prediction.Prediction` class, specifying
@@ -686,3 +686,56 @@ Call the :py:meth:`~plantpredict.prediction.Prediction.update` method on the ins
 .. code-block:: python
 
     prediction.update()
+
+
+Model System-Level of Power Plant (Transformer, Transmission, etc.)
+---------------------------------------------------------------------
+
+This tutorial details how to model Total System Capacity, Transformers and Transmission Lines for a power plant/energy
+prediction. This can be done upon initial creation of a prediction from scratch (see the example for
+`Create Project and Prediction from scratch.`_), but for the sake of example, we will consider the case of updating an
+existing power plant.
+
+Instantiate a :py:class:`~plantpredict.powerplant.PowerPlant`, specifying its :py:attr:`project_id` and
+:py:attr:`prediction_id` (visible in the URL of that prediction in a web browser
+...:py:data:`/projects/{project_id}/prediction/{id}`).
+
+.. code-block:: python
+
+    project_id = 13161   # CHANGE TO YOUR PROJECT ID
+    prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
+    powerplant = api.powerplant(project_id=project_id, prediction_id=prediction_id)
+
+Retrieve the power plant's attributes.
+
+.. code-block:: python
+
+    powerplant.get()
+
+Set the system :py:attr:`availability_loss` on the :py:class:`~plantpredict.powerplant.PowerPlant` instance in units
+:py:data:`[%]`.
+
+.. code-block:: python
+
+    powerplant.availability_loss = 1.7
+
+Set the plant output (LGIA) limit in units :py:data:`[MWac]`.
+
+.. code-block:: python
+
+    powerplant.lgia_limitation = 0.8
+
+Add :py:attr:`transformers` and :py:data:`transmission_lines`, specifying the :py:attr:`ordinal` (1-indexed) such that
+they are in the desired order (where 1 is closest to the physical output of the plant).
+
+.. code-block:: python
+
+    powerplant.add_transformer(rating=0.6, high_side_voltage=600, no_load_loss=1.1, full_load_loss=1.7, ordinal=1)
+    powerplant.add_transmission_line(length=3, resistance=0.1, number_of_conductors_per_phase=1, ordinal=2)
+
+Call the :py:meth:`~plantpredict.powerplant.PowerPlant.update` method on the instance of
+:py:class:`~plantpredict.powerplant.PowerPlant` to persist these changes to PlantPredict.
+
+.. code-block:: python
+
+    powerplant.update()
