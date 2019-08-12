@@ -242,7 +242,7 @@ You can add export options for multiple blocks, but in this example we just do o
 
 Instantiate a new prediction using the :py:class:`~plantpredict.prediction.Prediction` class, specifying its
 :py:attr:`id` and :py:attr:`project_id` (visible in the URL of that prediction in a web browser
-...:py:data:`.../projects/{project_id}/prediction/{id}/`).
+... :py:data:`/projects/{project_id}/prediction/{id}/`).
 
 .. code-block:: python
 
@@ -288,7 +288,7 @@ Clone a prediction.
 
 Instantiate the prediction you wish to clone using the :py:class:`~plantpredict.prediction.Prediction` class, specifying
 its :py:attr:`id` and :py:attr:`project_id` (visible in the URL of that prediction in a web browser
-...:py:data:`.../projects/{project_id}/prediction/{id}/`).
+... :py:data:`/projects/{project_id}/prediction/{id}/`).
 
 .. code-block:: python
 
@@ -322,7 +322,7 @@ Change the module in a power plant.
 
 Instantiate the powerplant of the prediction of interest using the
 :py:class:`~plantpredict.powerplant.PowerPlant` class, specifying the :py:attr:`project_id` and :py:attr:`prediction_id`
-(visible in the URL of that prediction in a web browser ...:py:data:`.../projects/{project_id}/prediction/{id}/`).
+(visible in the URL of that prediction in a web browser ... :py:data:`/projects/{project_id}/prediction/{id}/`).
 
 .. code-block:: python
 
@@ -337,7 +337,7 @@ Retrieve all of its attributes.
     powerplant.get()
 
 Specify the :py:attr:`id` of the module you want to replace the power plant's current module with (visible in the URL
-of that module in a web browser ...:py:data:`.../module/{id}/`). Retrieve the module.
+of that module in a web browser ... :py:data:`/module/{id}/`). Retrieve the module.
 
 .. code-block:: python
 
@@ -361,7 +361,7 @@ Change a prediction's weather file.
 
 Instantiate the prediction of interest using the :py:class:`~plantpredict.prediction.Prediction` class, specifying its
 :py:attr:`id` and :py:attr:`project_id` (visible in the URL of that prediction in a web browser
-...:py:data:`.../projects/{project_id}/prediction/{id}/`). Do the same for the project of interest using the
+... :py:data:`/projects/{project_id}/prediction/{id}/`). Do the same for the project of interest using the
 :py:class:`~plantpredict.project.Project` class.
 
 .. code-block:: python
@@ -629,7 +629,7 @@ consider the case of updating an existing prediction.
 
 First instantiate the prediction of interest using the :py:class:`~plantpredict.prediction.Prediction` class, specifying
 its :py:attr:`id` and :py:attr:`project_id` (visible in the URL of that prediction in a web browser
-...:py:data:`.../projects/{project_id}/prediction/{id}/`).
+... :py:data:`/projects/{project_id}/prediction/{id}/`).
 
 .. code-block:: python
 
@@ -698,7 +698,7 @@ existing power plant.
 
 Instantiate a :py:class:`~plantpredict.powerplant.PowerPlant`, specifying its :py:attr:`project_id` and
 :py:attr:`prediction_id` (visible in the URL of that prediction in a web browser
-...:py:data:`/projects/{project_id}/prediction/{id}`).
+... :py:data:`/projects/{project_id}/prediction/{id}`).
 
 .. code-block:: python
 
