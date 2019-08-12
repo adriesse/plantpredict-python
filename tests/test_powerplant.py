@@ -52,6 +52,44 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             ]}
         ]
 
+    def test_add_transformer(self):
+        self._make_mocked_api()
+        self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        self._init_powerplant_structure()
+
+        self.powerplant.add_transformer(
+            rating=0.6,
+            high_side_voltage=600,
+            no_load_loss=1.1,
+            full_load_loss=1.7,
+            ordinal=1
+        )
+        self.assertEqual(self.powerplant.transformers, [{
+            "rating": 0.6,
+            "high_side_voltage": 600,
+            "no_load_loss": 1.1,
+            "full_load_loss": 1.7,
+            "ordinal": 1
+        }])
+
+    def test_add_transmission_line(self):
+        self._make_mocked_api()
+        self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        self._init_powerplant_structure()
+
+        self.powerplant.add_transmission_line(
+            length=3.0,
+            resistance=0.1,
+            number_of_conductors_per_phase=1,
+            ordinal=1
+        )
+        self.assertEqual(self.powerplant.transmission_lines, [{
+            "length": 3.0,
+            "resistance": 0.1,
+            "number_of_conductors_per_phase": 1,
+            "ordinal": 1
+        }])
+
     def test_clone_block(self):
         self._make_mocked_api()
         self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)

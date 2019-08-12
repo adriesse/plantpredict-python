@@ -36,6 +36,61 @@ class PowerPlant(PlantPredictEntity):
 
         return super(PowerPlant, self).update()
 
+    def add_transformer(self, rating, high_side_voltage, no_load_loss, full_load_loss, ordinal):
+        """
+        Add a transformer to model the system-level of a power plant.
+
+        :param float rating: Transformer rating. Must be between :py:data:`0.1` and :py:data:`10000.0` - units
+                             :py:data:`[MVA]`.
+        :param float high_side_voltage: Transformer voltage. Must be between :py:data:`1.0` and :py:data:`1000.0` -
+                                        units :py:data:`[kV]`.
+        :param float no_load_loss: Transformer loss at no load. Must be between :py:data:`0.0` and :py:data:`10.0` -
+                                   units :py:data:`[%]`.
+        :param float full_load_loss: Transformer loss at full load. Must be between :py:data:`0.0` and :py:data:`10.0` -
+                                     units :py:data:`[%]`.
+        :param int ordinal: Order in sequence of :py:attr:`transformers` and :py:attr:`transmission_lines` where
+                            :py:data:`1` represents the closest entity to the power plant/farthest entity from the
+                            energy meter (1-indexed).
+        """
+        transformer = {
+            "rating": rating,
+            "high_side_voltage": high_side_voltage,
+            "no_load_loss": no_load_loss,
+            "full_load_loss": full_load_loss,
+            "ordinal": ordinal
+        }
+
+        try:
+            self.transformers.append(transformer)
+        except AttributeError:
+            self.transformers = [transformer]
+
+    def add_transmission_line(self, length, resistance, number_of_conductors_per_phase, ordinal):
+        """
+        Add a transformer to model the system-level of a power plant.
+
+        :param float length: Length of transmission line. Must be between :py:data:`0.1` and :py:data:`100.0` - units
+                     :py:data:`[km]`.
+        :param float resistance: Transmission line resistivity (per 300m). Must be between :py:data:`0.001` and
+                                 :py:data:`2` - units :py:data:`[Ohms/300m]`.
+        :param int number_of_conductors_per_phase: Number of conductors per phase. Must be between :py:data:`1` and
+                                                   :py:data:`10`.
+        :param ordinal: Order in sequence of :py:attr:`transformers` and :py:attr:`transmission_lines` where
+                        :py:data:`1` represents the closest entity to the power plant/farthest entity from the
+                        energy meter (1-indexed).
+        """
+        transmission_line = {
+            "length": length,
+            "resistance": resistance,
+            "number_of_conductors_per_phase": number_of_conductors_per_phase,
+            "ordinal": ordinal
+        }
+
+        try:
+            self.transmission_lines.append(transmission_line)
+        except AttributeError:
+            self.transmission_lines = [transmission_line]
+
     @handle_refused_connection
     @handle_error_response
     def clone_block(self, block_id_to_clone):
@@ -297,5 +352,7 @@ class PowerPlant(PlantPredictEntity):
 
         self.power_factor = None
         self.blocks = None
+        self.transformers = None
+        self.transmission_lines = None
 
         super(PowerPlant, self).__init__(api)

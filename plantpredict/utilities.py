@@ -22,6 +22,7 @@ def snake_to_camel(key):
 
 MANUAL_KEY_FIXES = {
     "camel_to_snake": {
+        "k_m_l": "kml",
         "s_t_c": "stc",
         "STC": "stc",
         "i_a_m": "iam",
@@ -61,12 +62,15 @@ MANUAL_KEY_FIXES = {
         "sandiaconductive": "sandia_conductive",
         "sandiaconvective": "sandia_convective",
         "l_i_d": "lid",
-        "at25": "at_25"
+        "at25": "at_25",
+        "l_g_i_a": "lgia",
+        "number_of_conducters_per_phase": "number_of_conductors_per_phase"      # misspelled in PlantPredict backend
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",
         "backtracking": "backTracking",
-        "backsideMismatch": "backSideMismatch"
+        "backsideMismatch": "backSideMismatch",
+        "numberOfConductorsPerPhase": "numberOfConductersPerPhase"              # misspelled in PlantPredict backend
     }
 }
 
