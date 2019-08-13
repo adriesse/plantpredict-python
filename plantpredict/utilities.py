@@ -30,10 +30,10 @@ MANUAL_KEY_FIXES = {
         "p_o_a": "poa",
         "back_tracking": "backtracking",
         "back_side": "backside",
-        "transformerkva": "transformer_kva",
+        "k_v_a": "kva",
+        "transformerkva_rating": "transformer_kva_rating",
         "inverterkva": "inverter_kva",
         "usek_v_a": "use_kva_",
-        "k_v_a": "kva",
         "m_v": "mv",
         "e_s_s": "ess",
         "k_w": "_kw",
@@ -68,7 +68,10 @@ MANUAL_KEY_FIXES = {
         "cool996": "cool_996",
         "heat996": "heat_996",
         "max50_year": "max_50_year",
-        "min50_year": "min_50_year"
+        "min50_year": "min_50_year",
+        "p_q": "pq",
+        "kvacurves": "kva_curves",
+        "k_va": "kva"
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",

@@ -30,7 +30,7 @@ class Inverter(PlantPredictEntity):
 
     @handle_refused_connection
     @handle_error_response
-    def change_inverter_status(self, new_status, note=""):
+    def change_status(self, new_status, note=""):
         """
 
         :param new_status:
@@ -47,4 +47,22 @@ class Inverter(PlantPredictEntity):
                 "status": new_status,
                 "note": note
             }]
+        )
+
+    @handle_refused_connection
+    @handle_error_response
+    def get_kva(self, elevation, temperature, use_cooling_temp):
+        """
+        Uses the given elevation and temperature to interpolate a kVa rating from the inverter's kVa curves.
+
+        :param float elevation: Elevation at which to evaluate the inverter kVa rating - units :py:data:`[m]`.
+        :param float temperature: Temperature at which to evaluate the inverter kVa rating - units :py:data:`[deg-C]`.
+        :param bool use_cooling_temp: Determines if the calculation should use the plant design cooling temperature (
+                                      at 99.6 degrees).
+        :return: # TODO after new API response is implemented
+        """
+        return requests.get(
+            url=self.api.base_url + "/Inverter/{}/kVa".format(self.id),
+            headers={"Authorization": "Bearer " + self.api.access_token},
+            params={"elevation": elevation, "temperature": temperature, "useCoolingTemp": use_cooling_temp}
         )

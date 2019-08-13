@@ -314,6 +314,20 @@ def mocked_requests_get(*args, **kwargs):
             status_code=200
         )
 
+    elif kwargs['url'] == "https://api.plantpredict.com/Inverter/808/kVa" and kwargs['params'] == {
+        'elevation': 1000, 'temperature': 20.0, 'useCoolingTemp': True
+    }:
+        return MockResponse(
+            json_data={'kva': 700.0},
+            status_code=200
+        )
+
+    elif kwargs['url'] == "https://api.plantpredict.com/Inverter/808/":
+        return MockResponse(
+            json_data={'power_rated': 600.0},
+            status_code=200
+        )
+
     return MockResponse(None, 404)
 
 
