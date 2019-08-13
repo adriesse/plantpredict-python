@@ -2,7 +2,7 @@ import unittest
 import mock
 
 import plantpredict
-from plantpredict import project, prediction, powerplant, geo, inverter, module, weather
+from plantpredict import project, prediction, powerplant, geo, inverter, module, weather, ashrae
 from tests import mocked_requests
 
 
@@ -52,6 +52,9 @@ class TestApi(unittest.TestCase):
 
     def test_weather(self):
         self.assertIsInstance(self.api.weather(), weather.Weather)
+
+    def test_ashrae(self):
+        self.assertIsInstance(self.api.ashrae(), ashrae.ASHRAE)
 
 
 if __name__ == '__main__':

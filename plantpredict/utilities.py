@@ -64,7 +64,11 @@ MANUAL_KEY_FIXES = {
         "l_i_d": "lid",
         "at25": "at_25",
         "l_g_i_a": "lgia",
-        "number_of_conducters_per_phase": "number_of_conductors_per_phase"      # misspelled in PlantPredict backend
+        "number_of_conducters_per_phase": "number_of_conductors_per_phase",      # misspelled in PlantPredict backend
+        "cool996": "cool_996",
+        "heat996": "heat_996",
+        "max50_year": "max_50_year",
+        "min50_year": "min_50_year"
     },
     "snake_to_camel": {
         "powerplant": "powerPlant",

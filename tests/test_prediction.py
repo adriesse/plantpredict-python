@@ -12,9 +12,21 @@ class TestPrediction(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self._make_mocked_api()
         prediction = Prediction(api=self.mocked_api, project_id=7)
 
-        prediction.create()
+        prediction.create(use_closest_ashrae_station=False)
         self.assertEqual(prediction.create_url_suffix, "/Project/7/Prediction")
         self.assertTrue(mocked_create.called)
+
+    @mock.patch('plantpredict.ashrae.requests.get', new=mocked_requests.mocked_requests_get)
+    @mock.patch('plantpredict.project.requests.get', new=mocked_requests.mocked_requests_get)
+    def test_assign_plant_design_temperature_with_closest_ashrae_station(self):
+        self._make_mocked_api()
+        prediction = Prediction(api=self.mocked_api, project_id=7)
+
+        prediction._assign_plant_design_temperature_with_closest_ashrae_station()
+        self.assertEqual(prediction.ashrae_station, "TEST STATION")
+        self.assertEqual(prediction.cool_996, 20.0)
+        self.assertEqual(prediction.max_50_year, 17.0)
+        self.assertEqual(prediction.min_50_year, -20.0)
 
     @mock.patch('plantpredict.plant_predict_entity.PlantPredictEntity.delete')
     def test_delete(self, mocked_delete):
