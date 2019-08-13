@@ -280,6 +280,40 @@ def mocked_requests_get(*args, **kwargs):
             status_code=200
         )
 
+    elif kwargs['url'] == "https://api.plantpredict.com/ASHRAE/GetStation" and kwargs['params'] == {
+        'latitude': 35.0, 'longitude': -109.0, 'stationName': 'TEST STATION'
+    }:
+        return MockResponse(
+            json_data={
+                "station_name": "TEST STATION",
+                "wmo": 18081,
+                "cool_996": 20.0,
+                "min_50_year": -20.0,
+                "max_50_year": 17.0,
+                "distance": 5.3,
+                "latitude": 35.0,
+                "longitude": -109.0
+            },
+            status_code=200
+        )
+
+    elif kwargs['url'] == "https://api.plantpredict.com/ASHRAE" and kwargs['params'] == {
+        'latitude': 33.0, 'longitude': -110.0
+    }:
+        return MockResponse(
+            json_data={
+                "station_name": "TEST STATION",
+                "wmo": 18081,
+                "cool_996": 20.0,
+                "min_50_year": -20.0,
+                "max_50_year": 17.0,
+                "distance": 5.3,
+                "latitude": 35.0,
+                "longitude": -109.0
+            },
+            status_code=200
+        )
+
     return MockResponse(None, 404)
 
 
