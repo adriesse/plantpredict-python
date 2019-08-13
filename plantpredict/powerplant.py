@@ -113,10 +113,8 @@ class PowerPlant(PlantPredictEntity):
     def add_block(self, use_energization_date=False, energization_date=""):
         """
 
-        :param use_energization_date:
-        :type use_energization_date: bool
-        :param energization_date:
-        :type energization_date: str
+        :param bool use_energization_date:
+        :param str energization_date:
         :return: Block name, which is an integer identifier.
         :rtype: int
         """
@@ -136,10 +134,10 @@ class PowerPlant(PlantPredictEntity):
 
     @handle_refused_connection
     @handle_error_response
-    def add_array(self, block_name, transformer_enabled=True, match_total_inverter_kva=True, repeater=1,
-                  ac_collection_loss=1, das_load=800, cooling_load=0.0, additional_losses=0.0,
-                  transformer_high_side_voltage=34.5, transformer_no_load_loss=0.2, transformer_full_load_loss=0.7,
-                  description=""):
+    def add_array(self, block_name, transformer_enabled=True, match_total_inverter_kva=True,
+                  transformer_kva_rating=None, repeater=1, ac_collection_loss=1, das_load=800, cooling_load=0.0,
+                  additional_losses=0.0, transformer_high_side_voltage=34.5, transformer_no_load_loss=0.2,
+                  transformer_full_load_loss=0.7, description=""):
         """
         Adds an array to the block specified by :py:attr:`block_name` on the local instance of
         :py:class:`~plantpredict.powerplant.PowerPlant`.
@@ -147,6 +145,7 @@ class PowerPlant(PlantPredictEntity):
         :param int block_name:
         :param bool transformer_enabled:
         :param bool match_total_inverter_kva:
+        :param float transformer_kva_rating: Only used if :py:data:`match_total_inverter_kva` is set to :py:data:`False`.
         :param int repeater:
         :param float ac_collection_loss: - units :py:data:`[%]`
         :param float das_load: - units :py:data:`[W]`
@@ -159,7 +158,7 @@ class PowerPlant(PlantPredictEntity):
         :return: The name of the newly added array.
         :rtype: int
         """
-        self.blocks[block_name - 1]["arrays"].append({
+        array = {
             "name": len(self.blocks[block_name - 1]["arrays"]) + 1,
             "repeater": repeater,
             "ac_collection_loss": ac_collection_loss,
@@ -173,13 +172,59 @@ class PowerPlant(PlantPredictEntity):
             "transformer_full_load_loss": transformer_full_load_loss,
             "inverters": [],
             "description": description
-        })
+        }
+        if not match_total_inverter_kva:
+            array.update({"transformer_kva_rating": transformer_kva_rating})
+
+        self.blocks[block_name - 1]["arrays"].append(array)
 
         return self.blocks[block_name - 1]["arrays"][-1]["name"]
 
     @handle_refused_connection
     @handle_error_response
-    def add_inverter(self, block_name, array_name, inverter_id, setpoint_kw=None, power_factor=1.0, repeater=1):
+    def _get_inverter_power_rated(self, inverter_id):
+        """
+
+        :param inverter_id:
+        :return:
+        """
+        inverter = self.api.inverter(id=inverter_id)
+        inverter.get()
+
+        return inverter.power_rated
+
+    @handle_refused_connection
+    @handle_error_response
+    def _get_inverter_kva_rating(self, inverter_id):
+        """
+
+        :param inverter_id:
+        :return:
+        """
+        project = self.api.project(id=self.project_id)
+        project.get()
+        prediction = self.api.prediction(id=self.prediction_id, project_id=self.project_id)
+        prediction.get()
+        ashrae = self.api.ashrae(
+            latitude=project.latitude,
+            longitude=project.longitude,
+            station_name=prediction.ashrae_station
+        )
+        ashrae.get_station()
+
+        inverter = self.api.inverter(id=inverter_id)
+        response = inverter.get_kva(
+            elevation=project.elevation,
+            temperature=ashrae.cool_996,
+            use_cooling_temp=self.use_cooling_temp
+        )
+
+        return response['kva']
+
+    @handle_refused_connection
+    @handle_error_response
+    def add_inverter(self, block_name, array_name, inverter_id, setpoint_kw=None, power_factor=1.0, repeater=1,
+                     kva_rating=0.0):
         """
 
         :param block_name:
@@ -188,18 +233,17 @@ class PowerPlant(PlantPredictEntity):
         :param setpoint_kw:
         :param power_factor:
         :param repeater:
+        :param kva_rating:
         :return:
         """
-        inverter = self.api.inverter(id=inverter_id)
-        inverter.get()
-
         self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"].append({
             "name": chr(ord("A") + len(self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"])),
             "repeater": repeater,
             "inverter_id": inverter_id,
-            "setpoint_kw": setpoint_kw if setpoint_kw else inverter.power_rated,
+            "setpoint_kw": setpoint_kw if setpoint_kw else self._get_inverter_power_rated(inverter_id),
             "power_factor": power_factor,
-            "dc_fields": []
+            "dc_fields": [],
+            "kva_rating": self._get_inverter_kva_rating(inverter_id) if self.use_cooling_temp else kva_rating
         })
 
         return self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][-1]["name"]
@@ -346,9 +390,10 @@ class PowerPlant(PlantPredictEntity):
         # convert field dc power from kW to W
         return 1000 * field_dc_power / (planned_module_rating * modules_wired_in_series)
 
-    def __init__(self, api, project_id=None, prediction_id=None):
+    def __init__(self, api, project_id=None, prediction_id=None, use_cooling_temp=True):
         self.project_id = project_id
         self.prediction_id = prediction_id
+        self.use_cooling_temp = use_cooling_temp
 
         self.power_factor = None
         self.blocks = None

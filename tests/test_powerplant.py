@@ -158,11 +158,44 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "description": "testing"
         })
 
-    def test_add_inverter(self):
+    def test_add_array_no_match_total_inverter_kva(self):
         self._make_mocked_api()
         self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
         self._init_powerplant_structure()
-        inverter_name = self.powerplant.add_inverter(block_name=1, array_name=1, inverter_id=123, setpoint_kw=800)
+        array_name = self.powerplant.add_array(
+            block_name=1,
+            description="testing",
+            match_total_inverter_kva=False,
+            transformer_kva_rating=700.0
+        )
+
+        self.assertEqual(len(self.powerplant.blocks[0]["arrays"]), 2)
+        self.assertEqual(array_name, 2)
+        self.assertEqual(self.powerplant.blocks[0]["arrays"][1], {
+            "name": 2,
+            "repeater": 1,
+            "ac_collection_loss": 1,
+            "das_load": 800,
+            "cooling_load": 0,
+            "additional_losses": 0,
+            "transformer_enabled": True,
+            "match_total_inverter_kva": False,
+            "transformer_high_side_voltage": 34.5,
+            "transformer_no_load_loss": 0.2,
+            "transformer_full_load_loss": 0.7,
+            "inverters": [],
+            "description": "testing",
+            "transformer_kva_rating": 700.0
+        })
+
+    def test_add_inverter(self):
+        self._make_mocked_api()
+        self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        self.powerplant.use_cooling_temp = False
+        self._init_powerplant_structure()
+        inverter_name = self.powerplant.add_inverter(
+            block_name=1, array_name=1, inverter_id=123, setpoint_kw=800, kva_rating=650.0
+        )
 
         self.assertEqual(len(self.powerplant.blocks[0]["arrays"][0]["inverters"]), 2)
         self.assertEqual(inverter_name, "B")
@@ -172,6 +205,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "inverter_id": 123,
             "setpoint_kw": 800,
             "power_factor": 1.0,
+            "kva_rating": 650.0,
             "dc_fields": []
         })
 
@@ -313,6 +347,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
 
         self.assertEqual(self.powerplant.project_id, 7)
         self.assertEqual(self.powerplant.prediction_id, 77)
+        self.assertTrue(self.powerplant.use_cooling_temp)
         self.assertIsNone(self.powerplant.power_factor)
         self.assertIsNone(self.powerplant.blocks)
 

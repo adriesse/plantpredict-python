@@ -1,8 +1,9 @@
 import mock
 import unittest
+import json
 
 from plantpredict.inverter import Inverter
-from tests import plantpredict_unit_test_case
+from tests import plantpredict_unit_test_case, mocked_requests
 
 
 class TestInverter(plantpredict_unit_test_case.PlantPredictUnitTestCase):
@@ -41,6 +42,14 @@ class TestInverter(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         inverter.update()
         self.assertEqual(inverter.update_url_suffix, "/Inverter")
         self.assertTrue(mocked_update.called)
+
+    @mock.patch('plantpredict.inverter.requests.get', new=mocked_requests.mocked_requests_get)
+    def test_get_kva(self):
+        self._make_mocked_api()
+        inverter = Inverter(api=self.mocked_api, id=808)
+        response = inverter.get_kva(elevation=1000, temperature=20, use_cooling_temp=True)
+
+        self.assertEqual(json.loads(response.content)['kva'], 700.0)
 
 
 if __name__ == '__main__':
