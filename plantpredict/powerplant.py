@@ -248,94 +248,20 @@ class PowerPlant(PlantPredictEntity):
 
         return self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][-1]["name"]
 
-    @handle_refused_connection
-    @handle_error_response
-    def add_dc_field(self, block_name, array_name, inverter_name, module_id, ground_coverage_ratio,
-                     number_of_series_strings_wired_in_parallel, field_dc_power,
-                     tracking_type, modules_high, modules_wired_in_series, module_azimuth=None, number_of_rows=None,
-                     lateral_intermodule_gap=0.02, vertical_intermodule_gap=0.02, module_orientation=None,
-                     module_tilt=None, dc_field_backtracking_type=None, minimum_tracking_limit_angle_d=-60.0,
-                     maximum_tracking_limit_angle_d=60.0, sandia_conductive_coef=None, sandia_convective_coef=None,
-                     cell_to_module_temp_diff=None, heat_balance_conductive_coef=None,
-                     heat_balance_convective_coef=None, module_mismatch_coefficient=None, module_quality=None,
-                     light_induced_degradation=None, tracker_load_loss=0.0, dc_wiring_loss_at_stc=0.0,
-                     dc_health=0.0, array_based_shading=False):
+    def get_default_module_azimuth_from_latitude(self):
+        """
+        Plant is oriented south if above equator. The convention is 0.0 for North-facing arrays.
 
-        # if tracking type is fixed tilt module tilt is required
-        if (tracking_type == TrackingTypeEnum.FIXED_TILT) and not module_tilt:
-            raise ValueError("The input module_tilt is required for a fixed tilt DC field.")
-        elif (tracking_type == TrackingTypeEnum.HORIZONTAL_TRACKER) and not dc_field_backtracking_type:
-            raise ValueError("The input dc_field_backtracking_type is required for a horizontal tracker DC field.")
-
-        m = self.api.module(id=module_id)
-        m.get()
-        module_orientation = module_orientation if module_orientation else m.default_orientation
-        collector_bandwidth = self.calculate_collector_bandwidth(
-            m.width, m.length, module_orientation, modules_high, vertical_intermodule_gap
-        )
-        post_to_post_spacing = self.calculate_post_to_post_spacing_from_gcr(collector_bandwidth, ground_coverage_ratio)
-        number_of_rows = number_of_rows if number_of_rows else number_of_series_strings_wired_in_parallel
-
-        # azimuth faces south if project is above equator
+        :return: :py:data:`180.0` if latitude is above equator, otherwise :py:data:`0.0`.
+        :rtype: float
+        """
         p = self.api.project(id=self.project_id)
         p.get()
-        module_azimuth = module_azimuth if module_azimuth else (
-            180.0 if p.latitude >= 0.0 else 0.0
-        )
+        latitude = 180.0 if p.latitude >= 0.0 else 0.0
 
-        self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"].append({
-            "name": len(
-                self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"]
-            ) + 1,
-            "module_id": module_id,
-            "tracking_type": tracking_type,
-            "module_azimuth": module_azimuth,
-            "module_tilt": module_tilt,
-            "dc_field_backtracking_type": dc_field_backtracking_type,
-            "minimum_tracking_limit_angle_d": minimum_tracking_limit_angle_d,
-            "maximum_tracking_limit_angle_d": maximum_tracking_limit_angle_d,
-            "modules_high": modules_high,
-            "modules_wired_in_series": modules_wired_in_series,
-            "number_of_rows": number_of_rows,
-            "modules_wide": int(number_of_series_strings_wired_in_parallel*modules_wired_in_series/float(number_of_rows)),
-            "module_orientation": module_orientation if module_orientation else m.default_orientation,
-            "lateral_intermodule_gap": lateral_intermodule_gap,
-            "vertical_intermodule_gap": vertical_intermodule_gap,
-            "collector_bandwidth": collector_bandwidth,
-            "post_to_post_spacing": post_to_post_spacing,
-            "planned_module_rating": m.stc_max_power,
-            "field_dc_power": field_dc_power,
-            "number_of_series_strings_wired_in_parallel": number_of_series_strings_wired_in_parallel,
-            "array_based_shading": array_based_shading,
-            "sandia_conductive_coef": sandia_conductive_coef if sandia_conductive_coef else m.sandia_conductive_coef,
-            "sandia_convective_coef": sandia_convective_coef if sandia_convective_coef else m.sandia_convective_coef,
-            "cell_to_module_temp_diff": (
-                cell_to_module_temp_diff if cell_to_module_temp_diff else m.cell_to_module_temp_diff
-            ),
-            "heat_balance_conductive_coef": (
-                heat_balance_conductive_coef if heat_balance_conductive_coef else m.heat_balance_conductive_coef
-            ),
-            "heat_balance_convective_coef": (
-                heat_balance_convective_coef if heat_balance_convective_coef else m.heat_balance_convective_coef
-            ),
-            "module_mismatch_coefficient": (
-                module_mismatch_coefficient if module_mismatch_coefficient else m.module_mismatch_coefficient
-            ),
-            "module_quality": module_quality if module_quality else m.module_quality,
-            "light_induced_degradation": (
-                light_induced_degradation if light_induced_degradation else m.light_induced_degradation
-            ),
-            "tracker_load_loss": tracker_load_loss,
-            "dc_wiring_loss_at_stc": dc_wiring_loss_at_stc,
-            "dc_health": dc_health
-        })
-
-        return self.blocks[
-            block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"][-1]["name"]
+        return latitude
 
     @staticmethod
-    @handle_refused_connection
-    @handle_error_response
     def calculate_collector_bandwidth(module_width, module_length, module_orientation, modules_high,
                                       vertical_intermodule_gap):
         """
@@ -352,8 +278,65 @@ class PowerPlant(PlantPredictEntity):
         return modules_high * module_bandwidth / 1000 + (modules_high - 1) * vertical_intermodule_gap
 
     @staticmethod
-    @handle_refused_connection
-    @handle_error_response
+    def calculate_table_length(modules_wide, module_orientation, module_length, module_width, lateral_intermodule_gap):
+        """
+
+        :param modules_wide:
+        :param module_orientation:
+        :param module_length:
+        :param module_width:
+        :param lateral_intermodule_gap:
+        :return:
+        """
+        module_dimension = module_length if module_orientation == ModuleOrientationEnum.LANDSCAPE else module_width
+        table_length = modules_wide*module_dimension + lateral_intermodule_gap*(modules_wide - 1)
+
+        return table_length
+
+    @staticmethod
+    def calculate_tables_per_row(field_dc_power, planned_module_rating, modules_high, modules_wide,
+                                 tables_removed_for_pcs, number_of_rows):
+        """
+
+        :param field_dc_power:
+        :param planned_module_rating:
+        :param modules_high:
+        :param modules_wide:
+        :param tables_removed_for_pcs:
+        :param number_of_rows:
+        :return:
+        """
+        module_count = 1000*field_dc_power / planned_module_rating
+        modules_per_table = modules_high * modules_wide            # note: only a frontend value
+        total_tables = module_count / modules_per_table            # note: only a frontend value
+        tables_per_row = (total_tables + tables_removed_for_pcs) / number_of_rows
+
+        return tables_per_row
+
+    @staticmethod
+    def validate_dc_field_sizing(field_dc_power, number_of_series_strings_wired_in_parallel, planned_module_rating,
+                                 modules_wired_in_series):
+        """
+
+        :param field_dc_power:
+        :param number_of_series_strings_wired_in_parallel:
+        :param planned_module_rating:
+        :param modules_wired_in_series:
+        :return:
+        """
+        if (field_dc_power is not None) and (number_of_series_strings_wired_in_parallel is not None):
+            raise ValueError("Both field_dc_power and number_of_series_strings_wired_in_parallel are not None. Only "
+                             "one of these values can be specified (and the other will be calculated).")
+        elif (field_dc_power is not None) and (number_of_series_strings_wired_in_parallel is None):
+            number_of_series_strings_wired_in_parallel = 1000 * field_dc_power / \
+                                                         (planned_module_rating * modules_wired_in_series)
+        elif (number_of_series_strings_wired_in_parallel is not None) and (field_dc_power is None):
+            field_dc_power = number_of_series_strings_wired_in_parallel * \
+                             (planned_module_rating * modules_wired_in_series)/ 1000.0
+
+        return field_dc_power, number_of_series_strings_wired_in_parallel
+
+    @staticmethod
     def calculate_post_to_post_spacing_from_gcr(collector_bandwidth, ground_coverage_ratio):
         """
 
@@ -364,8 +347,6 @@ class PowerPlant(PlantPredictEntity):
         return collector_bandwidth / ground_coverage_ratio
 
     @staticmethod
-    @handle_refused_connection
-    @handle_error_response
     def calculate_field_dc_power(dc_ac_ratio, inverter_setpoint):
         """
 
@@ -376,19 +357,158 @@ class PowerPlant(PlantPredictEntity):
         return dc_ac_ratio*inverter_setpoint
 
     @staticmethod
-    @handle_refused_connection
-    @handle_error_response
-    def calculate_number_of_series_strings_wired_in_parallel(field_dc_power, planned_module_rating,
-                                                             modules_wired_in_series):
+    def validate_mounting_structure_parameters(tracking_type, module_tilt, tracking_backtracking_type):
         """
 
-        :param field_dc_power:
-        :param planned_module_rating:
-        :param modules_wired_in_series:
+        :param tracking_type:
+        :param module_tilt:
+        :param tracking_backtracking_type:
         :return:
         """
-        # convert field dc power from kW to W
-        return 1000 * field_dc_power / (planned_module_rating * modules_wired_in_series)
+        if (tracking_type == TrackingTypeEnum.FIXED_TILT) and not module_tilt:
+            raise ValueError("The input module_tilt is required for a fixed tilt DC field.")
+        elif (tracking_type == TrackingTypeEnum.HORIZONTAL_TRACKER) and (tracking_backtracking_type is None):
+            raise ValueError("The input tracking_backtracking_type is required for a horizontal tracker DC field.")
+
+    @handle_refused_connection
+    @handle_error_response
+    def add_dc_field(self, block_name, array_name, inverter_name, module_id,
+                     tracking_type, modules_high, modules_wired_in_series, number_of_rows, modules_wide=None,
+                     field_dc_power=None, number_of_series_strings_wired_in_parallel=None,
+                     module_tilt=None, seasonal_tilt=False, seasonal_tilt_monthly_factors=None,
+                     module_orientation=None, module_azimuth=None, tracking_backtracking_type=None,
+                     minimum_tracking_limit_angle_d=-60.0, maximum_tracking_limit_angle_d=60.0,
+                     post_to_post_spacing=None, lateral_intermodule_gap=0.02, vertical_intermodule_gap=0.02,
+                     array_based_shading=False, table_to_table_spacing=0.0, tables_removed_for_pcs=0,
+                     module_quality=None, module_mismatch_coefficient=None, light_induced_degradation=None,
+                     dc_wiring_loss_at_stc=1.5, dc_health=1.0, heat_balance_conductive_coef=None,
+                     heat_balance_convective_coef=None, sandia_conductive_coef=None, sandia_convective_coef=None,
+                     cell_to_module_temp_diff=None, tracker_load_loss=0.0):
+        """
+        Adds a DC field to an inverter on the instance of :py:class:`~plantpredict.powerplant.PowerPlant`. Location in
+        the plant hierarchy is specified :py:attr:`block_name`, :py:attr:`array_name`, and :py:attr:`inverter_name` in
+        the inputs of this method. Note: Calling this method only helps construct the local object and does not update
+        the power plant in PlantPredict. In order to persist this change, call
+        :py:meth`~plantpredict.powerplant.PowerPlant.update` after constructing a complete power plant.
+
+        :param int block_name:
+        :param int array_name:
+        :param str inverter_name:
+        :param int module_id:
+        :param int tracking_type:
+        :param int modules_high:
+        :param int modules_wired_in_series:
+        :param float number_of_rows:
+        :param int modules_wide:
+        :param float field_dc_power:
+        :param float number_of_series_strings_wired_in_parallel:
+        :param float module_tilt:
+        :param bool seasonal_tilt:
+        :param dict seasonal_tilt_monthly_factors:
+        :param module_orientation:
+        :param module_azimuth:
+        :param tracking_backtracking_type:
+        :param minimum_tracking_limit_angle_d:
+        :param maximum_tracking_limit_angle_d:
+        :param post_to_post_spacing:
+        :param lateral_intermodule_gap:
+        :param vertical_intermodule_gap:
+        :param array_based_shading:
+        :param table_to_table_spacing:
+        :param tables_removed_for_pcs:
+        :param module_quality:
+        :param module_mismatch_coefficient:
+        :param light_induced_degradation:
+        :param dc_wiring_loss_at_stc:
+        :param dc_health:
+        :param heat_balance_conductive_coef:
+        :param heat_balance_convective_coef:
+        :param sandia_conductive_coef:
+        :param sandia_convective_coef:
+        :param cell_to_module_temp_diff:
+        :param tracker_load_loss:
+        :return:
+        """
+        self.validate_mounting_structure_parameters(tracking_type, module_tilt, tracking_backtracking_type)
+
+        m = self.api.module(id=module_id)
+        m.get()
+        field_dc_power, number_of_series_strings_wired_in_parallel = self.validate_dc_field_sizing(
+            field_dc_power=field_dc_power,
+            number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
+            planned_module_rating=m.stc_max_power,
+            modules_wired_in_series=modules_wired_in_series,
+        )
+
+        module_orientation = module_orientation if module_orientation else m.default_orientation
+        modules_wide = modules_wide if modules_wide else modules_wired_in_series
+        self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"].append({
+            "name": len(
+                self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"]
+            ) + 1,
+            "module_id": module_id,
+            "tracking_type": tracking_type,
+            "module_tilt": module_tilt,
+            "seasonal_tilt": seasonal_tilt,
+            "seasonal_tilt_monthly_factors": seasonal_tilt_monthly_factors,
+            "tracking_backtracking_type": tracking_backtracking_type,
+            "minimum_tracking_limit_angle_d": minimum_tracking_limit_angle_d,
+            "maximum_tracking_limit_angle_d": maximum_tracking_limit_angle_d,
+            "module_orientation": module_orientation,
+            "modules_high": modules_high,
+            "module_azimuth": module_azimuth if module_azimuth else self.get_default_module_azimuth_from_latitude(),
+            "collector_bandwidth": self.calculate_collector_bandwidth(module_width=m.width,
+                                                                      module_length=m.length,
+                                                                      module_orientation=module_orientation,
+                                                                      vertical_intermodule_gap=vertical_intermodule_gap,
+                                                                      modules_high=modules_high),
+            "post_to_post_spacing": post_to_post_spacing,
+            # Electrical
+            "planned_module_rating": m.stc_max_power,
+            "modules_wired_in_series": modules_wired_in_series,
+            "field_dc_power": field_dc_power,
+            "number_of_series_strings_wired_in_parallel": number_of_series_strings_wired_in_parallel,
+            "module_count": 1000*field_dc_power/m.stc_max_power,    # confirmed calculation in PlantPredict backend
+            # Losses
+            "module_quality": module_quality if module_quality else m.module_quality,
+            "module_mismatch_coefficient": (module_mismatch_coefficient if module_mismatch_coefficient else
+                                            m.module_mismatch_coefficient),
+            "light_induced_degradation": (light_induced_degradation if light_induced_degradation else
+                                          m.light_induced_degradation),
+            "dc_wiring_loss_at_stc": dc_wiring_loss_at_stc,
+            "dc_health": dc_health,
+            "heat_balance_conductive_coef": (heat_balance_conductive_coef if heat_balance_conductive_coef else
+                                             m.heat_balance_conductive_coef),
+            "heat_balance_convective_coef": (heat_balance_convective_coef if heat_balance_convective_coef else
+                                             m.heat_balance_convective_coef),
+            "sandia_conductive_coef": sandia_conductive_coef if sandia_conductive_coef else m.sandia_conductive_coef,
+            "cell_to_module_temp_diff": (cell_to_module_temp_diff if cell_to_module_temp_diff else
+                                         m.cell_to_module_temp_diff),
+            "sandia_convective_coef": sandia_convective_coef if sandia_convective_coef else m.sandia_convective_coef,
+            "tracker_load_loss": tracker_load_loss,
+            # Advanced Fields
+            "lateral_intermodule_gap": lateral_intermodule_gap,
+            "vertical_intermodule_gap": vertical_intermodule_gap,
+            "modules_wide": modules_wide,
+            "table_to_table_spacing": table_to_table_spacing,
+            "array_based_shading": array_based_shading,
+            "number_of_rows": number_of_rows,
+            "table_length": self.calculate_table_length(modules_wide=modules_wide,
+                                                        module_width=m.width,
+                                                        module_length=m.length,
+                                                        module_orientation=m.module_orientation,
+                                                        lateral_intermodule_gap=lateral_intermodule_gap),
+            "tables_per_row": self.calculate_tables_per_row(field_dc_power=field_dc_power,
+                                                            planned_module_rating=m.stc_max_power,
+                                                            modules_high=modules_high,
+                                                            modules_wide=modules_wide,
+                                                            tables_removed_for_pcs=tables_removed_for_pcs,
+                                                            number_of_rows=number_of_rows),
+            "tables_removed_for_pcs": tables_removed_for_pcs,
+        })
+
+        return self.blocks[
+            block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"][-1]["name"]
 
     def __init__(self, api, project_id=None, prediction_id=None, use_cooling_temp=True):
         self.project_id = project_id

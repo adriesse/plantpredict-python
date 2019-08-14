@@ -3,7 +3,7 @@ import unittest
 
 from tests import plantpredict_unit_test_case, mocked_requests
 from plantpredict.powerplant import PowerPlant
-from plantpredict.enumerations import TrackingTypeEnum, ModuleOrientationEnum
+from plantpredict.enumerations import TrackingTypeEnum, ModuleOrientationEnum, BacktrackingTypeEnum
 
 
 class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
@@ -333,13 +333,76 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         )
         self.assertEqual(field_dc_power, 960.0)
 
-    def test_calculate_number_of_series_strings_wired_in_parallel(self):
-        n = PowerPlant.calculate_number_of_series_strings_wired_in_parallel(
-            field_dc_power=800,
-            planned_module_rating=120,
-            modules_wired_in_series=10
+    def test_validate_dc_field_sizing_both_specified(self):
+        with self.assertRaises(ValueError):
+            PowerPlant.validate_dc_field_sizing(
+                field_dc_power=869.4,
+                number_of_series_strings_wired_in_parallel=420.0,
+                modules_wired_in_series=6,
+                planned_module_rating=420.0
+            )
+
+    def test_validate_dc_field_sizing_with_field_dc_power(self):
+        field_dc_power, number_of_series_strings_wired_in_parallel = PowerPlant.validate_dc_field_sizing(
+            field_dc_power=869.4,
+            number_of_series_strings_wired_in_parallel=None,
+            modules_wired_in_series=6,
+            planned_module_rating=420.0
         )
-        self.assertAlmostEqual(n, 666.666666666)
+        self.assertEqual(field_dc_power, 869.4)
+        self.assertEqual(number_of_series_strings_wired_in_parallel, 345.0)
+
+    def test_validate_dc_field_sizing_with_number_of_series_strings_wired_in_parallel(self):
+        field_dc_power, number_of_series_strings_wired_in_parallel = PowerPlant.validate_dc_field_sizing(
+            field_dc_power=None,
+            number_of_series_strings_wired_in_parallel=345.0,
+            modules_wired_in_series=6,
+            planned_module_rating=420.0
+        )
+        self.assertEqual(field_dc_power, 869.4)
+        self.assertEqual(number_of_series_strings_wired_in_parallel, 345.0)
+
+    def test_validate_mounting_structure_parameters_fixed_tilt_valid(self):
+        PowerPlant.validate_mounting_structure_parameters(
+            tracking_type=TrackingTypeEnum.FIXED_TILT,
+            module_tilt=30.0,
+            tracking_backtracking_type=None
+        )
+
+    def test_validate_mounting_structure_parameters_fixed_tilt_invalid(self):
+        with self.assertRaises(ValueError) as e:
+            PowerPlant.validate_mounting_structure_parameters(
+                tracking_type=TrackingTypeEnum.FIXED_TILT,
+                module_tilt=None,
+                tracking_backtracking_type=None
+            )
+
+        self.assertEqual(e.exception.args[0], "The input module_tilt is required for a fixed tilt DC field.")
+
+    def test_validate_mounting_structure_parameters_tracking_true_tracking_valid(self):
+        PowerPlant.validate_mounting_structure_parameters(
+            tracking_type=TrackingTypeEnum.HORIZONTAL_TRACKER,
+            module_tilt=None,
+            tracking_backtracking_type=BacktrackingTypeEnum.TRUE_TRACKING
+        )
+
+    def test_validate_mounting_structure_parameters_tracking_backtracking_valid(self):
+        PowerPlant.validate_mounting_structure_parameters(
+            tracking_type=TrackingTypeEnum.HORIZONTAL_TRACKER,
+            module_tilt=None,
+            tracking_backtracking_type=BacktrackingTypeEnum.BACKTRACKING
+        )
+
+    def test_validate_mounting_structure_parameters_tracking_invalid(self):
+        with self.assertRaises(ValueError) as e:
+            PowerPlant.validate_mounting_structure_parameters(
+                tracking_type=TrackingTypeEnum.HORIZONTAL_TRACKER,
+                module_tilt=None,
+                tracking_backtracking_type=None
+            )
+
+        self.assertEqual(e.exception.args[0], "The input tracking_backtracking_type is required for a horizontal "
+                                              "tracker DC field.")
 
     def test_init(self):
         self._make_mocked_api()
