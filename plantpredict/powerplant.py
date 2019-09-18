@@ -31,13 +31,14 @@ class PowerPlant(PlantPredictEntity):
                 :file: ../docs/_static/csv_tables/powerplant.csv
                 :header-rows: 1
                 :stub-columns: 1
-                :widths: 20 5 57 18
+                :widths: 20 5 75
                 :align: center
 
             .. csv-table:: Contents of dictionary :py:attr:`blocks`
                 :file: ../docs/_static/csv_tables/powerplant_blocks.csv
                 :header-rows: 1
                 :stub-columns: 1
+                :widths: 20 5 75
                 :align: center
     |
     """
