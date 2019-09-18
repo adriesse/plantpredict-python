@@ -28,7 +28,7 @@ class PowerPlant(PlantPredictEntity):
         .. container:: attributes
 
             .. csv-table:: Power Plant Attributes & Structure
-                :file: docs/_static/csv_tables/powerplant.csv
+                :file: /docs/_static/csv_tables/powerplant.csv
                 :header-rows: 1
                 :stub-columns: 1
 
