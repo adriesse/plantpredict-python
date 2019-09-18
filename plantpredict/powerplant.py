@@ -19,13 +19,11 @@ class PowerPlant(PlantPredictEntity):
     For methods beyond these four, the input requirements might be either attribute assignments or variable inputs to
     the method.
 
-    **Power Plant Attributes & Structure**
-
     .. container:: toggle
 
         .. container:: header
 
-            Power Plant Top-Level Attributes
+            **Power Plant Attributes & Structure**
 
         .. container:: powerplant
 
@@ -40,11 +38,11 @@ class PowerPlant(PlantPredictEntity):
 
         .. container:: header
 
-            :py:attr:`blocks`
+            - :py:attr:`blocks`
 
         .. container:: blocks
 
-            ..csv-table:: Contents of dictionary :py:data:`blocks`
+            .. csv-table:: Contents of dictionary :py:data:`blocks`
                 :file: ../docs/_static_csv_tables/powerplant_blocks.csv
                 :header-rows: 1
                 :stub-columns: 1
