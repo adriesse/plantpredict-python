@@ -1,0 +1,2 @@
+Field,Type,Description,Required for :py:meth:`~plantpredict.powerplant.PowerPlant.create`
+power_factor,float,adlkfajdfad,required

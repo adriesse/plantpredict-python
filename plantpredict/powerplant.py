@@ -7,6 +7,30 @@ from plantpredict.enumerations import ModuleOrientationEnum, TrackingTypeEnum
 
 class PowerPlant(PlantPredictEntity):
     """
+    Represents the hierarchical structure of a power plant in PlantPredict. There is a one-to-one relationship between a
+    :py:class`~plantpredict.powerplant.PowerPlant` and :py:class:`~plantpredict.prediction.Prediction`. It is linked to
+    that prediction via the attributes :py:attr:`project_id` and :py:attr:`prediction_id`.
+
+    All classes that inherit from :py:class:`~plantpredict.plant_predict_entity.PlantPredictEntity` follow the same
+    general usage pattern. The core class methods (:py:class`~plantpredict.powerplant.PowerPlant.get`,
+    :py:class`~plantpredict.powerplant.PowerPlant.create`, :py:class`~plantpredict.powerplant.PowerPlant.update`, and
+    :py:class`~plantpredict.powerplant.PowerPlant.delete`) require that certain attributes be assigned to the instance
+    of the class in order to run successfully, rather than requiring direct variable inputs to the method call itself.
+    For methods beyond these four, the input requirements might be either attribute assignments or variable inputs to
+    the method.
+
+    .. container:: toggle
+
+        .. container:: header
+
+            **Power Plant Attributes & Structure**
+
+        .. container:: attributes
+
+            .. csv-table:: Power Plant Attributes & Structure
+                :file: _static/csv_tables/powerplant.csv
+                :header-rows: 1
+                :stub-columns: 1
     """
     def create(self, power_factor=1.0):
         """
