@@ -27,39 +27,55 @@ class PowerPlant(PlantPredictEntity):
 
         .. container:: attributes
 
-            .. csv-table:: Power Plant Attributes & Structure
+            .. csv-table:: Power Plant Top-Level Attributes
                 :file: ../docs/_static/csv_tables/powerplant.csv
                 :header-rows: 1
                 :stub-columns: 1
+                :align: center
 
+            ..csv-table :: Contents of dictionary :py:data:`blocks`
+                :file ../docs/_static_csv_tables/powerplant_blocks.csv
+                :header-rows: 1
+                :stub-columns: 1
+                :align: center
+    |
     """
     def create(self):
         """
-        **POST** */Project/ :py:attr:`project_id` /Prediction/ :py:attr:`prediction_id` /PowerPlant*
+        **POST** */Project/* :py:attr:`project_id` */Prediction/* :py:attr:`prediction_id` */PowerPlant*
 
+        :return:
         """
+        self.power_factor = 1.0
+
         self.create_url_suffix = "/Project/{}/Prediction/{}/PowerPlant".format(self.project_id, self.prediction_id)
-
-        # this is automatically calculated in the UI
-        self.power_factor = 1.0 #power_factor # TODO calculate
-
         return super(PowerPlant, self).create()
 
     def delete(self):
-        """DELETE /Project/{ProjectId}/Prediction/{PredictionId}/PowerPlant"""
+        """
+        **DELETE** */Project/* :py:attr:`project_id` */Prediction/* :py:attr:`prediction_id` */PowerPlant*
+
+        :return:
+        """
         self.delete_url_suffix = "/Project/{}/Prediction/{}/PowerPlant".format(self.project_id, self.prediction_id)
         super(PowerPlant, self).delete()
 
     def get(self):
-        """"GET /Project/{ProjectId}/Prediction/{PredictionId}/PowerPlant"""
-        self.get_url_suffix = "/Project/{}/Prediction/{}/PowerPlant".format(self.project_id, self.prediction_id)
+        """
+        **GET** */Project/* :py:attr:`project_id` */Prediction/* :py:attr:`prediction_id` */PowerPlant*
 
+        :return:
+        """
+        self.get_url_suffix = "/Project/{}/Prediction/{}/PowerPlant".format(self.project_id, self.prediction_id)
         return super(PowerPlant, self).get()
 
     def update(self):
-        """PUT /Project/{ProjectId}/Prediction/{PredictionId}/PowerPlant"""
-        self.update_url_suffix = "/Project/{}/Prediction/{}/PowerPlant".format(self.project_id, self.prediction_id)
+        """
+        **PUT** */Project/* :py:attr:`project_id` */Prediction/* :py:attr:`prediction_id` */PowerPlant*
 
+        :return:
+        """
+        self.update_url_suffix = "/Project/{}/Prediction/{}/PowerPlant".format(self.project_id, self.prediction_id)
         return super(PowerPlant, self).update()
 
     def add_transformer(self, rating, high_side_voltage, no_load_loss, full_load_loss, ordinal):
