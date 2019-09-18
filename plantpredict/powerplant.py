@@ -12,9 +12,9 @@ class PowerPlant(PlantPredictEntity):
     that prediction via the attributes :py:attr:`project_id` and :py:attr:`prediction_id`.
 
     All classes that inherit from :py:class:`~plantpredict.plant_predict_entity.PlantPredictEntity` follow the same
-    general usage pattern. The core class methods (:py:class`~plantpredict.powerplant.PowerPlant.get`,
-    :py:class`~plantpredict.powerplant.PowerPlant.create`, :py:class`~plantpredict.powerplant.PowerPlant.update`, and
-    :py:class`~plantpredict.powerplant.PowerPlant.delete`) require that certain attributes be assigned to the instance
+    general usage pattern. The core class methods (:py:class:`~plantpredict.powerplant.PowerPlant.get`,
+    :py:class:`~plantpredict.powerplant.PowerPlant.create`, :py:class:`~plantpredict.powerplant.PowerPlant.update`, and
+    :py:class:`~plantpredict.powerplant.PowerPlant.delete`) require that certain attributes be assigned to the instance
     of the class in order to run successfully, rather than requiring direct variable inputs to the method call itself.
     For methods beyond these four, the input requirements might be either attribute assignments or variable inputs to
     the method.
@@ -28,18 +28,20 @@ class PowerPlant(PlantPredictEntity):
         .. container:: attributes
 
             .. csv-table:: Power Plant Attributes & Structure
-                :file: _static/csv_tables/powerplant.csv
+                :file: /_static/csv_tables/powerplant.csv
                 :header-rows: 1
                 :stub-columns: 1
+
     """
-    def create(self, power_factor=1.0):
+    def create(self):
         """
         **POST** */Project/ :py:attr:`project_id` /Prediction/ :py:attr:`prediction_id` /PowerPlant*
 
         """
         self.create_url_suffix = "/Project/{}/Prediction/{}/PowerPlant".format(self.project_id, self.prediction_id)
 
-        self.power_factor = power_factor
+        # this is automatically calculated in the UI
+        self.power_factor = power_factor # TODO calculate
 
         return super(PowerPlant, self).create()
 
