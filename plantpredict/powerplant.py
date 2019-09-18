@@ -31,29 +31,6 @@ class PowerPlant(PlantPredictEntity):
                 :file: _static/csv_tables/powerplant.csv
                 :header-rows: 1
                 :stub-columns: 1
-
-
-
-id (integer, optional),
-resultList (Array[PlantPredict.Entities.PowerPlants.PowerPlantCalculationResultDetail], optional),
-blocks (Array[PlantPredict.Entities.PowerPlants.PVBlock], optional),
-transformers (Array[PlantPredict.Entities.Transformer], optional),
-transmissionLines (Array[PlantPredict.Entities.TransmissionLine], optional),
-ess (PlantPredict.Entities.ESS.ESSSystem, optional),
-exportSystem (boolean, optional),
-exportESS (boolean, optional),
-lgiaLimitTimeSeriesId (integer, optional),
-lgiaLimitTimeSeries (PlantPredict.Entities.TimeSeries, optional),
-useLGIALimitTimeSeries (boolean, optional),
-powerFactor (number),
-lgiaLimitation (number, optional),
-availabilityLoss (number, optional),
-useCoolingTemp (boolean, optional),
-totalModuleArea (number, optional),
-maxMVTransformerVoltage (number, optional),
-maximumPlantOutput (number, optional)
-                year_repeater; int; Must be between :py:data:`1` and :py:data:`50` - unitless.
-
     """
     def create(self, power_factor=1.0):
         """
