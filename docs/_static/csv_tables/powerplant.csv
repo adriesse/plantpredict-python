@@ -3,7 +3,7 @@ project_id,int,,
 prediction_id,int,,
 id,int,Unique identifier of the power plant in PlantPredict.,-
 result_list,list,,-
-blocks,list,See table **Contents of dictionary :py:data:`blocks`** below.,-
+blocks,list,See table **Contents of dictionary blocks** below.,-
 transformers,list,,-
 transmission_lines,list,,-
 ess,dict,,-
