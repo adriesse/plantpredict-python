@@ -31,18 +31,10 @@ class PowerPlant(PlantPredictEntity):
                 :file: ../docs/_static/csv_tables/powerplant.csv
                 :header-rows: 1
                 :stub-columns: 1
-                :widths: 20 5 60 15
+                :widths: 20 5 57 18
                 :align: center
 
-    .. container:: toggle
-
-        .. container:: header
-
-            - :py:attr:`blocks`
-
-        .. container:: blocks
-
-            .. csv-table:: Contents of dictionary :py:data:`blocks`
+            .. csv-table:: Contents of dictionary :py:attr:`blocks`
                 :file: ../docs/_static_csv_tables/powerplant_blocks.csv
                 :header-rows: 1
                 :stub-columns: 1
