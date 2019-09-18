@@ -25,7 +25,7 @@ class PowerPlant(PlantPredictEntity):
 
         .. container:: header
 
-            **Power Plant Top-Level Attributes**
+            Power Plant Top-Level Attributes
 
         .. container:: powerplant
 
@@ -38,9 +38,9 @@ class PowerPlant(PlantPredictEntity):
 
     .. container:: toggle
 
-        ..container:: header
-        
-            **Contents of dictionary blocks**
+        .. container:: header
+
+            :py:attr:`blocks`
 
         .. container:: blocks
 
