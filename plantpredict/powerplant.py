@@ -22,9 +22,13 @@ class PowerPlant(PlantPredictEntity):
     **Power Plant Attributes & Structure**
 
     .. container:: toggle
+
         .. container:: header
+
             **Power Plant Top-Level Attributes**
+
         .. container:: powerplant
+
             .. csv-table:: Power Plant Top-Level Attributes
                 :file: ../docs/_static/csv_tables/powerplant.csv
                 :header-rows: 1
@@ -33,9 +37,13 @@ class PowerPlant(PlantPredictEntity):
                 :align: center
 
     .. container:: toggle
+
         ..container:: header
+        
             **Contents of dictionary blocks**
+
         .. container:: blocks
+
             ..csv-table:: Contents of dictionary :py:data:`blocks`
                 :file: ../docs/_static_csv_tables/powerplant_blocks.csv
                 :header-rows: 1
