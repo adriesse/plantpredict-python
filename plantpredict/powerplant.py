@@ -8,7 +8,7 @@ from plantpredict.enumerations import ModuleOrientationEnum, TrackingTypeEnum
 class PowerPlant(PlantPredictEntity):
     """
     Represents the hierarchical structure of a power plant in PlantPredict. There is a one-to-one relationship between a
-    :py:class`~plantpredict.powerplant.PowerPlant` and :py:class:`~plantpredict.prediction.Prediction`. It is linked to
+    :py:class:`~plantpredict.powerplant.PowerPlant` and :py:class:`~plantpredict.prediction.Prediction`. It is linked to
     that prediction via the attributes :py:attr:`project_id` and :py:attr:`prediction_id`.
 
     All classes that inherit from :py:class:`~plantpredict.plant_predict_entity.PlantPredictEntity` follow the same
@@ -28,7 +28,7 @@ class PowerPlant(PlantPredictEntity):
         .. container:: attributes
 
             .. csv-table:: Power Plant Attributes & Structure
-                :file: /_static/csv_tables/powerplant.csv
+                :file: docs/_static/csv_tables/powerplant.csv
                 :header-rows: 1
                 :stub-columns: 1
 
@@ -41,7 +41,7 @@ class PowerPlant(PlantPredictEntity):
         self.create_url_suffix = "/Project/{}/Prediction/{}/PowerPlant".format(self.project_id, self.prediction_id)
 
         # this is automatically calculated in the UI
-        self.power_factor = power_factor # TODO calculate
+        self.power_factor = 1.0 #power_factor # TODO calculate
 
         return super(PowerPlant, self).create()
 
