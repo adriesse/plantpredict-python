@@ -15,11 +15,9 @@ Full documentation on the backend algorithms used in PlantPredict is available `
 The source code for plantpredict-python is available on `GitHub
 <https://github.com/stephenkaplan/plantpredict-python>`_.
 
-Sign up for important email updates below:
+Sign up for important email updates `HERE
+<https://docs.google.com/forms/d/e/1FAIpQLSex1MjHe2c6SUXSL4faLqOKpJMvzFZ7e8nfMl4sVn66OcrCeQ/viewform>`_.
 
-.. raw:: html
-
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSex1MjHe2c6SUXSL4faLqOKpJMvzFZ7e8nfMl4sVn66OcrCeQ/viewform?embedded=true" width="640" height="946" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 
 Contents
 =========
