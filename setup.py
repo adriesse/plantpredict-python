@@ -18,9 +18,6 @@ setup(
     install_requires=[
         'requests',
         'pandas',
-        'numpy',
-        'python-dateutil',
-        'pytz',
         'six',
         'mock',
         'xlrd',
