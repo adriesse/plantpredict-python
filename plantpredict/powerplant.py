@@ -34,7 +34,7 @@ class PowerPlant(PlantPredictEntity):
                 :widths: 20 5 75
                 :align: center
 
-            .. csv-table:: Contents of dictionary :py:attr:`blocks`
+            .. csv-table:: Contents of # TODO blocks is a list :py:attr:`blocks`
                 :file: ../docs/_static/csv_tables/powerplant_blocks.csv
                 :header-rows: 1
                 :stub-columns: 1
@@ -239,7 +239,7 @@ class PowerPlant(PlantPredictEntity):
 
     @handle_refused_connection
     @handle_error_response
-    def _get_inverter_kva_rating(self, inverter_id):
+    def get_inverter_kva_rating(self, inverter_id):
         """
 
         :param inverter_id:
@@ -287,7 +287,7 @@ class PowerPlant(PlantPredictEntity):
             "setpoint_kw": setpoint_kw if setpoint_kw else self._get_inverter_power_rated(inverter_id),
             "power_factor": power_factor,
             "dc_fields": [],
-            "kva_rating": self._get_inverter_kva_rating(inverter_id) if self.use_cooling_temp else kva_rating
+            "kva_rating": self.get_inverter_kva_rating(inverter_id) if self.use_cooling_temp else kva_rating
         })
 
         return self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][-1]["name"]

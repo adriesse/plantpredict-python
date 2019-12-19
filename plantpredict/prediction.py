@@ -239,7 +239,6 @@ class Prediction(PlantPredictEntity):
         :param new_prediction_name:
         :return:
         """
-        # clone prediction
         new_prediction = self.api.prediction()
         self.get()
         original_prediction_id = self.id
