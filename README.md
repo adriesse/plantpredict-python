@@ -2,8 +2,6 @@
 
 # plantpredict-python
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/stephenkaplan/plantpredict-python/master?filepath=example_usage)
-
 Install **latest stable version** (0.9.2) via: `pip install plantpredict`.
 
 Install **development version** via Github master branch.
