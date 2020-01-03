@@ -126,12 +126,10 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self._make_mocked_api()
         self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
         self._init_powerplant_structure()
-        cloned_block = self.powerplant.clone_block(block_id_to_clone=1)
+        cloned_block_name = self.powerplant.clone_block(block_id_to_clone=1)
 
-        self.assertIsNotNone(cloned_block)
-        self.assertEqual(cloned_block, {"id": 1, "name": 2, "arrays": [
-                {"id": 11, "name": 1, "inverters": [{"id": 111, "name": "A", "dc_fields": [{"id": 1111, "name": 1}]}]}
-            ]})
+        self.assertIsNotNone(cloned_block_name)
+        self.assertEqual(cloned_block_name, 2)
         self.assertEqual(len(self.powerplant.blocks), 2)
         self.assertEqual(self.powerplant.blocks[-1], {"id": 1, "name": 2, "arrays": [
                 {"id": 11, "name": 1, "inverters": [{"id": 111, "name": "A", "dc_fields": [{"id": 1111, "name": 1}]}]}
@@ -397,6 +395,79 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         )
         self.assertAlmostEqual(tables_per_row, 2.8, 1)
 
+    def test_calculate_tables_per_row_with_tables_removed(self):
+        tables_per_row = PowerPlant.calculate_tables_per_row(
+            field_dc_power=756,
+            planned_module_rating=360,
+            modules_high=4,
+            modules_wide=18,
+            tables_removed_for_pcs=1.0,
+            number_of_rows=10.2469507659596
+        )
+        self.assertAlmostEqual(tables_per_row, 3, 0)
+
+    def test_calculate_dc_field_size_by_collector_bandwidth(self):
+        dc_field_size = PowerPlant._calculate_dc_field_size_by_collector_bandwidth(
+            number_of_rows=10.2469507659596,
+            post_to_post_spacing=9.799999999999997,
+            collector_bandwidth=4.03
+        )
+        self.assertAlmostEqual(dc_field_size, 94.65, 2)
+
+    def test_calculate_dc_field_size_by_tables_per_row_landscape_module_orientation(self):
+        dc_field_size = PowerPlant._calculate_dc_field_size_by_tables_per_row(
+            tables_per_row=2.8463,
+            module_orientation=ModuleOrientationEnum.LANDSCAPE,
+            module_length=1960,
+            module_width=992,
+            lateral_intermodule_gap=0.02,
+            modules_wide=18
+        )
+        self.assertAlmostEqual(dc_field_size, 101.42, 2)
+
+    def test_calculate_dc_field_size_by_tables_per_row_portrait_module_orientation(self):
+        dc_field_size = PowerPlant._calculate_dc_field_size_by_tables_per_row(
+            tables_per_row=4,
+            module_orientation=ModuleOrientationEnum.PORTRAIT,
+            module_length=1960,
+            module_width=992,
+            lateral_intermodule_gap=0.02,
+            modules_wide=18
+        )
+        self.assertAlmostEqual(dc_field_size, 72.86, 1)
+
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_dc_field_size_by_tables_per_row')
+    def test_calculate_dc_field_length_tracker(self, mock_calculate_dc_field_size_by_tables_per_row):
+        self._make_mocked_api()
+        powerplant = PowerPlant(self.mocked_api)
+        powerplant._calculate_dc_field_length(2, ModuleOrientationEnum.PORTRAIT, 1962, 900, 0.02, 18,
+                                              TrackingTypeEnum.HORIZONTAL_TRACKER, 1, 1.5, 4.03)
+        self.assertTrue(mock_calculate_dc_field_size_by_tables_per_row.called)
+
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_dc_field_size_by_collector_bandwidth')
+    def test_calculate_dc_field_length_fixed_tilt(self, mock_calculate_dc_field_size_by_collector_bandwidth):
+        self._make_mocked_api()
+        powerplant = PowerPlant(self.mocked_api)
+        powerplant._calculate_dc_field_length(2, ModuleOrientationEnum.PORTRAIT, 1962, 900, 0.02, 18,
+                                              TrackingTypeEnum.FIXED_TILT, 1, 1.5, 4.03)
+        self.assertTrue(mock_calculate_dc_field_size_by_collector_bandwidth.called)
+
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_dc_field_size_by_collector_bandwidth')
+    def test_calculate_dc_field_width_tracker(self, mock_calculate_dc_field_size_by_collector_bandwidth):
+        self._make_mocked_api()
+        powerplant = PowerPlant(self.mocked_api)
+        powerplant._calculate_dc_field_width(TrackingTypeEnum.HORIZONTAL_TRACKER, 2, 1962, 900, 0.02, 18,
+                                             ModuleOrientationEnum.PORTRAIT, 1, 1.5, 4.03)
+        self.assertTrue(mock_calculate_dc_field_size_by_collector_bandwidth.called)
+
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_dc_field_size_by_tables_per_row')
+    def test_calculate_dc_field_width_fixed_tilt(self, mock_calculate_dc_field_size_by_tables_per_row):
+        self._make_mocked_api()
+        powerplant = PowerPlant(self.mocked_api)
+        powerplant._calculate_dc_field_width(TrackingTypeEnum.FIXED_TILT, 2, 1962, 900, 0.02, 18,
+                                             ModuleOrientationEnum.PORTRAIT, 1, 1.5, 4.03)
+        self.assertTrue(mock_calculate_dc_field_size_by_tables_per_row.called)
+
     def test_validate_dc_field_sizing_both_specified(self):
         try:
             PowerPlant._validate_dc_field_sizing(
@@ -590,7 +661,9 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "number_of_rows": 1,
             "table_length": 20000.18,
             "tables_per_row": 100.0,
-            "tables_removed_for_pcs": 0
+            "tables_removed_for_pcs": 0,
+            'field_length': 4.859999999999999,
+            'field_width': 2019.98
         })
 
     @mock.patch('plantpredict.plant_predict_entity.requests.get', new=mocked_requests.mocked_requests_get)
@@ -655,7 +728,9 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "number_of_rows": 1,
             "table_length": 20000.18,
             "tables_per_row": 100.0,
-            "tables_removed_for_pcs": 0
+            "tables_removed_for_pcs": 0,
+            'field_length': 2019.98,
+            'field_width': 4.859999999999999
         })
 
     @mock.patch('plantpredict.plant_predict_entity.requests.get', new=mocked_requests.mocked_requests_get)
@@ -696,7 +771,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
     @mock.patch('plantpredict.powerplant.PowerPlant.calculate_table_length')
     @mock.patch('plantpredict.powerplant.PowerPlant.get_default_module_azimuth_from_latitude')
     def test_add_dc_field_helper_methods_called(self, mock_get_default_module_azimuth_from_latitude,
-                                                    mock_calculate_table_length, mock_calculate_tables_per_row):
+                                                mock_calculate_table_length, mock_calculate_tables_per_row):
         self._make_mocked_api()
         self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
         self._init_powerplant_structure()
@@ -711,12 +786,40 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             modules_high=4,
             modules_wired_in_series=10,
             post_to_post_spacing=1.0,
-            tracking_backtracking_type=BacktrackingTypeEnum.BACKTRACKING
+            tracking_backtracking_type=BacktrackingTypeEnum.BACKTRACKING,
         )
 
         self.assertTrue(mock_get_default_module_azimuth_from_latitude.called)
         self.assertTrue(mock_calculate_table_length.called)
         self.assertTrue(mock_calculate_tables_per_row.called)
+
+    @mock.patch('plantpredict.plant_predict_entity.requests.get', new=mocked_requests.mocked_requests_get)
+    @mock.patch('plantpredict.project.requests.get', new=mocked_requests.mocked_requests_get)
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_dc_field_width')
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_dc_field_length')
+    def test_add_dc_field_dimension_calculator_helpers_called(self, mock_calculate_dc_field_length,
+                                                              mock_calculate_dc_field_width):
+
+        self._make_mocked_api()
+        self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        self._init_powerplant_structure()
+
+        self.powerplant.add_dc_field(
+            block_name=1,
+            array_name=1,
+            inverter_name="A",
+            module_id=123,
+            tracking_type=TrackingTypeEnum.HORIZONTAL_TRACKER,
+            number_of_series_strings_wired_in_parallel=400,
+            modules_high=4,
+            modules_wired_in_series=10,
+            post_to_post_spacing=1.0,
+            tracking_backtracking_type=BacktrackingTypeEnum.BACKTRACKING,
+            module_azimuth=180.0
+        )
+
+        self.assertTrue(mock_calculate_dc_field_length.called)
+        self.assertTrue(mock_calculate_dc_field_width.called)
 
     @mock.patch('plantpredict.plant_predict_entity.requests.get', new=mocked_requests.mocked_requests_get)
     @mock.patch('plantpredict.project.requests.get', new=mocked_requests.mocked_requests_get)

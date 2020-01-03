@@ -141,8 +141,9 @@ class PowerPlant(PlantPredictEntity):
         """
         Clones (copies) an existing block and appends it to `self.blocks`.
 
-        :param block_id_to_clone: Unique identifier of the block
-        :return:
+        :param int block_id_to_clone: Unique identifier of the block. Accessible on a given block with key `id`.
+        :return: Name of newly cloned block.
+        :rtype: int
         """
         block_to_clone = [b for b in self.blocks if b['id'] == block_id_to_clone][0]
         block_copy = copy.deepcopy(block_to_clone)
@@ -150,17 +151,21 @@ class PowerPlant(PlantPredictEntity):
         self.blocks.append(block_copy)
         self.update()
 
-        return self.blocks[-1]
+        return self.blocks[-1]["name"]
 
-    # TODO none of this stuff accounts for duplicate names, or out of order names, etc
     @handle_refused_connection
     @handle_error_response
     def add_block(self, use_energization_date=False, energization_date=""):
         """
+        Creates a new block and appends it to `self.blocks`. Block naming is sequential - for instance, if there are 2
+        existing blocks with names `1` and `2` (accessible via key `name` on each block in list), the next block created
+        by `add_block` will automatically have `name` equal to `3`. This method does not currently account for the
+        situation in which an existing power plant has block named non-sequentially.
 
-        :param bool use_energization_date:
-        :param str energization_date:
-        :return: Block name, which is an integer identifier.
+        :param bool use_energization_date: Enables use of energization date in power plant block. Defaults to `False`.
+        :param str energization_date: Timestamp representing energization date of block. Uses format
+                                      `2019-12-26T16:43:55.867Z` and defaults to an empty string.
+        :return: Name of newly added block
         :rtype: int
         """
         block = {
@@ -170,6 +175,7 @@ class PowerPlant(PlantPredictEntity):
             "arrays": []
         }
 
+        # if blocks list does not exit, create new list instead of appending
         try:
             self.blocks.append(block)
         except AttributeError:
@@ -179,10 +185,9 @@ class PowerPlant(PlantPredictEntity):
 
     def _validate_block_name(self, block_name):
         """
+        Checks that a given block name exists in power plant and raises `ValueError` if not.
 
-        :param int block_name:
-        :return:
-        :rtype:
+        :param int block_name: Value for key `name` in a single item of list `self.blocks`.
         """
         if block_name not in [b['name'] for b in self.blocks]:
             raise ValueError("{} is not a valid block name in the existing power plant structure.".format(block_name))
@@ -389,6 +394,83 @@ class PowerPlant(PlantPredictEntity):
         return tables_per_row
 
     @staticmethod
+    def _calculate_dc_field_size_by_collector_bandwidth(number_of_rows, post_to_post_spacing, collector_bandwidth):
+        """
+
+        :param number_of_rows:
+        :param post_to_post_spacing:
+        :param collector_bandwidth:
+        :return:
+        """
+        return post_to_post_spacing*(number_of_rows - 1) + collector_bandwidth
+
+    @staticmethod
+    def _calculate_dc_field_size_by_tables_per_row(tables_per_row, module_orientation, module_length, module_width,
+                                                   lateral_intermodule_gap, modules_wide):
+        """
+
+        :param tables_per_row:
+        :param module_orientation:
+        :param module_length:
+        :param module_width:
+        :param lateral_intermodule_gap:
+        :param modules_wide:
+        :return:
+        """
+        module_size = module_length / 1000.0 if module_orientation == ModuleOrientationEnum.LANDSCAPE \
+            else module_width / 1000.0
+
+        return (modules_wide * tables_per_row * (module_size + lateral_intermodule_gap)) - lateral_intermodule_gap
+
+    def _calculate_dc_field_length(self, tables_per_row, module_orientation, module_length, module_width,
+                                   lateral_intermodule_gap, modules_wide, tracking_type, number_of_rows,
+                                   post_to_post_spacing, collector_bandwidth):
+        """
+
+        :param tables_per_row:
+        :param module_orientation:
+        :param module_length:
+        :param module_width:
+        :param lateral_intermodule_gap:
+        :param modules_wide:
+        :param tracking_type:
+        :param number_of_rows:
+        :param post_to_post_spacing:
+        :param collector_bandwidth:
+        :return:
+        """
+        if tracking_type == TrackingTypeEnum.HORIZONTAL_TRACKER:
+            return self._calculate_dc_field_size_by_tables_per_row(tables_per_row, module_orientation, module_length,
+                                                                   module_width, lateral_intermodule_gap, modules_wide)
+
+        return self._calculate_dc_field_size_by_collector_bandwidth(number_of_rows, post_to_post_spacing,
+                                                                    collector_bandwidth)
+
+    def _calculate_dc_field_width(self, tracking_type, number_of_rows, post_to_post_spacing, collector_bandwidth,
+                                  tables_per_row, module_orientation, module_length, module_width,
+                                  lateral_intermodule_gap, modules_wide):
+        """
+
+        :param tracking_type:
+        :param number_of_rows:
+        :param post_to_post_spacing:
+        :param collector_bandwidth:
+        :param tables_per_row:
+        :param module_orientation:
+        :param module_length:
+        :param module_width:
+        :param lateral_intermodule_gap:
+        :param modules_wide:
+        :return:
+        """
+        if tracking_type == TrackingTypeEnum.HORIZONTAL_TRACKER:
+            return self._calculate_dc_field_size_by_collector_bandwidth(number_of_rows, post_to_post_spacing,
+                                                                        collector_bandwidth)
+
+        return self._calculate_dc_field_size_by_tables_per_row(tables_per_row, module_orientation, module_length,
+                                                               module_width, lateral_intermodule_gap, modules_wide)
+
+    @staticmethod
     def _validate_dc_field_sizing(field_dc_power, number_of_series_strings_wired_in_parallel, planned_module_rating,
                                   modules_wired_in_series):
         """
@@ -531,9 +613,11 @@ class PowerPlant(PlantPredictEntity):
         :param tracker_load_loss:
         :return:
         """
+        # validate inputs
         self._validate_inverter_name(block_name=block_name, array_name=array_name, inverter_name=inverter_name)
         self._validate_mounting_structure_parameters(tracking_type, module_tilt, tracking_backtracking_type)
 
+        # calculate parameters typically calculated in the UI
         m = self.api.module(id=module_id)
         m.get()
         field_dc_power, number_of_series_strings_wired_in_parallel = self._validate_dc_field_sizing(
@@ -542,9 +626,30 @@ class PowerPlant(PlantPredictEntity):
             planned_module_rating=m.stc_max_power,
             modules_wired_in_series=modules_wired_in_series,
         )
-
         module_orientation = module_orientation if module_orientation is not None else m.default_orientation
         modules_wide = modules_wide if modules_wide is not None else modules_wired_in_series
+        collector_bandwidth = self.calculate_collector_bandwidth(
+            module_width=m.width,
+            module_length=m.length,
+            module_orientation=module_orientation,
+            vertical_intermodule_gap=vertical_intermodule_gap,
+            modules_high=modules_high
+        )
+        table_length = self.calculate_table_length(
+            modules_wide=modules_wide,
+            module_width=m.width,
+            module_length=m.length,
+            module_orientation=module_orientation,
+            lateral_intermodule_gap=lateral_intermodule_gap
+        )
+        tables_per_row = self.calculate_tables_per_row(
+            field_dc_power=field_dc_power,
+            planned_module_rating=m.stc_max_power,
+            modules_high=modules_high,
+            modules_wide=modules_wide,
+            tables_removed_for_pcs=tables_removed_for_pcs,
+            number_of_rows=number_of_rows
+        )
         self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"].append({
             "name": len(
                 self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"]
@@ -561,11 +666,7 @@ class PowerPlant(PlantPredictEntity):
             "modules_high": modules_high,
             "module_azimuth": (module_azimuth if module_azimuth is not None
                                else self.get_default_module_azimuth_from_latitude()),
-            "collector_bandwidth": self.calculate_collector_bandwidth(module_width=m.width,
-                                                                      module_length=m.length,
-                                                                      module_orientation=module_orientation,
-                                                                      vertical_intermodule_gap=vertical_intermodule_gap,
-                                                                      modules_high=modules_high),
+            "collector_bandwidth": collector_bandwidth,
             "post_to_post_spacing": post_to_post_spacing,
             # Electrical
             "planned_module_rating": m.stc_max_power,
@@ -599,18 +700,15 @@ class PowerPlant(PlantPredictEntity):
             "table_to_table_spacing": table_to_table_spacing,
             "array_based_shading": array_based_shading,
             "number_of_rows": number_of_rows,
-            "table_length": self.calculate_table_length(modules_wide=modules_wide,
-                                                        module_width=m.width,
-                                                        module_length=m.length,
-                                                        module_orientation=module_orientation,
-                                                        lateral_intermodule_gap=lateral_intermodule_gap),
-            "tables_per_row": self.calculate_tables_per_row(field_dc_power=field_dc_power,
-                                                            planned_module_rating=m.stc_max_power,
-                                                            modules_high=modules_high,
-                                                            modules_wide=modules_wide,
-                                                            tables_removed_for_pcs=tables_removed_for_pcs,
-                                                            number_of_rows=number_of_rows),
+            "table_length": table_length,
+            "tables_per_row": tables_per_row,
             "tables_removed_for_pcs": tables_removed_for_pcs,
+            "field_length": self._calculate_dc_field_length(tables_per_row, module_orientation, m.length, m.width,
+                                                            lateral_intermodule_gap, modules_wide, tracking_type,
+                                                            number_of_rows, post_to_post_spacing, collector_bandwidth),
+            "field_width": self._calculate_dc_field_width(tracking_type, number_of_rows, post_to_post_spacing,
+                                                          collector_bandwidth, tables_per_row, module_orientation,
+                                                          m.length, m.width, lateral_intermodule_gap, modules_wide)
         })
 
         return self.blocks[
