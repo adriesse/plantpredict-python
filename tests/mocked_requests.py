@@ -266,6 +266,12 @@ def mocked_requests_get(*args, **kwargs):
             status_code=200
         )
 
+    elif kwargs['url'] == "https://api.plantpredict.com/Project/8":
+        return MockResponse(
+            json_data={"latitude": -33.0, "longitude": -110.0},
+            status_code=200
+        )
+
     elif kwargs['url'] == "https://api.plantpredict.com/Weather/999/Detail":
         return MockResponse(
             json_data={"id": 999, "name": "Weather File"},

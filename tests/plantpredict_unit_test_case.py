@@ -5,7 +5,7 @@ from plantpredict.prediction import Prediction
 from plantpredict.module import Module
 from plantpredict.project import Project
 from plantpredict.ashrae import ASHRAE
-from plantpredict.powerplant import PowerPlant
+from plantpredict.inverter import Inverter
 
 
 class PlantPredictUnitTestCase(unittest.TestCase):
