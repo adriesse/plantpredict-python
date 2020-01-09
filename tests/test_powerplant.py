@@ -19,15 +19,6 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self.assertTrue(mocked_create.called)
         self.assertEqual(powerplant.power_factor, 1.0)
 
-    @mock.patch('plantpredict.plant_predict_entity.PlantPredictEntity.delete')
-    def test_delete(self, mocked_delete):
-        self._make_mocked_api()
-        powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
-
-        powerplant.delete()
-        self.assertEqual(powerplant.delete_url_suffix, "/Project/7/Prediction/77/PowerPlant")
-        self.assertTrue(mocked_delete.called)
-
     @mock.patch('plantpredict.plant_predict_entity.PlantPredictEntity.get')
     def test_get(self, mocked_get):
         self._make_mocked_api()
@@ -284,7 +275,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             self.assertEqual(e.args[0], "3 is not a valid array name in block 1.")
 
     @mock.patch('plantpredict.powerplant.PowerPlant._get_inverter_power_rated', mock_get_inverter_power_rated)
-    @mock.patch('plantpredict.powerplant.PowerPlant.get_inverter_kva_rating', mock_get_inverter_kva_rating)
+    @mock.patch('plantpredict.powerplant.PowerPlant._get_inverter_kva_rating', mock_get_inverter_kva_rating)
     def test_add_inverter_default_inputs_use_cooling_temp(self):
         self._make_mocked_api()
         self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
@@ -305,7 +296,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         })
 
     @mock.patch('plantpredict.powerplant.PowerPlant._get_inverter_power_rated', mock_get_inverter_power_rated)
-    @mock.patch('plantpredict.powerplant.PowerPlant.get_inverter_kva_rating', mock_get_inverter_kva_rating)
+    @mock.patch('plantpredict.powerplant.PowerPlant._get_inverter_kva_rating', mock_get_inverter_kva_rating)
     def test_add_inverter_invalid_array_name(self):
         self._make_mocked_api()
         self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
@@ -341,11 +332,11 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self._make_mocked_api()
         self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
 
-        default_module_azimuth = self.powerplant.get_default_module_azimuth_from_latitude()
+        default_module_azimuth = self.powerplant._get_default_module_azimuth_from_latitude()
         self.assertEqual(default_module_azimuth, 180.0)
 
     def test_calculate_collector_bandwidth_portrait(self):
-        collector_bandwidth = PowerPlant.calculate_collector_bandwidth(
+        collector_bandwidth = PowerPlant._calculate_collector_bandwidth(
             module_length=1960,
             module_width=992,
             module_orientation=ModuleOrientationEnum.PORTRAIT,
@@ -355,7 +346,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self.assertAlmostEqual(collector_bandwidth, 7.90, 2)
 
     def test_calculate_collector_bandwidth_landscape(self):
-        collector_bandwidth = PowerPlant.calculate_collector_bandwidth(
+        collector_bandwidth = PowerPlant._calculate_collector_bandwidth(
             module_length=1960,
             module_width=992,
             module_orientation=ModuleOrientationEnum.LANDSCAPE,
@@ -365,27 +356,27 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self.assertAlmostEqual(collector_bandwidth, 4.03, 2)
 
     def test_calculate_table_length_portrait(self):
-        table_length = PowerPlant.calculate_table_length(
+        table_length = PowerPlant._calculate_table_length(
             modules_wide=18,
             module_orientation=ModuleOrientationEnum.PORTRAIT,
             module_length=1960,
             module_width=992,
             lateral_intermodule_gap=0.02
         )
-        self.assertAlmostEqual(table_length, 17856.34)
+        self.assertEqual(table_length, 18.196)
 
     def test_calculate_table_length_landscape(self):
-        table_length = PowerPlant.calculate_table_length(
+        table_length = PowerPlant._calculate_table_length(
             modules_wide=18,
             module_orientation=ModuleOrientationEnum.LANDSCAPE,
             module_length=1960,
             module_width=992,
             lateral_intermodule_gap=0.02
         )
-        self.assertAlmostEqual(table_length, 35280.34)
+        self.assertAlmostEqual(table_length, 35.62)
 
     def test_calculate_tables_per_row(self):
-        tables_per_row = PowerPlant.calculate_tables_per_row(
+        tables_per_row = PowerPlant._calculate_tables_per_row(
             field_dc_power=756,
             planned_module_rating=360,
             modules_high=4,
@@ -396,7 +387,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self.assertAlmostEqual(tables_per_row, 2.8, 1)
 
     def test_calculate_tables_per_row_with_tables_removed(self):
-        tables_per_row = PowerPlant.calculate_tables_per_row(
+        tables_per_row = PowerPlant._calculate_tables_per_row(
             field_dc_power=756,
             planned_module_rating=360,
             modules_high=4,
@@ -521,7 +512,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self.assertAlmostEqual(post_to_post_spacing, 10.07, 2)
 
     def test_calculate_field_dc_power(self):
-        field_dc_power = PowerPlant.calculate_field_dc_power(
+        field_dc_power = PowerPlant.calculate_field_dc_power_from_dc_ac_ratio(
             dc_ac_ratio=1.20,
             inverter_setpoint=630
         )
@@ -627,8 +618,6 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "module_id": 123,
             "tracking_type": TrackingTypeEnum.FIXED_TILT,
             "module_tilt": 30,
-            "seasonal_tilt": False,
-            "seasonal_tilt_monthly_factors": None,
             "tracking_backtracking_type": None,
             "minimum_tracking_limit_angle_d": -60.0,
             "maximum_tracking_limit_angle_d": 60.0,
@@ -659,7 +648,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "table_to_table_spacing": 0.0,
             "array_based_shading": False,
             "number_of_rows": 1,
-            "table_length": 20000.18,
+            "table_length": 20.18,
             "tables_per_row": 100.0,
             "tables_removed_for_pcs": 0,
             'field_length': 4.859999999999999,
@@ -695,8 +684,6 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "tracking_type": TrackingTypeEnum.HORIZONTAL_TRACKER,
             "module_tilt": None,
             "tracking_backtracking_type": BacktrackingTypeEnum.BACKTRACKING,
-            "seasonal_tilt": False,
-            "seasonal_tilt_monthly_factors": None,
             "minimum_tracking_limit_angle_d": -60.0,
             "maximum_tracking_limit_angle_d": 60.0,
             "module_orientation": ModuleOrientationEnum.LANDSCAPE,
@@ -726,7 +713,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "table_to_table_spacing": 0.0,
             "array_based_shading": False,
             "number_of_rows": 1,
-            "table_length": 20000.18,
+            "table_length": 20.18,
             "tables_per_row": 100.0,
             "tables_removed_for_pcs": 0,
             'field_length': 2019.98,
@@ -767,9 +754,9 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
 
     @mock.patch('plantpredict.plant_predict_entity.requests.get', new=mocked_requests.mocked_requests_get)
     @mock.patch('plantpredict.project.requests.get', new=mocked_requests.mocked_requests_get)
-    @mock.patch('plantpredict.powerplant.PowerPlant.calculate_tables_per_row')
-    @mock.patch('plantpredict.powerplant.PowerPlant.calculate_table_length')
-    @mock.patch('plantpredict.powerplant.PowerPlant.get_default_module_azimuth_from_latitude')
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_tables_per_row')
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_table_length')
+    @mock.patch('plantpredict.powerplant.PowerPlant._get_default_module_azimuth_from_latitude')
     def test_add_dc_field_helper_methods_called(self, mock_get_default_module_azimuth_from_latitude,
                                                 mock_calculate_table_length, mock_calculate_tables_per_row):
         self._make_mocked_api()
@@ -863,13 +850,16 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
 
     def test_init(self):
         self._make_mocked_api()
-        self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77, some_kwarg='kwarg')
 
         self.assertEqual(self.powerplant.project_id, 7)
         self.assertEqual(self.powerplant.prediction_id, 77)
         self.assertTrue(self.powerplant.use_cooling_temp)
         self.assertIsNone(self.powerplant.power_factor)
-        self.assertIsNone(self.powerplant.blocks)
+        self.assertEqual(self.powerplant.blocks, [])
+        self.assertEqual(self.powerplant.transformers, [])
+        self.assertEqual(self.powerplant.transmission_lines, [])
+        self.assertEqual(self.powerplant.some_kwarg, 'kwarg')
 
 
 if __name__ == '__main__':
