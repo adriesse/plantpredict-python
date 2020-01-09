@@ -23,123 +23,137 @@ class PowerPlant(PlantPredictEntity):
     :param int project_id:
     :param int prediction_id:
     :param bool use_cooling_temp:
-
-    :param int id:
     :param list blocks:
+    :param list transformers:
+    :param list transmission_lines:
+    :param power_factor:
+    :param lgia_limitation:
+    :param availability_loss:
+    :param use_cooling_temp:
+    :param total_module_area:
+    :param max_mv_transformer_voltage:
+    :param maximum_plant_output:
+    :param int id:
 
-        ..code-block:: python
+    .. container:: toggle
 
-            [{
-                "name": 0,
-                "energization_date": "2019-12-26T16:43:55.867Z",
-                "use_energization_date": True,
-                "number_of_modules": 0,
-                "total_module_area": 0,
-                "repeater": 0,
-                "id": 0,
-                "description": "string"
-                "arrays": [{
+        .. container:: header
+
+            **Contents of `blocks`**
+
+        .. container:: blocks
+
+            ..code-block:: python
+
+                [{
                     "name": 0,
-                    "inverters": [{
-                        "name": "string",
-                        "dc_fields": [{
-                            "name": 0,
-                            "module_id": 0,
-                            "module": SEE MODULE
-                            "tracking_type": plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT,
-                            "module_orientation": plantpredict.enumerations.ModuleOrientationEnum,
-                            "tables_removed_for_pcs": 0,
-                            "ground_slope": 0,
-                            "ground_slope_azimuth": 0,
-                            "transverse_slope": 0,
-                            "baseline_slope": 0,
-                            "modules_high": 0,
-                            "modules_wide": 0,
-                            "lateral_intermodule_gap": 0,
-                            "vertical_intermodule_gap": 0,
-                            "field_length": 0,
-                            "field_width": 0,
-                            "collector_bandwidth": 0,
-                            "table_length": 0,
-                            "tables_per_row": 0,
-                            "post_to_post_spacing": 0,
-                            "number_of_rows": 0,
-                            "table_to_table_spacing": 0,
-                            "module_azimuth": 0,
-                            "module_tilt": 0,
-                            "tracking_backtracking_type": "None",
-                            "tracker_pitch_angle_d": 0,
-                            "minimum_tracking_limit_angle_d": 0,
-                            "maximum_tracking_limit_angle_d": 0,
-                            "tracker_stow_angle": 0,
-                            "post_height": 0,
-                            "structure_shading": 0,
-                            "backside_mismatch": 0,
-                            "field_dc_power": 0,
-                            "modules_wired_in_series": 0,
-                            "number_of_series_strings_wired_in_parallel": 0,
-                            "planned_module_rating": 0,
-                            "sandia_conductive_coef": 0,
-                            "sandia_convective_coef": 0,
-                            "cell_to_module_temp_diff": 0,
-                            "heat_balance_conductive_coef": 0,
-                            "heat_balance_convective_coef": 0,
-                            "module_mismatch_coefficient": 0,
-                            "module_quality": 0,
-                            "light_induced_degradation": 0,
-                            "tracker_load_loss": 0,
-                            "dc_wiring_loss_at_stc": 0,
-                            "dc_health": 0,
-                            "effective_resistance_at_stc": 0,
+                    "energization_date": "2019-12-26T16:43:55.867Z",
+                    "use_energization_date": True,
+                    "number_of_modules": 0,
+                    "total_module_area": 0,
+                    "repeater": 0,
+                    "id": 0,
+                    "description": "string"
+                    "arrays": [{
+                        "name": 0,
+                        "inverters": [{
+                            "name": "string",
+                            "dc_fields": [{
+                                "name": 0,
+                                "module_id": 0,
+                                "module": SEE MODULE
+                                "tracking_type": plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT,
+                                "module_orientation": plantpredict.enumerations.ModuleOrientationEnum,
+                                "tables_removed_for_pcs": 0,
+                                "ground_slope": 0,
+                                "ground_slope_azimuth": 0,
+                                "transverse_slope": 0,
+                                "baseline_slope": 0,
+                                "modules_high": 0,
+                                "modules_wide": 0,
+                                "lateral_intermodule_gap": 0,
+                                "vertical_intermodule_gap": 0,
+                                "field_length": 0,
+                                "field_width": 0,
+                                "collector_bandwidth": 0,
+                                "table_length": 0,
+                                "tables_per_row": 0,
+                                "post_to_post_spacing": 0,
+                                "number_of_rows": 0,
+                                "table_to_table_spacing": 0,
+                                "module_azimuth": 0,
+                                "module_tilt": 0,
+                                "tracking_backtracking_type": "None",
+                                "tracker_pitch_angle_d": 0,
+                                "minimum_tracking_limit_angle_d": 0,
+                                "maximum_tracking_limit_angle_d": 0,
+                                "tracker_stow_angle": 0,
+                                "post_height": 0,
+                                "structure_shading": 0,
+                                "backside_mismatch": 0,
+                                "field_dc_power": 0,
+                                "modules_wired_in_series": 0,
+                                "number_of_series_strings_wired_in_parallel": 0,
+                                "planned_module_rating": 0,
+                                "sandia_conductive_coef": 0,
+                                "sandia_convective_coef": 0,
+                                "cell_to_module_temp_diff": 0,
+                                "heat_balance_conductive_coef": 0,
+                                "heat_balance_convective_coef": 0,
+                                "module_mismatch_coefficient": 0,
+                                "module_quality": 0,
+                                "light_induced_degradation": 0,
+                                "tracker_load_loss": 0,
+                                "dc_wiring_loss_at_stc": 0,
+                                "dc_health": 0,
+                                "effective_resistance_at_stc": 0,
+                                "total_module_area": 0,
+                                "uiam_d": 0,
+                                "uiam_g": 0,
+                                "ush_d": 0,
+                                "ush_g": 0,
+                                "repeater": 0,
+                                "id": 0,
+                                "description": "string"
+                            }],
+                            "inverter_id": 0,
+                            "inverter": SEE INVERTER
+                            "setpoint_kw": 0,
+                            "power_factor": 0,
+                            "kva_rating": 0,
                             "total_module_area": 0,
-                            "uiam_d": 0,
-                            "uiam_g": 0,
-                            "ush_d": 0,
-                            "ush_g": 0,
                             "repeater": 0,
                             "id": 0,
                             "description": "string"
-                        }],
-                        "inverter_id": 0,
-                        "inverter": SEE INVERTER
-                        "setpoint_kw": 0,
-                        "power_factor": 0,
-                        "kva_rating": 0,
-                        "total_module_area": 0,
-                        "repeater": 0,
-                        "id": 0,
-                        "description": "string"
-                  }],
-                  "ac_collection_loss": 0,
-                  "das_load": 0,
-                  "cooling_load": 0,
-                  "additional_losses": 0,
-                  "match_total_inverter_kva": true,
-                  "transformer_enabled": true,
-                  "array_based_shading": true,
-                  "array_shading_number_of_rows": 0,
-                  "transformer_kva_rating": 0,
-                  "transformer_high_side_voltage": 0,
-                  "transformer_no_load_loss": 0,
-                  "transformer_full_load_loss": 0,
-                  "total_modules": 0,
-                  "total_module_area": 0,
-                  "tracker_motor_losses": 0,
-                  "repeater": 0,
-                  "id": 0,
-                  "description": "string"
-                }],
-            }]
+                      }],
+                      "ac_collection_loss": 0,
+                      "das_load": 0,
+                      "cooling_load": 0,
+                      "additional_losses": 0,
+                      "match_total_inverter_kva": true,
+                      "transformer_enabled": true,
+                      "array_based_shading": true,
+                      "array_shading_number_of_rows": 0,
+                      "transformer_kva_rating": 0,
+                      "transformer_high_side_voltage": 0,
+                      "transformer_no_load_loss": 0,
+                      "transformer_full_load_loss": 0,
+                      "total_modules": 0,
+                      "total_module_area": 0,
+                      "tracker_motor_losses": 0,
+                      "repeater": 0,
+                      "id": 0,
+                      "description": "string"
+                    }],
+                }]
 
-        .. csv-table:: Contents of blocks
+            .. csv-table:: Contents of blocks
 
-            :file: ../docs/_static/csv_tables/powerplant_blocks.csv
-            :header-rows: 1
-            :stub-columns: 1
-            :widths: 20 5 75
-            :align: center
-
-    :param list transformers:
+                :file: ../docs/_static/csv_tables/powerplant_blocks.csv
+                :header-rows: 1
+                :stub-columns: 1
+                :widths: 20 5 75
+                :align: center
 
     .. container:: toggle
 
@@ -160,9 +174,7 @@ class PowerPlant(PlantPredictEntity):
                     "ordinal": 0
                 }]
 
-    :param list transmission_lines:
-
-     .. container:: toggle
+    .. container:: toggle
 
         .. container:: header
 
@@ -179,15 +191,6 @@ class PowerPlant(PlantPredictEntity):
                     "number_of_conducters_per_phase": 0,
                     "ordinal: 0,
                 }]
-
-    :param power_factor:
-    :param lgia_limitation:
-    :param availability_loss:
-    :param use_cooling_temp:
-    :param total_module_area:
-    :param max_mv_transformer_voltage:
-    :param maximum_plant_output:
-
     |
     """
     def create(self):
