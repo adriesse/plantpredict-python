@@ -250,7 +250,8 @@ class Module(PlantPredictEntity):
                     module_name = module_to_get.name
                     Isc = module_to_get.stc_short_circuit_current
 
-        :return: A dictionary containing all of the retrieved Module attributes.
+        :return: A dictionary containing all of the retrieved Module attributes. (Matches the result of calling
+                 `self.__dict__` after calling this method).
         :rtype: dict
         """
         self.get_url_suffix = "/Module/{}".format(self.id)
