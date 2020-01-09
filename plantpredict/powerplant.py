@@ -43,7 +43,7 @@ class PowerPlant(PlantPredictEntity):
 
         .. container:: blocks
 
-            ..code-block:: python
+            .. code-block:: python
 
                 [{
                     "name": 0,
@@ -163,7 +163,7 @@ class PowerPlant(PlantPredictEntity):
 
         .. container:: transformers
 
-            ..code-block:: python
+            .. code-block:: python
 
                 [{
                     "id": 0,
@@ -182,7 +182,7 @@ class PowerPlant(PlantPredictEntity):
 
         .. container:: transmission_lines
 
-            ..code-block:: python
+            .. code-block:: python
 
                 [{
                     "id": 0,
