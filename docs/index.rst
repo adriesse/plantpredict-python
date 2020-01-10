@@ -15,17 +15,15 @@ Full documentation on the backend algorithms used in PlantPredict is available `
 The source code for plantpredict-python is available on `GitHub
 <https://github.com/stephenkaplan/plantpredict-python>`_.
 
-Sign up for important email updates below:
+Sign up for important email updates `HERE
+<https://docs.google.com/forms/d/e/1FAIpQLSex1MjHe2c6SUXSL4faLqOKpJMvzFZ7e8nfMl4sVn66OcrCeQ/viewform>`_.
 
-.. raw:: html
-
-   <iframe width="640px" height= "480px" src= "https://forms.office.com/Pages/ResponsePage.aspx?id=XE-R-cJvQ0CcBGzOwLgZ9Y7YT2Dx-xdDgbbgqMY9_3lUOVoxRkRLUlg3MkFWWDdDRjlDUlhWQUVQTS4u&embed=true" frameborder= "0" marginwidth= "0" marginheight= "0" style= "border: none; max-width:100%; max-height:100vh" allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen> </iframe>
 
 Contents
 =========
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    installation
    authentication_oauth2

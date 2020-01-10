@@ -1,5 +1,4 @@
 import requests
-import unittest
 
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.utilities import convert_json, snake_to_camel
@@ -13,7 +12,7 @@ class Prediction(PlantPredictEntity):
     The :py:mod:`plantpredict.Prediction` entity models a single energy prediction within a
     :py:mod:`plantpredict.Project`.
     """
-    def create(self, error_spa_var=2.0, error_model_acc=2.9, error_int_ann_var=3.0,
+    def create(self, use_closest_ashrae_station=True, error_spa_var=2.0, error_model_acc=2.9, error_int_ann_var=3.0,
                error_sens_acc=5.0, error_mon_acc=2.0, year_repeater=1, status=PredictionStatusEnum.DRAFT_PRIVATE):
         """
         **POST** */Project/ :py:attr:`project_id` /Prediction*
@@ -103,7 +102,27 @@ class Prediction(PlantPredictEntity):
         self.year_repeater = year_repeater
         self.status = status
 
+        if use_closest_ashrae_station:
+            self._assign_plant_design_temperature_with_closest_ashrae_station()
+
         return super(Prediction, self).create()
+
+    def _assign_plant_design_temperature_with_closest_ashrae_station(self):
+        """
+        Assigns the plant design temperatures by using the closest ASHRAE station (based on the associated project's
+        latitude and longitude).
+        """
+        project = self.api.project(id=self.project_id)
+        project.get()
+        ashrae = self.api.ashrae(latitude=project.latitude, longitude=project.longitude)
+
+        ashrae.get_closest_station()
+
+        # set relevant attributes from ASHRAE to Prediction
+        self.ashrae_station = ashrae.station_name
+        self.cool_996 = ashrae.cool_996
+        self.max_50_year = ashrae.max_50_year
+        self.min_50_year = ashrae.min_50_year
 
     def delete(self):
         """HTTP Request: DELETE /Project/{ProjectId}/Prediction/{Id}
@@ -229,15 +248,9 @@ class Prediction(PlantPredictEntity):
     def clone(self, new_prediction_name):
         """
 
-        Parameters
-        ----------
-        new_prediction_name
-
-        Returns
-        -------
-
+        :param new_prediction_name:
+        :return:
         """
-        # clone prediction
         new_prediction = self.api.prediction()
         self.get()
         original_prediction_id = self.id
@@ -284,11 +297,14 @@ class Prediction(PlantPredictEntity):
 
     @handle_refused_connection
     @handle_error_response
-    def change_prediction_status(self, new_status, note=""):
+    def change_status(self, new_status, note=""):
         """
+        Change the status (and resulting sharing/privacy settings) of a prediction (ex. from py:attr:`DRAFT_PRIVATE` to
+        py:attr:`DRAFT-SHARED`.
 
-        :param new_status:
-        :param note:
+        :param int new_status: Enumeration representing status to change prediction to. See (or import)
+                               :py:class:`plantpredict.enumerations.PredictionStatusEnum`.
+        :param str note: Description of reason for change.
         :return:
         """
         return requests.post(
@@ -319,7 +335,3 @@ class Prediction(PlantPredictEntity):
         self.error_mon_acc = None
 
         super(Prediction, self).__init__(api)
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -8,6 +8,7 @@ from plantpredict.geo import Geo
 from plantpredict.inverter import Inverter
 from plantpredict.module import Module
 from plantpredict.weather import Weather
+from plantpredict.ashrae import ASHRAE
 
 
 class Api(object):
@@ -96,3 +97,6 @@ class Api(object):
 
     def weather(self, **kwargs):
         return Weather(self, **kwargs)
+
+    def ashrae(self, **kwargs):
+        return ASHRAE(self, **kwargs)

@@ -76,7 +76,7 @@ prediction.create()
 
 # change the prediction's status to DRAFT-SHARED to make it accessible to other members of your team (or to another
 # relevant status)
-prediction.change_prediction_status(new_status=PredictionStatusEnum.DRAFT_SHARED, note="Changed for tutorial.")
+prediction.change_status(new_status=PredictionStatusEnum.DRAFT_SHARED, note="Changed for tutorial.")
 
 # instantiate a local instance of PowerPlant, assigning project_id and prediction_id
 powerplant = api.powerplant(project_id=project.id, prediction_id=prediction.id)

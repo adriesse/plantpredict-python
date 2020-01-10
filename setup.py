@@ -18,14 +18,7 @@ setup(
     install_requires=[
         'requests',
         'pandas',
-        'certifi',
-        'chardet',
-        'idna',
-        'numpy',
-        'python-dateutil',
-        'pytz',
         'six',
-        'urllib3',
         'mock',
         'xlrd',
         'openpyxl'

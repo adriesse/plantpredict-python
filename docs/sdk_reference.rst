@@ -69,6 +69,14 @@ Geo
     :undoc-members:
     :show-inheritance:
 
+ASHRAE
+-------------
+
+.. automodule:: plantpredict.ashrae
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Helpers
 =======
 
@@ -76,9 +84,9 @@ Helpers
     :members:
     :undoc-members:
 
-Utilities
-===========
-
-
 Data Enumerations
 ===================
+
+.. automodule:: plantpredict.enumerations
+    :members:
+    :undoc-members:
