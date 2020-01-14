@@ -1,6 +1,6 @@
 import json
 
-from plantpredict.enumerations import ModuleOrientationEnum
+from plantpredict.enumerations import ModuleOrientationEnum, FacialityEnum
 
 
 class MockResponse:
@@ -187,6 +187,28 @@ def mocked_requests_get(*args, **kwargs):
                 "module_mismatch_coefficient": 1.0,
                 "module_quality": 1.0,
                 "light_induced_degradation": 1.0,
+                "faciality": FacialityEnum.MONOFACIAL
+            },
+            status_code=200
+        )
+
+    elif kwargs['url'] == "https://api.plantpredict.com/Module/456":
+        return MockResponse(
+            json_data={
+                "default_orientation": ModuleOrientationEnum.LANDSCAPE,
+                "length": 2000,
+                "width": 1200,
+                "stc_max_power": 120,
+                "sandia_conductive_coef": 30.7,
+                "sandia_convective_coef": 0.0,
+                "cell_to_module_temp_diff": 3.0,
+                "heat_balance_conductive_coef": -3.47,
+                "heat_balance_convective_coef": -0.0594,
+                "module_mismatch_coefficient": 1.0,
+                "module_quality": 1.0,
+                "light_induced_degradation": 1.0,
+                "faciality": FacialityEnum.BIFACIAL,
+                "backside_mismatch": 3.0,
             },
             status_code=200
         )
