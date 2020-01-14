@@ -1,4 +1,4 @@
-def mock_get_inverter_power_rated(*args):
+def mock_get_inverter_apparent_power(*args):
     return 800.0
 
 

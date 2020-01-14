@@ -19,27 +19,70 @@ class PowerPlant(PlantPredictEntity):
     For methods beyond these four, the input requirements might be either attribute assignments or variable inputs to
     the method.
 
-    :param plantpredict.api.Api api:
-    :param int project_id:
-    :param int prediction_id:
-    :param bool use_cooling_temp:
-    :param list blocks:
-    :param list transformers:
-    :param list transmission_lines:
-    :param power_factor:
-    :param lgia_limitation:
-    :param availability_loss:
-    :param use_cooling_temp:
-    :param total_module_area:
-    :param max_mv_transformer_voltage:
-    :param maximum_plant_output:
-    :param int id:
+    Sample code for properly building a :py:class:`~plantpredict.powerplant.PowerPlant` can be found in
+    :ref:`example_usage`. While a new :py:class:`~plantpredict.powerplant.PowerPlant` can be initialized via the
+    :py:meth:`~plantpredict.powerplant.PowerPlant.__init__`, as in the following example:
+
+    .. code-block:: python
+
+        powerplant = plantpredict.powerplant.PowerPlant(api, project_id=1, prediction_id=2)
+
+    it is recommended to use the :py:class:`~plantpredict.api.Api` factory method
+    :py:meth:`~plantpredict.api.Api.powerplant, as in the following example:
+
+    .. code-block:: python
+
+        powerplant = api.powerplant(project_id=1, prediction_id=2)
+
+    where both cases assume that `api` is a properly defined :py:class:`~plantpredict.api.Api` object, and that the
+    package has been imported at the top of the script with `import plantpredict`.
+
+    Note on parameters listed below: This list of attributes is comprehensive, but does not encompass 100% of parameters
+    that might be available via :py:meth:`plantpredict.powerplant.PowerPlant.get` after the associated prediction is
+    run. The list includes all relevant attributes that a user should/can set upon building the
+    :py:class:`~plantpredict.powerplant.PowerPlant`, plus some of the post-prediction-run parameters. This note also
+    applies to the thoroughness of key-value pairs in the large dictionaries within some of these attributes, such
+    as in :py:attr:`blocks`.
+
+    :param plantpredict.api.Api api: An properly initialized instance of the PlantPredict API client class,
+                                     :py:class:`~plantpredict.api.Api`, containing such important attributes as
+                                     :py:attr:`access_token`.
+    :param int, None project_id: Unique identifier for the :py:class:`~plantpredict.project.Project` with
+                                 which to associate the power plant. Must represent a valid, exiting Project in the
+                                 PlantPredict database.
+    :param int, None prediction_id: Unique identifier for the :py:class:`~plantpredict.prediction.Prediction`
+                                    with which to associate the power plant. Must represent a valid, existing Prediction
+                                    on the given Project in the PlantPredict database, as represented by the input
+                                    :py:data:`project_id`.
+    :param bool use_cooling_temp: If `True`, the `kva_rating` of each inverter in the power plant is calculated based on
+                                 the 99.6 cooling temperature of the nearest ASHRAE station to the corresponding
+                                 :py:class:`~plantpredict.project.Project` (as specified by :py:attr:`self.project_id`),
+                                 the elevation of the :py:class:`~plantpredict.project.Project`, and the
+                                 elevation/temperature curves of the inverter model specified by :py:data:`inverter_id`.
+                                 Defaults to `True`. If `False`, the `kva_rating` of each inverter in the power plant is
+                                 set as the :py:attr:`apparent_power` of the inverter model specified by
+                                 :py:data:`inverter_id`.
+    :param float lgia_limitation: Maximum for power plant according to its Large Generator Interconnection Agreement
+                                 (LGIA). Must be between :py:data:`0` and :py:data:`2000` - units `[MWac]`.
+    :param float availability_loss: Accounts for losses due to any plant-wide outage events such as inverter
+                                    shutdowns/failures. Must be between :py:data:`0` and :py:data:`25` - units `[%]`.
+    :param float power_factor: The ratio of the power that can be used and the product of the operating current and
+                               voltage (also referred to as Plant kVA Derate). Defaults to :py:data:`1.0`. Must be
+                               between :py:data:`0` and :py:data:`1`, where `1` is a "unity" power factor. Defaults to
+                               `1.0` in :py:meth:`~plantpredict.powerplant.PowerPlant.__init__` and automatically
+                               recalculated when :py:meth:`~plantpredict.powerplant.PowerPlant.create` called.
+    :param list transformers: Defaults to an empty list `[]` See "Example contents & parameter specifications for
+                              :py:attr:`transformers`" below.
+    :param list transmission_lines: Defaults to an empty list `[]`. See "Example contents & parameter specifications for
+                                    :py:attr:`transmission_lines`" below.
+    :param list blocks: Defaults to an empty list `[]`. See "Example contents & parameter specifications for
+                        :py:attr:`blocks`" below.
 
     .. container:: toggle
 
         .. container:: header
 
-            **Contents of `blocks`**
+            Example contents & parameter specifications for :py:attr:`blocks`
 
         .. container:: blocks
 
@@ -47,19 +90,44 @@ class PowerPlant(PlantPredictEntity):
 
                 [{
                     "name": 0,
-                    "energization_date": "2019-12-26T16:43:55.867Z",
-                    "use_energization_date": True,
-                    "number_of_modules": 0,
-                    "total_module_area": 0,
-                    "repeater": 0,
                     "id": 0,
                     "description": "string"
+                    "repeater": 0,
+                    "energization_date": "2019-12-26T16:43:55.867Z",
+                    "use_energization_date": True,
                     "arrays": [{
                         "name": 0,
+                        "id": 0,
+                        "description": "string",
+                        "repeater": 0,
+                        "ac_collection_loss": 0,
+                        "das_load": 0,
+                        "cooling_load": 0,
+                        "additional_losses": 0,
+                        "match_total_inverter_kva": true,
+                        "transformer_enabled": true,
+                        "array_based_shading": true,
+                        "array_shading_number_of_rows": 0,
+                        "transformer_kva_rating": 0,
+                        "transformer_high_side_voltage": 0,
+                        "transformer_no_load_loss": 0,
+                        "transformer_full_load_loss": 0,
+                        "tracker_motor_losses": 0,
                         "inverters": [{
                             "name": "string",
+                            "id": 0,
+                            "description": "string"
+                            "repeater": 0,
+                            "inverter_id": 0,
+                            "inverter": SEE INVERTER
+                            "setpoint_kw": 0,
+                            "power_factor": 0,
+                            "kva_rating": 0,
                             "dc_fields": [{
                                 "name": 0,
+                                "id": 0,
+                                "description": "string",
+                                "repeater": 0,
                                 "module_id": 0,
                                 "module": SEE MODULE
                                 "tracking_type": plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT,
@@ -112,42 +180,12 @@ class PowerPlant(PlantPredictEntity):
                                 "uiam_g": 0,
                                 "ush_d": 0,
                                 "ush_g": 0,
-                                "repeater": 0,
-                                "id": 0,
-                                "description": "string"
                             }],
-                            "inverter_id": 0,
-                            "inverter": SEE INVERTER
-                            "setpoint_kw": 0,
-                            "power_factor": 0,
-                            "kva_rating": 0,
-                            "total_module_area": 0,
-                            "repeater": 0,
-                            "id": 0,
-                            "description": "string"
-                      }],
-                      "ac_collection_loss": 0,
-                      "das_load": 0,
-                      "cooling_load": 0,
-                      "additional_losses": 0,
-                      "match_total_inverter_kva": true,
-                      "transformer_enabled": true,
-                      "array_based_shading": true,
-                      "array_shading_number_of_rows": 0,
-                      "transformer_kva_rating": 0,
-                      "transformer_high_side_voltage": 0,
-                      "transformer_no_load_loss": 0,
-                      "transformer_full_load_loss": 0,
-                      "total_modules": 0,
-                      "total_module_area": 0,
-                      "tracker_motor_losses": 0,
-                      "repeater": 0,
-                      "id": 0,
-                      "description": "string"
+                        }],
                     }],
                 }]
 
-            .. csv-table:: Contents of blocks
+            .. csv-table:: Parameter specifications for :py:attr:`blocks`
 
                 :file: ../docs/_static/csv_tables/powerplant_blocks.csv
                 :header-rows: 1
@@ -200,13 +238,14 @@ class PowerPlant(PlantPredictEntity):
         Creates a new power plant in the PlantPredict database with the attributes assigned to the instance of
         :py:class:`~plantpredict.powerplant.PowerPlant`. Automatically attaches it to a project/prediction existing in
         PlantPredict associated with the assigned values for :py:attr:`self.project_id` and
-        :py:attr:`self.prediction_id`. See :py:class:`~plantpredict.powerplant.PowerPlant` documentation attributes
-        required to successfully call this method.
+        :py:attr:`self.prediction_id`. Also automatically calculates the average power factor (plant design derate)
+        based on the power factors of each inverter. See :py:class:`~plantpredict.powerplant.PowerPlant` documentation
+        attributes required to successfully call this method.
 
         :return: `{'is_successful': True}`
         :rtype: dict
         """
-        self.power_factor = 1.0
+        self._calculate_and_set_average_power_factor()
 
         self.create_url_suffix = "/Project/{}/Prediction/{}/PowerPlant".format(self.project_id, self.prediction_id)
         return super(PowerPlant, self).create()
@@ -241,6 +280,49 @@ class PowerPlant(PlantPredictEntity):
         """
         self.update_url_suffix = "/Project/{}/Prediction/{}/PowerPlant".format(self.project_id, self.prediction_id)
         return super(PowerPlant, self).update()
+
+    def _calculate_sum_power_factors(self):
+        """
+        Calculates the sum of all of the inverter power factors (design derate) in the power plant by iterating through
+        each array of each block of :py:attr:`self.blocks`.
+
+        :return: Sum of all power factors of each inverter in the power plant.
+        :rtype: float
+        """
+        power_factors = []
+        for block in self.blocks:
+            for array in block['arrays']:
+                for inverter in array['inverters']:
+                    power_factors.append(inverter['power_factor'] * array['repeater'] * inverter['repeater'])
+
+        return sum(power_factors)
+
+    def _calculate_num_inverters(self):
+        """
+        Calculates the total number of inverters in the power plant by iterating through each array of each block of
+        :py:attr:`self.blocks`.
+
+        :return: Total number of inverters in the power plant.
+        :rtype: int
+        """
+        num_inverters = []
+        for block in self.blocks:
+            for array in block['arrays']:
+                for inverter in array['inverters']:
+                    num_inverters.append(inverter['repeater'] * array['repeater'] * block['repeater'])
+
+        return sum(num_inverters)
+
+    def _calculate_and_set_average_power_factor(self):
+        """
+        Calculates the average power factor (design derate) of the power plant and sets it as the attribute
+        :py:attr:`power_factor`.
+        """
+
+        total_power_factors = self._calculate_sum_power_factors()
+        total_inverters = self._calculate_num_inverters()
+
+        self.power_factor = 0.0 if total_inverters == 0 else total_power_factors / total_inverters
 
     def add_transformer(self, rating, high_side_voltage, no_load_loss, full_load_loss, ordinal):
         """
@@ -436,9 +518,9 @@ class PowerPlant(PlantPredictEntity):
                                               inverter behind the transformer, and the input `transformer_kva_rating`
                                               won't be used. Defaults to :py:data:`True`.
         :param float, None transformer_kva_rating: User-specified transformer kVA rating. Only used if
-                                             :py:data:`match_total_inverter_kva` is set to :py:data:`False`. Must be
-                                             between :py:data:`0` and :py:data:`20000` - units `[kVA]`. Defaults to
-                                             `None`.
+                                                   :py:data:`match_total_inverter_kva` is set to :py:data:`False`. Must
+                                                   be between :py:data:`0` and :py:data:`20000` - units `[kVA]`.
+                                                   Defaults to `None`.
         :param int repeater: Number of identical arrays of this type in the parent block. Must be between :py:data:`1`
                              and :py:data:`10000`. Defaults to :py:data:`1`.
         :param float ac_collection_loss: Accounts for ohmic losses in the AC wiring between the array and parent block.
@@ -491,18 +573,18 @@ class PowerPlant(PlantPredictEntity):
 
     @handle_refused_connection
     @handle_error_response
-    def _get_inverter_power_rated(self, inverter_id):
+    def _get_inverter_apparent_power(self, inverter_id):
         """
-        Returns the power rating of an inverter specified by its unique identifier.
+        Returns the apparent power of an inverter specified by its unique identifier.
 
         :param int inverter_id: Unique identifier of an Inverter in the PlantPredict Inverter database.
-        :return: Power rating of inverter
+        :return: Apparent power of inverter model - units `[kVA]`.
         :rtype: float
         """
         inverter = self.api.inverter(id=inverter_id)
         inverter.get()
 
-        return inverter.power_rated
+        return inverter.apparent_power
 
     @handle_refused_connection
     @handle_error_response
@@ -538,10 +620,39 @@ class PowerPlant(PlantPredictEntity):
 
         return response['kva']
 
+    @staticmethod
+    def _validate_inverter_setpoint_inputs(setpoint_kw, power_factor, kva_rating):
+        """
+        Ensures valid inputs for :py:data:`setpoint_kw` and :py:data:`power_factor`. In general, ensures that the ratio
+        `power_factor = setpoint_kw / kva_rating` is maintained, while kva_rating is held constant.
+
+        :param float, None setpoint_kw: Inverter setpoint. Must be between :py:data:`1` and :py:data:`10000` - units
+                                        `[kW]`.
+        :param float power_factor: The ratio of the power that can be used and the product of the operating current and
+                                   voltage. Must be between :py:data:`0` and :py:data:`1`, where `1` is a "unity" power
+                                    factor.
+        :param float kva_rating: Inverter kVA rating.
+        :raises ValueError: Raised if :py:data:`setpoint_kw` is not `None` and :py:data:`power_factor` is not `1.0`.
+        :return: Valid inverter setpoint and power factor (design derate).
+        :rtype: tuple
+        """
+        # if setpoint isn't provided, calculate by multiplying design derate by kvarating
+        if setpoint_kw is None:
+            setpoint_kw = power_factor * kva_rating
+
+        # if setpoint is provided, recalculate design derate as the ratio of setpoint ot kva rating
+        elif (setpoint_kw is not None) and (power_factor == 1.0):
+            power_factor = setpoint_kw / kva_rating
+
+        # setpoint cannot be provided when a non-unity power factor is provided (since kva rating is constant)
+        elif (setpoint_kw is not None) and (power_factor != 1.0):
+            raise ValueError("setpoint_kw can not be specified while a non-unity (non-1.0) power factor is specified.")
+
+        return setpoint_kw, power_factor
+
     @handle_refused_connection
     @handle_error_response
-    def add_inverter(self, block_name, array_name, inverter_id, setpoint_kw=None, power_factor=1.0, repeater=1,
-                     kva_rating=0.0):
+    def add_inverter(self, block_name, array_name, inverter_id, setpoint_kw=None, power_factor=1.0, repeater=1):
         """
         A "power plant builder" helper method that adds an inverter to an array specified by :py:data:`array_name`,
         which is a child of a block specified by :py:data:`block_name` on the
@@ -550,6 +661,14 @@ class PowerPlant(PlantPredictEntity):
         dictionary), the next array created by :py:meth:`~plantpredict.powerplant.PowerPlant.add_inverter` will
         automatically have `name` equal to `"C"`. This method does not currently account for the situation in which an
         existing power plant has inverters named non-sequentially.
+
+        The inverter 'kva_rating` will be set based on the power plant-level attribute :py:attr:`use_cooling_temp`. If
+        :py:attr:`use_cooling_temp` is `True`, this value is automatically calculated based on the 99.6 cooling
+        temperature of the nearest ASHRAE station to the corresponding :py:class:`~plantpredict.project.Project` (as
+        specified by :py:attr:`self.project_id`), the elevation of the :py:class:`~plantpredict.project.Project`, and
+        the elevation/temperature curves of the inverter model specified by :py:data:`inverter_id`. If
+        :py:attr:`use_cooling_temp` is `False`, then `kva_rating` is set as the :py:attr:`apparent_power` of the
+        inverter model specified by :py:data:`inverter_id`.
 
         Note that this addition is not persisted to PlantPredict unless
         :py:meth:`~plantpredict.powerplant.PowerPlant.update` is subsequently called.
@@ -565,35 +684,35 @@ class PowerPlant(PlantPredictEntity):
                                and :py:data:`99`.
         :param int inverter_id: Unique identifier of an inverter model in the PlantPredict Inverter database to use.
         :param float, None setpoint_kw: Inverter setpoint. Must be between :py:data:`1` and :py:data:`10000` - units
-                                        `[kW]`. If left as default (`None`), the `power_rated` of the inverter model
-                                        specified (by :py:data:`inverter_id`) will be used as the inverter setpoint.
+                                        `[kW]`. If left as default (`None`), will be automatically calculated as the
+                                        product between :py:data:`power_factor` and the inverter kVA rating.
         :param float power_factor: The ratio of the power that can be used and the product of the operating current and
-                                   voltage. Must be between :py:data:`0` and :py:data:`1`, where `1` is a "unity" power
-                                    factor. Defaults to :py:data:`1.0`.
+                                   voltage (also referred to as design derate). Must be between :py:data:`0` and
+                                   :py:data:`1`, where `1` is a "unity" power factor. Defaults to :py:data:`1.0`.
         :param int repeater: Number of identical inverters of this type in the parent array. Must be between
                              :py:data:`1` and :py:data:`10000`. Defaults to :py:data:`1`.
-        :param float kva_rating: If :py:attr:`self.use_cooling_temp` is `True`, this value is calculated based on the
-                                 99.6 cooling temperature of the nearest ASHARE station to the corresponding
-                                 :py:class:`~plantpredict.project.Project` (as specified by :py:attr:`self.project_id`),
-                                 the elevation of the :py:class:`~plantpredict.project.Project`, and the
-                                 elevation/temperature curves of the inverter model specified by :py:data:`inverter_id`.
-                                 Otherwise, defaults to :py:data:`0.0`.
         :raises ValueError: Raised if :py:data:`block_name` is not a valid block name in the existing power plant, or if
                             the :py:data:`block_name` is valid but :py:data:`array_name` is not a valid array name in
-                            the block.
+                            the block. Also raised if :py:data:`setpoint_kw` is not `None` and :py:data:`power_factor`
+                            is not `1.0`.
         :return: The name of the newly added inverter.
         :rtype: str
         """
+        # validate and prepare inverter parameters
         self._validate_array_name(block_name, array_name)
+
+        kva_rating = (self._get_inverter_kva_rating(inverter_id) if self.use_cooling_temp
+                      else self._get_inverter_apparent_power(inverter_id))
+        setpoint_kw, power_factor = self._validate_inverter_setpoint_inputs(setpoint_kw, power_factor, kva_rating)
 
         self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"].append({
             "name": chr(ord("A") + len(self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"])),
             "repeater": repeater,
             "inverter_id": inverter_id,
-            "setpoint_kw": setpoint_kw if setpoint_kw else self._get_inverter_power_rated(inverter_id),
+            "setpoint_kw": setpoint_kw,
             "power_factor": power_factor,
             "dc_fields": [],
-            "kva_rating": self._get_inverter_kva_rating(inverter_id) if self.use_cooling_temp else kva_rating
+            "kva_rating": kva_rating
         })
 
         return self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][-1]["name"]
@@ -1185,7 +1304,7 @@ class PowerPlant(PlantPredictEntity):
         self.prediction_id = prediction_id
         self.use_cooling_temp = use_cooling_temp
 
-        self.power_factor = None
+        self.power_factor = 1.0
         self.blocks = []
         self.transformers = []
         self.transmission_lines = []
