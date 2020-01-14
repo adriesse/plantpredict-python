@@ -56,15 +56,15 @@ class PowerPlant(PlantPredictEntity):
                                     on the given Project in the PlantPredict database, as represented by the input
                                     :py:data:`project_id`.
     :param bool use_cooling_temp: If `True`, the `kva_rating` of each inverter in the power plant is calculated based on
-                                 the 99.6 cooling temperature of the nearest ASHRAE station to the corresponding
-                                 :py:class:`~plantpredict.project.Project` (as specified by :py:attr:`self.project_id`),
-                                 the elevation of the :py:class:`~plantpredict.project.Project`, and the
-                                 elevation/temperature curves of the inverter model specified by :py:data:`inverter_id`.
-                                 Defaults to `True`. If `False`, the `kva_rating` of each inverter in the power plant is
-                                 set as the :py:attr:`apparent_power` of the inverter model specified by
-                                 :py:data:`inverter_id`.
+                                  the 99.6 cooling temperature of the nearest ASHRAE station to the corresponding
+                                  :py:class:`~plantpredict.project.Project` (as specified by
+                                  :py:attr:`self.project_id`), the elevation of the
+                                  :py:class:`~plantpredict.project.Project`, and the elevation/temperature curves of the
+                                  inverter model specified by :py:data:`inverter_id`. Defaults to `True`. If `False`,
+                                  the `kva_rating` of each inverter in the power plant is set as the
+                                  :py:attr:`apparent_power` of the inverter model specified by :py:data:`inverter_id`.
     :param float lgia_limitation: Maximum for power plant according to its Large Generator Interconnection Agreement
-                                 (LGIA). Must be between :py:data:`0` and :py:data:`2000` - units `[MWac]`.
+                                  (LGIA). Must be between :py:data:`0` and :py:data:`2000` - units `[MWac]`.
     :param float availability_loss: Accounts for losses due to any plant-wide outage events such as inverter
                                     shutdowns/failures. Must be between :py:data:`0` and :py:data:`25` - units `[%]`.
     :param float power_factor: The ratio of the power that can be used and the product of the operating current and
@@ -374,7 +374,7 @@ class PowerPlant(PlantPredictEntity):
             "number_of_conductors_per_phase": number_of_conductors_per_phase,
             "ordinal": ordinal
         }
-
+        # append new transmission line, or if list doesn't yet exist, create it
         try:
             self.transmission_lines.append(transmission_line)
         except AttributeError:
@@ -631,7 +631,7 @@ class PowerPlant(PlantPredictEntity):
                                         `[kW]`.
         :param float power_factor: The ratio of the power that can be used and the product of the operating current and
                                    voltage. Must be between :py:data:`0` and :py:data:`1`, where `1` is a "unity" power
-                                    factor.
+                                   factor.
         :param float kva_rating: Inverter kVA rating.
         :raises ValueError: Raised if :py:data:`setpoint_kw` is not `None` and :py:data:`power_factor` is not `1.0`.
         :return: Valid inverter setpoint and power factor (design derate).
@@ -934,14 +934,15 @@ class PowerPlant(PlantPredictEntity):
         values.
 
         :param float, None field_dc_power: DC capacity of the DC field. Must be `None` if
-                                     `number_of_seres_strings_wired_in_parallel` is not `None`, otherwise must be
-                                     between :py:data:`1` and :py:data:`20000` - units `[kW]`.
-        :param float, None number_of_series_strings_wired_in_parallel: Number of strings of modules electrically connected in
-                                                                 parallel in the DC field. Must be `None` if
-                                                                 `field_dc_power` is not `None`, otherwise must be
-                                                                 between :py:data:`1` and :py:data`10000`.
+                                           `number_of_seres_strings_wired_in_parallel` is not `None`, otherwise must be
+                                           between :py:data:`1` and :py:data:`20000` - units `[kW]`.
+        :param float, None number_of_series_strings_wired_in_parallel: Number of strings of modules electrically
+                                                                       connected in parallel in the DC field. Must be
+                                                                       `None` if `field_dc_power` is not `None`,
+                                                                       otherwise must be between :py:data:`1` and
+                                                                       :py:data`10000`.
         :param float planned_module_rating: Nameplate rating of each individual module in the DC field. Must be between
-                                    :py:data:`10` and :py:data:`1000` - units `[W]`.
+                                            :py:data:`10` and :py:data:`1000` - units `[W]`.
         :param int modules_wired_in_series: The number of modules electrically connected in series in a string. Must be
                                             be between :py:data:`1` and :py:data:`100`.
         :raises ValueError: Raised if both `field_dc_power` and `number_of_series_strings_wired_in_parallel` are `None`
@@ -1012,7 +1013,7 @@ class PowerPlant(PlantPredictEntity):
                                         :py:data:`0` and :py:data:`90` - units `[degrees]`.
         :param int, None tracking_backtracking_type: Represents the backtracking algorithm (True-Tracking or
                                                      Backtracking) used in DC Field. Use
-                                               :py:class:`~plantpredict.enumerations.BacktrackingTypeEnum`.
+                                                     :py:class:`~plantpredict.enumerations.BacktrackingTypeEnum`.
         :raises ValueError: Raised if the `tracking_type` is
                             :py:attr:`~plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT` and `module_tilt` is
                             `None`, or if `tracking_type` is
