@@ -535,9 +535,10 @@ class PowerPlant(PlantPredictEntity):
                                    :py:data:`0.0`.
         :param float additional_losses: Additional night time losses. Must be between :py:data:`0` and :py:data:`20000`
                                         - units :py:data:`[W]`. Defaults to :py:data:`0`.
-        :param float transformer_high_side_voltage: Transformer high side voltage (the AC collection line voltage defines
-                                                    the high-side of a MV inverter). Must be between :py:data:`0` and
-                                                    :py:data:`66` - units `[V]`. Defaults to :py:data:`34.5`.
+        :param float transformer_high_side_voltage: Transformer high side voltage (the AC collection line voltage
+                                                    defines the high-side of a MV inverter). Must be between
+                                                    :py:data:`0` and :py:data:`66` - units `[V]`. Defaults to
+                                                    :py:data:`34.5`.
         :param float transformer_no_load_loss: Accounts for transformer losses with no load. Must be between
                                                :py:data:`0` and :py:data:`10` - units `[%]`. Defaults to :py:data:`0.2`.
         :param float transformer_full_load_loss: Accounts for transformer losses with full load. Must be between
@@ -1361,12 +1362,12 @@ class PowerPlant(PlantPredictEntity):
         if m.faciality == FacialityEnum.BIFACIAL:
             self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65][
                 "dc_fields"][-1].update({
-                    "post_height": (post_height if post_height is not None
-                                    else self._calculate_default_post_height(tracking_type, collector_bandwidth,
-                                                                             module_tilt,
-                                                                             minimum_tracking_limit_angle_d,
-                                                                             maximum_tracking_limit_angle_d)
-                    ),
+                    "post_height": (
+                        post_height if post_height is not None
+                        else self._calculate_default_post_height(tracking_type, collector_bandwidth, module_tilt,
+                                                                 minimum_tracking_limit_angle_d,
+                                                                 maximum_tracking_limit_angle_d)
+                        ),
                     "structure_shading": structure_shading,
                     "backside_mismatch": backside_mismatch if backside_mismatch is not None else m.backside_mismatch
                 })
