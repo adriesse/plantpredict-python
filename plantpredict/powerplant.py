@@ -1,8 +1,9 @@
 import copy
+import numpy as np
 
 from plantpredict.plant_predict_entity import PlantPredictEntity
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
-from plantpredict.enumerations import ModuleOrientationEnum, TrackingTypeEnum
+from plantpredict.enumerations import ModuleOrientationEnum, TrackingTypeEnum, FacialityEnum
 
 
 class PowerPlant(PlantPredictEntity):
@@ -1023,6 +1024,38 @@ class PowerPlant(PlantPredictEntity):
         elif (tracking_type == TrackingTypeEnum.HORIZONTAL_TRACKER) and (tracking_backtracking_type is None):
             raise ValueError("The input tracking_backtracking_type is required for a horizontal tracker DC field.")
 
+    @staticmethod
+    def _calculate_default_post_height(tracking_type, collector_bandwidth, module_tilt, minimum_tracking_limit_angle_d,
+                                       maximum_tracking_limit_angle_d):
+        """
+        First calculates a default post height value. Then, the maximum of the calculated post height and 1.5 is
+        returned.
+
+        :param int tracking_type: Represents the tracking type/mounting structure (Fixed Tilt or Tracker) of the DC
+                                  field. Use :py:class:`~plantpredict.enumerations.TrackingTypeEnum`. (Seasonal Tilt
+                                  currently not supported in this package).
+        :param float collector_bandwidth: The total width/depth of each table/row of modules in the DC field. Must be
+                                          between :py:data:`0` and :py:data:`30` - units `[m]`.
+        :param float, None module_tilt: Tilt angle of modules in DC Field for a fixed tilt array. Defaults to `None`.
+                                        Non-null value required required if :py:data:`tracking_type` is equal to
+                                        :py:attr:`~plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT`, and must be
+                                        between :py:data:`0` and :py:data:`90` - units `[degrees]`.
+        :param float minimum_tracking_limit_angle_d: Minimum tracking angle for horizontal tracker array. Defaults to
+                                                     :py:data:`-60.0`. Must be between :py:data:`-90` and :py:data:`0` -
+                                                     units `[degrees]`.
+        :param float maximum_tracking_limit_angle_d: Maximum tracking angle for horizontal tracker array. Defaults to
+                                                     :py:data:`60.0`. Must be between :py:data:`0` and :py:data:`90` -
+                                                     units `[degrees]`.
+        :return: Default post height value.
+        :rtype: float
+        """
+        tilt = module_tilt if tracking_type == TrackingTypeEnum.FIXED_TILT else max(
+            abs(minimum_tracking_limit_angle_d), abs(maximum_tracking_limit_angle_d)
+        )
+        post_height = ((collector_bandwidth * np.sin(np.deg2rad(tilt))) / 2) + 1
+
+        return max(post_height, 1.5)
+
     @handle_refused_connection
     @handle_error_response
     def add_dc_field(self, block_name, array_name, inverter_name, module_id, tracking_type, modules_high,
@@ -1035,7 +1068,7 @@ class PowerPlant(PlantPredictEntity):
                      module_mismatch_coefficient=None, light_induced_degradation=None, dc_wiring_loss_at_stc=1.5,
                      dc_health=1.0, heat_balance_conductive_coef=None, heat_balance_convective_coef=None,
                      sandia_conductive_coef=None, sandia_convective_coef=None, cell_to_module_temp_diff=None,
-                     tracker_load_loss=0.0):
+                     tracker_load_loss=0.0, post_height=None, structure_shading=0.0, backside_mismatch=None):
         """
         A "power plant builder" helper method that adds a DC field to an inverter specified by :py:data:`inverter_name`,
         which is a child of the array  :py:data:`array_name`, which is a child of a block specified by
@@ -1063,7 +1096,7 @@ class PowerPlant(PlantPredictEntity):
                                   :py:meth:`~plantpredict.powerplant.PowerPlant.add_inverter`. Must be only `1`
                                   character.
         :param int module_id: Unique identifier of the module to be used in the DC field.
-        :param int tracking_type: Represents the tracking type/mounting structure (Fixed Tilt, Tracker, etc.) of the DC
+        :param int tracking_type: Represents the tracking type/mounting structure (Fixed Tilt or Tracker) of the DC
                                   field. Use :py:class:`~plantpredict.enumerations.TrackingTypeEnum`. (Seasonal Tilt
                                   currently not supported in this package).
         :param int modules_high: Number of modules high per table (number of ranks). Must be between :py:data:`1` and
@@ -1184,6 +1217,29 @@ class PowerPlant(PlantPredictEntity):
                                                      :py:data:`15` - units `[degrees-C]`.
         :param float tracker_load_loss: Accounts for losses from power use of horizontal tracker system. Defaults to
                                         `0.0`. Must be between :py:data:`0` and :py:data:`100` - units `[%]`.
+        :param float, None post_height: Height of mounting structure (table) post. Defaults to `None`. If left as
+                                        default (`None`), automatically calculated as
+                                        `((collector_bandwidth * sin(tilt) / 2) + 1`, where `tilt` is
+                                        :py:data:`module_tilt` if :py:data:`tracking_type` is
+                                        :py:attr:`~plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT`, or the
+                                        largest of the absolute values of
+                                        :py:data:`maximum_tracking_limit_angle_d`/:py:data:`minimum_tracking_limit_angle_d`
+                                        if :py:data:`tracking_type` is
+                                        :py:attr:`~plantpredict.enumerations.TrackingTypeEnum.HORIZONTAL_TRACKER`.
+                                        However, if the calculated value is less than `1.5`, `post_height` is
+                                        defaulted to `1.5`. Must be between :py:data:`0` and :py:data:`50` - units
+                                        `[m]`. This value is only used if the module model specified with
+                                        :py:data:`module_id` is bifacial.
+        :param float structure_shading: Accounts for backside of module losses from structure shading. Defaults to
+                                        `0.0`. Must be between :py:data:`0` and :py:data:`100` - units `[%]`. This value
+                                        is only used if the module model specified with :py:data:`module_id` is
+                                        bifacial.
+        :param float, None backside_mismatch: Accounts for losses due to inconsistent backside irradiance among modules
+                                              in the DC field. Defaults to `None`. If left as default (`None`), is
+                                              automatically set as the :py:attr:`module_orientation` of the module model
+                                              specified by :py:data:`module_id`. Must be between :py:data:`0` and
+                                              :py:data:`100` - units `[%]`. This value is only used if the module model
+                                              specified with :py:data:`module_id` is bifacial.
         :raises ValueError: Raised if `block_name` is not a valid block name in the existing power plant, or if the
                             :py:data:`block_name` is valid but :py:data:`array_name` is not a valid array name in the
                             block, or if :py:data:`array_name` is valid but :py:data:`inverter_name` is not a valid
@@ -1193,10 +1249,15 @@ class PowerPlant(PlantPredictEntity):
                             `~plantpredict.enumerations.TrackingTypeEnum.HORIZONTAL_TRACKER` and
                             :py:data:`tracking_backtracking_type` is `None`. Also raised if both
                             :py:data:`field_dc_power` and :py:data`number_of_series_strings_wired_in_parallel` are
-                            `None` or are both not `None`.
+                            `None` or are both not `None`. Also raised if `tracking_type` is
+                            :py:data:`~plantpredict.enumerations.TrackingTypeEnum.SEASONAL_TILT`.
         :return: The name of the newly added DC field.
         :rtype: int
         """
+        # only fixed tilt and horizontal tracker supported
+        if tracking_type == TrackingTypeEnum.SEASONAL_TILT:
+            raise ValueError("Seasonal Tilt is not currently supported by the add_dc_field method.")
+
         # validate inputs
         self._validate_inverter_name(block_name=block_name, array_name=array_name, inverter_name=inverter_name)
         self._validate_mounting_structure_parameters(tracking_type, module_tilt, tracking_backtracking_type)
@@ -1234,64 +1295,80 @@ class PowerPlant(PlantPredictEntity):
             tables_removed_for_pcs=tables_removed_for_pcs,
             number_of_rows=number_of_rows
         )
-        self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"].append({
-            "name": len(
-                self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"]
-            ) + 1,
-            "module_id": module_id,
-            "tracking_type": tracking_type,
-            "module_tilt": module_tilt,
-            "tracking_backtracking_type": tracking_backtracking_type,
-            "minimum_tracking_limit_angle_d": minimum_tracking_limit_angle_d,
-            "maximum_tracking_limit_angle_d": maximum_tracking_limit_angle_d,
-            "module_orientation": module_orientation,
-            "modules_high": modules_high,
-            "module_azimuth": (module_azimuth if module_azimuth is not None
-                               else self._get_default_module_azimuth_from_latitude()),
-            "collector_bandwidth": collector_bandwidth,
-            "post_to_post_spacing": post_to_post_spacing,
-            # Electrical
-            "planned_module_rating": m.stc_max_power,
-            "modules_wired_in_series": modules_wired_in_series,
-            "field_dc_power": field_dc_power,
-            "number_of_series_strings_wired_in_parallel": number_of_series_strings_wired_in_parallel,
-            "module_count": 1000*field_dc_power/m.stc_max_power,    # confirmed calculation in PlantPredict backend
-            # Losses
-            "module_quality": module_quality if module_quality is not None else m.module_quality,
-            "module_mismatch_coefficient": (module_mismatch_coefficient if module_mismatch_coefficient is not None else
-                                            m.module_mismatch_coefficient),
-            "light_induced_degradation": (light_induced_degradation if light_induced_degradation is not None else
-                                          m.light_induced_degradation),
-            "dc_wiring_loss_at_stc": dc_wiring_loss_at_stc,
-            "dc_health": dc_health,
-            "heat_balance_conductive_coef": (heat_balance_conductive_coef if heat_balance_conductive_coef is not None
-                                             else m.heat_balance_conductive_coef),
-            "heat_balance_convective_coef": (heat_balance_convective_coef if heat_balance_convective_coef is not None
-                                             else m.heat_balance_convective_coef),
-            "sandia_conductive_coef": (sandia_conductive_coef if sandia_conductive_coef is not None
-                                       else m.sandia_conductive_coef),
-            "cell_to_module_temp_diff": (cell_to_module_temp_diff if cell_to_module_temp_diff is not None else
-                                         m.cell_to_module_temp_diff),
-            "sandia_convective_coef": (sandia_convective_coef if sandia_convective_coef is not None
-                                       else m.sandia_convective_coef),
-            "tracker_load_loss": tracker_load_loss,
-            # Advanced Fields
-            "lateral_intermodule_gap": lateral_intermodule_gap,
-            "vertical_intermodule_gap": vertical_intermodule_gap,
-            "modules_wide": modules_wide,
-            "table_to_table_spacing": table_to_table_spacing,
-            "array_based_shading": array_based_shading,
-            "number_of_rows": number_of_rows,
-            "table_length": table_length,
-            "tables_per_row": tables_per_row,
-            "tables_removed_for_pcs": tables_removed_for_pcs,
-            "field_length": self._calculate_dc_field_length(tables_per_row, module_orientation, m.length, m.width,
-                                                            lateral_intermodule_gap, modules_wide, tracking_type,
-                                                            number_of_rows, post_to_post_spacing, collector_bandwidth),
-            "field_width": self._calculate_dc_field_width(tracking_type, number_of_rows, post_to_post_spacing,
-                                                          collector_bandwidth, tables_per_row, module_orientation,
-                                                          m.length, m.width, lateral_intermodule_gap, modules_wide)
-        })
+        self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"].append(
+            {
+                "name": len(self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][
+                                ord(inverter_name) - 65]["dc_fields"]) + 1,
+                "module_id": module_id,
+                "tracking_type": tracking_type,
+                "module_tilt": module_tilt,
+                "tracking_backtracking_type": tracking_backtracking_type,
+                "minimum_tracking_limit_angle_d": minimum_tracking_limit_angle_d,
+                "maximum_tracking_limit_angle_d": maximum_tracking_limit_angle_d,
+                "module_orientation": module_orientation,
+                "modules_high": modules_high,
+                "module_azimuth": (module_azimuth if module_azimuth is not None
+                                   else self._get_default_module_azimuth_from_latitude()),
+                "collector_bandwidth": collector_bandwidth,
+                "post_to_post_spacing": post_to_post_spacing,
+                # Electrical
+                "planned_module_rating": m.stc_max_power,
+                "modules_wired_in_series": modules_wired_in_series,
+                "field_dc_power": field_dc_power,
+                "number_of_series_strings_wired_in_parallel": number_of_series_strings_wired_in_parallel,
+                "module_count": 1000*field_dc_power/m.stc_max_power,    # confirmed calculation in PlantPredict backend
+                # Losses
+                "module_quality": module_quality if module_quality is not None else m.module_quality,
+                "module_mismatch_coefficient": (module_mismatch_coefficient if module_mismatch_coefficient is not None
+                                                else m.module_mismatch_coefficient),
+                "light_induced_degradation": (light_induced_degradation if light_induced_degradation is not None else
+                                              m.light_induced_degradation),
+                "dc_wiring_loss_at_stc": dc_wiring_loss_at_stc,
+                "dc_health": dc_health,
+                "heat_balance_conductive_coef": (heat_balance_conductive_coef if heat_balance_conductive_coef is not
+                                                 None else m.heat_balance_conductive_coef),
+                "heat_balance_convective_coef": (heat_balance_convective_coef if heat_balance_convective_coef is not
+                                                 None else m.heat_balance_convective_coef),
+                "sandia_conductive_coef": (sandia_conductive_coef if sandia_conductive_coef is not None
+                                           else m.sandia_conductive_coef),
+                "cell_to_module_temp_diff": (cell_to_module_temp_diff if cell_to_module_temp_diff is not None else
+                                             m.cell_to_module_temp_diff),
+                "sandia_convective_coef": (sandia_convective_coef if sandia_convective_coef is not None
+                                           else m.sandia_convective_coef),
+                "tracker_load_loss": tracker_load_loss,
+                # Advanced Fields
+                "lateral_intermodule_gap": lateral_intermodule_gap,
+                "vertical_intermodule_gap": vertical_intermodule_gap,
+                "modules_wide": modules_wide,
+                "table_to_table_spacing": table_to_table_spacing,
+                "array_based_shading": array_based_shading,
+                "number_of_rows": number_of_rows,
+                "table_length": table_length,
+                "tables_per_row": tables_per_row,
+                "tables_removed_for_pcs": tables_removed_for_pcs,
+                "field_length": self._calculate_dc_field_length(tables_per_row, module_orientation, m.length, m.width,
+                                                                lateral_intermodule_gap, modules_wide, tracking_type,
+                                                                number_of_rows, post_to_post_spacing,
+                                                                collector_bandwidth),
+                "field_width": self._calculate_dc_field_width(tracking_type, number_of_rows, post_to_post_spacing,
+                                                              collector_bandwidth, tables_per_row, module_orientation,
+                                                              m.length, m.width, lateral_intermodule_gap, modules_wide)
+            }
+        )
+
+        # add bifacial parameters if module is bifacial
+        if m.faciality == FacialityEnum.BIFACIAL:
+            self.blocks[block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65][
+                "dc_fields"][-1].update({
+                    "post_height": (post_height if post_height is not None
+                                    else self._calculate_default_post_height(tracking_type, collector_bandwidth,
+                                                                             module_tilt,
+                                                                             minimum_tracking_limit_angle_d,
+                                                                             maximum_tracking_limit_angle_d)
+                    ),
+                    "structure_shading": structure_shading,
+                    "backside_mismatch": backside_mismatch if backside_mismatch is not None else m.backside_mismatch
+                })
 
         return self.blocks[
             block_name - 1]["arrays"][array_name - 1]["inverters"][ord(inverter_name) - 65]["dc_fields"][-1]["name"]
