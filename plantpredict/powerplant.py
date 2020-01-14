@@ -29,7 +29,7 @@ class PowerPlant(PlantPredictEntity):
         powerplant = plantpredict.powerplant.PowerPlant(api, project_id=1, prediction_id=2)
 
     it is recommended to use the :py:class:`~plantpredict.api.Api` factory method
-    :py:meth:`~plantpredict.api.Api.powerplant, as in the following example:
+    :py:meth:`~plantpredict.api.Api.powerplant`, as in the following example:
 
     .. code-block:: python
 
@@ -48,10 +48,10 @@ class PowerPlant(PlantPredictEntity):
     :param plantpredict.api.Api api: An properly initialized instance of the PlantPredict API client class,
                                      :py:class:`~plantpredict.api.Api`, containing such important attributes as
                                      :py:attr:`access_token`.
-    :param int, None project_id: Unique identifier for the :py:class:`~plantpredict.project.Project` with
+    :param int or None project_id: Unique identifier for the :py:class:`~plantpredict.project.Project` with
                                  which to associate the power plant. Must represent a valid, exiting Project in the
                                  PlantPredict database.
-    :param int, None prediction_id: Unique identifier for the :py:class:`~plantpredict.prediction.Prediction`
+    :param int or None prediction_id: Unique identifier for the :py:class:`~plantpredict.prediction.Prediction`
                                     with which to associate the power plant. Must represent a valid, existing Prediction
                                     on the given Project in the PlantPredict database, as represented by the input
                                     :py:data:`project_id`.
@@ -120,7 +120,7 @@ class PowerPlant(PlantPredictEntity):
                             "description": "string"
                             "repeater": 0,
                             "inverter_id": 0,
-                            "inverter": SEE INVERTER
+                            "inverter": {} # dictionary containing full contents of an Inverter
                             "setpoint_kw": 0,
                             "power_factor": 0,
                             "kva_rating": 0,
@@ -130,7 +130,7 @@ class PowerPlant(PlantPredictEntity):
                                 "description": "string",
                                 "repeater": 0,
                                 "module_id": 0,
-                                "module": SEE MODULE
+                                "module": {}  # dictionary containing full contents of a Module model
                                 "tracking_type": plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT,
                                 "module_orientation": plantpredict.enumerations.ModuleOrientationEnum,
                                 "tables_removed_for_pcs": 0,
@@ -231,6 +231,7 @@ class PowerPlant(PlantPredictEntity):
                     "ordinal: 0,
                 }]
     |
+
     """
     def create(self):
         """
@@ -508,6 +509,7 @@ class PowerPlant(PlantPredictEntity):
 
         Note that this addition is not persisted to PlantPredict unless
         :py:meth:`~plantpredict.powerplant.PowerPlant.update` is subsequently called.
+
         :param int block_name: Name (1-indexed integer) of the parent block to add the array to. Can be found in the
                                relevant block dictionary (in list :py:attr:`self.blocks`) with key `id`.  This value is
                                returned for a new block when you create one with
@@ -518,7 +520,7 @@ class PowerPlant(PlantPredictEntity):
         :param bool match_total_inverter_kva: If `True`, the transformer size will match the total inverter kVA of the
                                               inverter behind the transformer, and the input `transformer_kva_rating`
                                               won't be used. Defaults to :py:data:`True`.
-        :param float, None transformer_kva_rating: User-specified transformer kVA rating. Only used if
+        :param float or None transformer_kva_rating: User-specified transformer kVA rating. Only used if
                                                    :py:data:`match_total_inverter_kva` is set to :py:data:`False`. Must
                                                    be between :py:data:`0` and :py:data:`20000` - units `[kVA]`.
                                                    Defaults to `None`.
@@ -542,7 +544,8 @@ class PowerPlant(PlantPredictEntity):
         :param float transformer_no_load_loss: Accounts for transformer losses with no load. Must be between
                                                :py:data:`0` and :py:data:`10` - units `[%]`. Defaults to :py:data:`0.2`.
         :param float transformer_full_load_loss: Accounts for transformer losses with full load. Must be between
-                                               :py:data:`0` and :py:data:`10` - units `[%]`. Defaults to :py:data:`0.7`.
+                                                 :py:data:`0` and :py:data:`10` - units `[%]`. Defaults to
+                                                 :py:data:`0.7`.
         :param float str description: Description of the array. Must be :py:data:`250` characters or less.
                                       Defaults to `""`.
         :raises ValueError: Raised if `block_name` is not a valid block name in the existing power plant.
@@ -685,7 +688,7 @@ class PowerPlant(PlantPredictEntity):
                                :py:meth:`~plantpredict.powerplant.PowerPlant.add_array`. Must be between :py:data:`1`
                                and :py:data:`99`.
         :param int inverter_id: Unique identifier of an inverter model in the PlantPredict Inverter database to use.
-        :param float, None setpoint_kw: Inverter setpoint. Must be between :py:data:`1` and :py:data:`10000` - units
+        :param float or None setpoint_kw: Inverter setpoint. Must be between :py:data:`1` and :py:data:`10000` - units
                                         `[kW]`. If left as default (`None`), will be automatically calculated as the
                                         product between :py:data:`power_factor` and the inverter kVA rating.
         :param float power_factor: The ratio of the power that can be used and the product of the operating current and
@@ -914,7 +917,7 @@ class PowerPlant(PlantPredictEntity):
                                    :py:data:`10000` - units `[mm]`.
         :param float lateral_intermodule_gap: Lateral gap between each module on the mounting structure. Must be between
                                               :py:data:`0` and py:data:`1` - units `[m]'.
-        :param int, float modules_wide: Number of modules across per table. Must be between :py:data:`1` and
+        :param int or float modules_wide: Number of modules across per table. Must be between :py:data:`1` and
                                        :py:data:`100`.
         :return: DC field width - units `[m]`.
         :rtype: float
@@ -1010,9 +1013,9 @@ class PowerPlant(PlantPredictEntity):
 
         :param int tracking_type: Represents the tracking type/mounting structure (Fixed Tilt, Tracker, etc.) of the DC
                                   field. Use :py:class:`~plantpredict.enumerations.TrackingTypeEnum`.
-        :param float, None module_tilt: Tilt angle of modules in DC Field for a fixed tilt array. Must be between
+        :param float or None module_tilt: Tilt angle of modules in DC Field for a fixed tilt array. Must be between
                                         :py:data:`0` and :py:data:`90` - units `[degrees]`.
-        :param int, None tracking_backtracking_type: Represents the backtracking algorithm (True-Tracking or
+        :param int or None tracking_backtracking_type: Represents the backtracking algorithm (True-Tracking or
                                                      Backtracking) used in DC Field. Use
                                                      :py:class:`~plantpredict.enumerations.BacktrackingTypeEnum`.
         :raises ValueError: Raised if the `tracking_type` is
@@ -1106,32 +1109,32 @@ class PowerPlant(PlantPredictEntity):
         :param int modules_wired_in_series: The number of modules electrically connected in series in a string.
         :param float post_to_post_spacing: Row spacing. Must be between :py:data:`0.0` and :py:data:`50.0` - units
                                            :py:data:`[m]`.
-        :param float, None number_of_rows: Number of rows of tables in DC field. Must be between :py:data:`0.1` and
+        :param float or None number_of_rows: Number of rows of tables in DC field. Must be between :py:data:`0.1` and
                                            :py:data:`10000`. Defaults to :py:data:`1`.
-        :param int, None modules_wide: Number of modules across per table. Must be between :py:data:`1` and
+        :param int or None modules_wide: Number of modules across per table. Must be between :py:data:`1` and
                                        :py:data:`100`. If left as default (`None`) will be assigned value equal to
                                        :py:data`modules_wired_in_series`.
-        :param float, None field_dc_power: DC capacity of the DC field. Defaults to `None`. Non-null value required if
+        :param float or None field_dc_power: DC capacity of the DC field. Defaults to `None`. Non-null value required if
                                            :py:data:`number_of_series_strings_wired_in_parallel` is `None` and  must be
                                            between :py:data:`1` and :py:data:`20000` - units `[kW]`.
-        :param float, None number_of_series_strings_wired_in_parallel: Number of strings of modules electrically
+        :param float or None number_of_series_strings_wired_in_parallel: Number of strings of modules electrically
                                                                        connected in parallel in the DC field. Defaults
                                                                        to `None`. Non-null value required if
                                                                        :py:data:`field_dc_power` is `None`, and must be
                                                                        between :py:data:`1` and :py:data`10000`.
-        :param float, None module_tilt: Tilt angle of modules in DC Field for a fixed tilt array. Defaults to `None`.
+        :param float or None module_tilt: Tilt angle of modules in DC Field for a fixed tilt array. Defaults to `None`.
                                         Non-null value required required if :py:data:`tracking_type` is equal to
                                         :py:attr:`~plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT`, and must be
                                         between :py:data:`0` and :py:data:`90` - units `[degrees]`.
-        :param int, None module_orientation: Represents the orientation (portrait or landscape) of modules in the DC
+        :param int or None module_orientation: Represents the orientation (portrait or landscape) of modules in the DC
                                              field. If left as default (`None`), is automatically set as the
                                             :py:attr:`module_orientation` of the module model specified by
                                             :py:data:`module_id`. Use
                                             :py:class:`~plantpredict.enumerations.ModuleOrientationEnum`.
-        :param float, None module_azimuth: Orientation of the entire DC field. The convention is 0.0 degrees for
+        :param float or None module_azimuth: Orientation of the entire DC field. The convention is 0.0 degrees for
                                            North-facing arrays. If left as default (`None`), is set to :py:data:`180.0`.
                                            Must be between :py:data:`0` and :py:data:`360` - units `[degrees]`.
-        :param int, None tracking_backtracking_type: Represents the backtracking algorithm (True-Tracking or
+        :param int or None tracking_backtracking_type: Represents the backtracking algorithm (True-Tracking or
                                                      Backtracking) used in DC Field. Use
                                                      :py:class:`~plantpredict.enumerations.BacktrackingTypeEnum`.
         :param float minimum_tracking_limit_angle_d: Minimum tracking angle for horizontal tracker array. Defaults to
@@ -1150,19 +1153,19 @@ class PowerPlant(PlantPredictEntity):
                                              :py:data:`0` and :py:data:`50`.
         :param float tables_removed_for_pcs: Number of tables removed in DC field to make room for its power
                                              conditioning system (PCS). Must be between :py:data:`0` and :py:data:`50`.
-        :param float, None module_quality: Accounts for any discrepancy between manufacturer nameplate rating of module
+        :param float or None module_quality: Accounts for any discrepancy between manufacturer nameplate rating of module
                                            and actual performance. If left as default (`None`), is automatically set as
                                            the :py:attr:`module_quality` of the module model specified by
                                            :py:data:`module_id`. Must be between :py:data:`-200` and :py:data:`99` -
                                            units `[%]`.
-        :param float, None module_mismatch_coefficient: Accounts for losses due to mismatch in electrical
+        :param float or None module_mismatch_coefficient: Accounts for losses due to mismatch in electrical
                                                         characteristics among modules in the strings of the DC fields
                                                         (and between strings in the DC field). If left as default
                                                         (`None`), is automatically set as the
                                                         :py:attr:`module_mismatch_coefficient` of the module model
                                                         specified by :py:data:`module_id`. Must be between :py:data:`0`
                                                         and :py:data:`30` - units `[%]`.
-        :param float, None light_induced_degradation: Accounts for losses due to light induced degradation.
+        :param float or None light_induced_degradation: Accounts for losses due to light induced degradation.
                                                       If left as default (`None`), is automatically set as the
                                                       :py:attr:`light_induced_degradation` of the module model specified
                                                       by :py:data:`module_id`. Must be between :py:data:`0` and
@@ -1172,7 +1175,7 @@ class PowerPlant(PlantPredictEntity):
                                             `[%]`.
         :param float dc_health: Accounts for any losses related to DC health. Defaults to :py:data:`1.0`. Must be
                                 between :py:data:`-10` and :py:data:`10` - units `[%]`.
-        :param float, None heat_balance_conductive_coef: Thermal loss factor (constant component) of heat balance module
+        :param float or None heat_balance_conductive_coef: Thermal loss factor (constant component) of heat balance module
                                                          surface temperature model. If left as default (`None`), is
                                                          automatically set as the
                                                          :py:attr:`heat_balance_conductive_coef` of the module model
@@ -1183,7 +1186,7 @@ class PowerPlant(PlantPredictEntity):
                                                          for the :py:class:`~plantpredict.prediction.Prediction`
                                                          associated with the power plant by :py:attr:`self.project_id`
                                                          and :py:attr:`self.prediction_id`.
-        :param float, None heat_balance_convective_coef: Thermal loss factor (wind speed component) of heat balance
+        :param float or None heat_balance_convective_coef: Thermal loss factor (wind speed component) of heat balance
                                                          module surface temperature model. If left as default (`None`),
                                                          is automatically set as the
                                                          :py:attr:`heat_balance_convective_coef` of the module model
@@ -1194,7 +1197,7 @@ class PowerPlant(PlantPredictEntity):
                                                          for the :py:class:`~plantpredict.prediction.Prediction`
                                                          associated with the power plant by :py:attr:`self.project_id`
                                                          and :py:attr:`self.prediction_id`.
-        :param float, None sandia_conductive_coef: Coefficient `a` for the Sandia module surface temperature model. If
+        :param float or None sandia_conductive_coef: Coefficient `a` for the Sandia module surface temperature model. If
                                                    left as default (`None`), is automatically set as the
                                                    :py:attr:`sandia_conductive_coef` of the module model specified by
                                                    :py:data:`module_id`. Must be between :py:data:`-5` and :py:data:`0`.
@@ -1203,7 +1206,7 @@ class PowerPlant(PlantPredictEntity):
                                                    for the :py:class:`~plantpredict.prediction.Prediction` associated
                                                    with the power plant by :py:attr:`self.project_id` and
                                                    :py:attr:`self.prediction_id`.
-        :param float, None sandia_convective_coef: Coefficient `b` for the Sandia module surface temperature model. If
+        :param float or None sandia_convective_coef: Coefficient `b` for the Sandia module surface temperature model. If
                                                    left as default (`None`), is automatically set as the
                                                    :py:attr:`sandia_convective_coef` of the module model specified by
                                                    :py:data:`module_id`. Must be between :py:data:`-1` and :py:data:`0`.
@@ -1212,14 +1215,14 @@ class PowerPlant(PlantPredictEntity):
                                                    for the :py:class:`~plantpredict.prediction.Prediction` associated
                                                    with the power plant by :py:attr:`self.project_id` and
                                                    :py:attr:`self.prediction_id`.
-        :param float, None cell_to_module_temp_diff: Difference between surface and cell temperature of modules. If left
+        :param float or None cell_to_module_temp_diff: Difference between surface and cell temperature of modules. If left
                                                      as default (`None`), is automatically set as the
                                                      :py:attr:`cell_to_module_temp_diff` of the module model specified
                                                      by :py:data:`module_id`. Must be between :py:data:`0` and
                                                      :py:data:`15` - units `[degrees-C]`.
         :param float tracker_load_loss: Accounts for losses from power use of horizontal tracker system. Defaults to
                                         `0.0`. Must be between :py:data:`0` and :py:data:`100` - units `[%]`.
-        :param float, None post_height: Height of mounting structure (table) post. Defaults to `None`. If left as
+        :param float or None post_height: Height of mounting structure (table) post. Defaults to `None`. If left as
                                         default (`None`), automatically calculated as
                                         `((collector_bandwidth * sin(tilt) / 2) + 1`, where `tilt` is
                                         :py:data:`module_tilt` if :py:data:`tracking_type` is
@@ -1236,7 +1239,7 @@ class PowerPlant(PlantPredictEntity):
                                         `0.0`. Must be between :py:data:`0` and :py:data:`100` - units `[%]`. This value
                                         is only used if the module model specified with :py:data:`module_id` is
                                         bifacial.
-        :param float, None backside_mismatch: Accounts for losses due to inconsistent backside irradiance among modules
+        :param float or None backside_mismatch: Accounts for losses due to inconsistent backside irradiance among modules
                                               in the DC field. Defaults to `None`. If left as default (`None`), is
                                               automatically set as the :py:attr:`module_orientation` of the module model
                                               specified by :py:data:`module_id`. Must be between :py:data:`0` and
