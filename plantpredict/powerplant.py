@@ -1160,98 +1160,95 @@ class PowerPlant(PlantPredictEntity):
                                              :py:data:`0` and :py:data:`50`.
         :param float tables_removed_for_pcs: Number of tables removed in DC field to make room for its power
                                              conditioning system (PCS). Must be between :py:data:`0` and :py:data:`50`.
-        :param float or None module_quality: Accounts for any discrepancy between manufacturer nameplate rating of module
-                                           and actual performance. If left as default (`None`), is automatically set as
-                                           the :py:attr:`module_quality` of the module model specified by
-                                           :py:data:`module_id`. Must be between :py:data:`-200` and :py:data:`99` -
-                                           units `[%]`.
-        :param float or None module_mismatch_coefficient: Accounts for losses due to mismatch in electrical
-                                                        characteristics among modules in the strings of the DC fields
-                                                        (and between strings in the DC field). If left as default
-                                                        (`None`), is automatically set as the
-                                                        :py:attr:`module_mismatch_coefficient` of the module model
-                                                        specified by :py:data:`module_id`. Must be between :py:data:`0`
-                                                        and :py:data:`30` - units `[%]`.
-        :param float or None light_induced_degradation: Accounts for losses due to light induced degradation.
-                                                      If left as default (`None`), is automatically set as the
-                                                      :py:attr:`light_induced_degradation` of the module model specified
-                                                      by :py:data:`module_id`. Must be between :py:data:`0` and
-                                                      :py:data:`30` - units `[%]`.
+        :param module_quality: Accounts for any discrepancy between manufacturer nameplate rating of module and actual
+                               performance. If left as default (`None`), is automatically set as the
+                               :py:attr:`module_quality` of the module model specified by :py:data:`module_id`. Must be
+                               between :py:data:`-200` and :py:data:`99` - units `[%]`.
+        :type module_quality: float, None
+        :param module_mismatch_coefficient: Accounts for losses due to mismatch in electrical characteristics among
+                                            modules in the strings of the DC fields (and between strings in the DC
+                                            field). If left as default (`None`), is automatically set as the
+                                            :py:attr:`module_mismatch_coefficient` of the module model specified by
+                                            :py:data:`module_id`. Must be between :py:data:`0` and :py:data:`30` -
+                                            units `[%]`.
+        :type module_mismatch_coefficient: float, None
+        :param light_induced_degradation: Accounts for losses due to light induced degradation. If left as default
+                                          (`None`), is automatically set as the :py:attr:`light_induced_degradation` of
+                                          the module model specified by :py:data:`module_id`. Must be between
+                                          :py:data:`0` and :py:data:`30` - units `[%]`.
+        :type light_induced_degradation: float, None
         :param float dc_wiring_loss_at_stc: Accounts for losses across all electrical wiring in the DC field. Defaults
                                             to :py:data:`1.5`. Must be between :py:data:`0` and :py:data:`30` - units
                                             `[%]`.
         :param float dc_health: Accounts for any losses related to DC health. Defaults to :py:data:`1.0`. Must be
                                 between :py:data:`-10` and :py:data:`10` - units `[%]`.
-        :param float or None heat_balance_conductive_coef: Thermal loss factor (constant component) of heat balance module
-                                                         surface temperature model. If left as default (`None`), is
-                                                         automatically set as the
-                                                         :py:attr:`heat_balance_conductive_coef` of the module model
-                                                         specified by :py:data:`module_id`. Must be between :py:data:`0`
-                                                         and :py:data:`100`. This value is only used if
-                                                         :py:attr:`model_temp_model` is set to
-                                                         :py:attr:`~plantpredict.enumerations.ModuleTemperatureModelEnum.HEAT_BALANCE`
-                                                         for the :py:class:`~plantpredict.prediction.Prediction`
+        :param heat_balance_conductive_coef: Thermal loss factor (constant component) of heat balance module surface
+                                             temperature model. If left as default (`None`), is automatically set as the
+                                             :py:attr:`heat_balance_conductive_coef` of the module model specified by
+                                             :py:data:`module_id`. Must be between :py:data:`0` and :py:data:`100`. This
+                                             value is only used if :py:attr:`model_temp_model` is set to
+                                             :py:attr:`~plantpredict.enumerations.ModuleTemperatureModelEnum.HEAT_BALANCE`
+                                             for the :py:class:`~plantpredict.prediction.Prediction` associated with the
+                                             power plant by :py:attr:`self.project_id` and
+                                             :py:attr:`self.prediction_id`.
+        :type heat_balance_conductive_coef: float, None
+        :param heat_balance_convective_coef: Thermal loss factor (wind speed component) of heat balance module surface
+                                             temperature model. If left as default (`None`), is automatically set as the
+                                             :py:attr:`heat_balance_convective_coef` of the module model specified by
+                                             :py:data:`module_id`. Must be between :py:data:`0` and :py:data:`100`. This
+                                             value is only used if :py:attr:`model_temp_model` is set to
+                                             :py:attr:`~plantpredict.enumerations.ModuleTemperatureModelEnum.HEAT_BALANCE`
+                                             for the :py:class:`~plantpredict.prediction.Prediction`
                                                          associated with the power plant by :py:attr:`self.project_id`
                                                          and :py:attr:`self.prediction_id`.
-        :param float or None heat_balance_convective_coef: Thermal loss factor (wind speed component) of heat balance
-                                                         module surface temperature model. If left as default (`None`),
-                                                         is automatically set as the
-                                                         :py:attr:`heat_balance_convective_coef` of the module model
-                                                         specified by :py:data:`module_id`. Must be between :py:data:`0`
-                                                         and :py:data:`100`. This value is only used if
-                                                         :py:attr:`model_temp_model` is set to
-                                                         :py:attr:`~plantpredict.enumerations.ModuleTemperatureModelEnum.HEAT_BALANCE`
-                                                         for the :py:class:`~plantpredict.prediction.Prediction`
-                                                         associated with the power plant by :py:attr:`self.project_id`
-                                                         and :py:attr:`self.prediction_id`.
-        :param float or None sandia_conductive_coef: Coefficient `a` for the Sandia module surface temperature model. If
-                                                   left as default (`None`), is automatically set as the
-                                                   :py:attr:`sandia_conductive_coef` of the module model specified by
-                                                   :py:data:`module_id`. Must be between :py:data:`-5` and :py:data:`0`.
-                                                   This value is only used if :py:attr:`model_temp_model` is set to
-                                                   :py:attr:`~plantpredict.enumerations.ModuleTemperatureModelEnum.SANDIA`
-                                                   for the :py:class:`~plantpredict.prediction.Prediction` associated
-                                                   with the power plant by :py:attr:`self.project_id` and
-                                                   :py:attr:`self.prediction_id`.
-        :param float or None sandia_convective_coef: Coefficient `b` for the Sandia module surface temperature model. If
-                                                   left as default (`None`), is automatically set as the
-                                                   :py:attr:`sandia_convective_coef` of the module model specified by
-                                                   :py:data:`module_id`. Must be between :py:data:`-1` and :py:data:`0`.
-                                                   This value is only used if :py:attr:`model_temp_model` is set to
-                                                   :py:attr:`~plantpredict.enumerations.ModuleTemperatureModelEnum.SANDIA`
-                                                   for the :py:class:`~plantpredict.prediction.Prediction` associated
-                                                   with the power plant by :py:attr:`self.project_id` and
-                                                   :py:attr:`self.prediction_id`.
-        :param float or None cell_to_module_temp_diff: Difference between surface and cell temperature of modules. If left
-                                                     as default (`None`), is automatically set as the
-                                                     :py:attr:`cell_to_module_temp_diff` of the module model specified
-                                                     by :py:data:`module_id`. Must be between :py:data:`0` and
-                                                     :py:data:`15` - units `[degrees-C]`.
+        :type heat_balance_convective_coef: float, None
+        :param sandia_conductive_coef: Coefficient `a` for the Sandia module surface temperature model. If left as
+                                       default (`None`), is automatically set as the :py:attr:`sandia_conductive_coef`
+                                       of the module model specified by :py:data:`module_id`. Must be between
+                                       :py:data:`-5` and :py:data:`0`. This value is only used if
+                                       :py:attr:`model_temp_model` is set to
+                                       :py:attr:`~plantpredict.enumerations.ModuleTemperatureModelEnum.SANDIA` for the
+                                       :py:class:`~plantpredict.prediction.Prediction` associated with the power plant
+                                       by :py:attr:`self.project_id` and :py:attr:`self.prediction_id`.
+        :type sandia_conductive_coef: float, None
+        :param sandia_convective_coef: Coefficient `b` for the Sandia module surface temperature model. If left as
+                                       default (`None`), is automatically set as the :py:attr:`sandia_convective_coef`
+                                       of the module model specified by :py:data:`module_id`. Must be between
+                                       :py:data:`-1` and :py:data:`0`. This value is only used if
+                                       :py:attr:`model_temp_model` is set to
+                                       :py:attr:`~plantpredict.enumerations.ModuleTemperatureModelEnum.SANDIA` for the
+                                       :py:class:`~plantpredict.prediction.Prediction` associated with the power plant
+                                       by :py:attr:`self.project_id` and :py:attr:`self.prediction_id`.
+        :type sandia_convective_coef: float, None
+        :param cell_to_module_temp_diff: Difference between surface and cell temperature of modules. If left as default
+                                         (`None`), is automatically set as the :py:attr:`cell_to_module_temp_diff` of
+                                         the module model specified by :py:data:`module_id`. Must be between
+                                         :py:data:`0` and :py:data:`15` - units `[degrees-C]`.
+        :type cell_to_module_temp_diff: float, None
         :param float tracker_load_loss: Accounts for losses from power use of horizontal tracker system. Defaults to
                                         `0.0`. Must be between :py:data:`0` and :py:data:`100` - units `[%]`.
-        :param float or None post_height: Height of mounting structure (table) post. Defaults to `None`. If left as
-                                        default (`None`), automatically calculated as
-                                        `((collector_bandwidth * sin(tilt) / 2) + 1`, where `tilt` is
-                                        :py:data:`module_tilt` if :py:data:`tracking_type` is
-                                        :py:attr:`~plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT`, or the
-                                        largest of the absolute values of
-                                        :py:data:`maximum_tracking_limit_angle_d`/:py:data:`minimum_tracking_limit_angle_d`
-                                        if :py:data:`tracking_type` is
-                                        :py:attr:`~plantpredict.enumerations.TrackingTypeEnum.HORIZONTAL_TRACKER`.
-                                        However, if the calculated value is less than `1.5`, `post_height` is
-                                        defaulted to `1.5`. Must be between :py:data:`0` and :py:data:`50` - units
-                                        `[m]`. This value is only used if the module model specified with
-                                        :py:data:`module_id` is bifacial.
+        :param post_height: Height of mounting structure (table) post. Defaults to `None`. If left as default (`None`),
+                            automatically calculated as `((collector_bandwidth * sin(tilt) / 2) + 1`, where `tilt` is
+                            :py:data:`module_tilt` if :py:data:`tracking_type` is
+                            :py:attr:`~plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT`, or the largest of the
+                            absolute values of
+                            :py:data:`maximum_tracking_limit_angle_d`/:py:data:`minimum_tracking_limit_angle_d`
+                            if :py:data:`tracking_type` is
+                            :py:attr:`~plantpredict.enumerations.TrackingTypeEnum.HORIZONTAL_TRACKER`. However, if the
+                            calculated value is less than `1.5`, `post_height` is defaulted to `1.5`. Must be between
+                            :py:data:`0` and :py:data:`50` - units `[m]`. This value is only used if the module model
+                            specified with :py:data:`module_id` is bifacial.
+        :type post_height: float, None
         :param float structure_shading: Accounts for backside of module losses from structure shading. Defaults to
                                         `0.0`. Must be between :py:data:`0` and :py:data:`100` - units `[%]`. This value
                                         is only used if the module model specified with :py:data:`module_id` is
                                         bifacial.
-        :param float or None backside_mismatch: Accounts for losses due to inconsistent backside irradiance among modules
-                                              in the DC field. Defaults to `None`. If left as default (`None`), is
-                                              automatically set as the :py:attr:`module_orientation` of the module model
-                                              specified by :py:data:`module_id`. Must be between :py:data:`0` and
-                                              :py:data:`100` - units `[%]`. This value is only used if the module model
-                                              specified with :py:data:`module_id` is bifacial.
+        :param backside_mismatch: Accounts for losses due to inconsistent backside irradiance among modules in the DC
+                                  field. Defaults to `None`. If left as default (`None`), is automatically set as the
+                                  :py:attr:`module_orientation` of the module model specified by :py:data:`module_id`.
+                                  Must be between :py:data:`0` and :py:data:`100` - units `[%]`. This value is only used
+                                  if the module model specified with :py:data:`module_id` is bifacial.
+        :type backside_mismatch: float, None
         :raises ValueError: Raised if `block_name` is not a valid block name in the existing power plant, or if the
                             :py:data:`block_name` is valid but :py:data:`array_name` is not a valid array name in the
                             block, or if :py:data:`array_name` is valid but :py:data:`inverter_name` is not a valid
