@@ -35,11 +35,7 @@ class PowerPlant(PlantPredictEntity):
         powerplant = api.powerplant(project_id=1, prediction_id=2)
 
     where both cases assume that :py:data:`api` is a properly defined :py:class:`~plantpredict.api.Api` object, and that
-    the package has been imported at the top of the script with:
-
-    .. code-block:: python
-
-        `import plantpredict`
+    the package has been imported at the top of the script with :code:`import plantpredict`.
 
     Note on parameters listed below: This list of attributes is comprehensive, but does not encompass 100% of parameters
     that might be available via :py:meth:`plantpredict.powerplant.PowerPlant.get` after the associated prediction is
@@ -47,38 +43,90 @@ class PowerPlant(PlantPredictEntity):
     :py:class:`~plantpredict.powerplant.PowerPlant`, plus some of the post-prediction-run parameters.
 
     :param plantpredict.api.Api api: An properly initialized instance of the PlantPredict API client class,
-                                     :py:class:`~plantpredict.api.Api`, containing such important attributes as
-                                     :py:attr:`access_token`.
+                                     :py:class:`~plantpredict.api.Api`, which is used for authentication with the
+                                     PlantPredict servers, given a user's unique API credentials.
     :param project_id: Unique identifier for the :py:class:`~plantpredict.project.Project` with which to associate the
-                       power plant. Must represent a valid, exiting Project in the PlantPredict database.
+                       power plant. Must represent a valid, exiting project in the PlantPredict database.
     :type project_id: int, None
     :param prediction_id: Unique identifier for the :py:class:`~plantpredict.prediction.Prediction` with which to
                           associate the power plant. Must represent a valid, existing Prediction on the given Project in
                           the PlantPredict database, as represented by the input :py:data:`project_id`.
     :type prediction_id: int, None
-    :param bool use_cooling_temp: If `True`, the `kva_rating` of each inverter in the power plant is calculated based on
-                                  the 99.6 cooling temperature of the nearest ASHRAE station to the corresponding
-                                  :py:class:`~plantpredict.project.Project` (as specified by
+    :param bool use_cooling_temp: If :py:data:`True`, the :py:attr:`kva_rating` of each inverter in the power plant is
+                                  calculated based on the 99.6 cooling temperature of the nearest ASHRAE station to the
+                                  corresponding :py:class:`~plantpredict.project.Project` (as specified by
                                   :py:attr:`project_id`), the elevation of the
                                   :py:class:`~plantpredict.project.Project`, and the elevation/temperature curves of the
-                                  inverter model specified by :py:data:`inverter_id`. Defaults to `True`. If `False`,
-                                  the `kva_rating` of each inverter in the power plant is set as the
-                                  :py:attr:`apparent_power` of the inverter model specified by :py:data:`inverter_id`.
-    :param float lgia_limitation: Maximum for power plant according to its Large Generator Interconnection Agreement
-                                  (LGIA). Must be between :py:data:`0` and :py:data:`2000` - units `[MWac]`.
+                                  inverter model specified by :py:data:`inverter_id`. Defaults to :py:data:`True`. If
+                                  :py:data:`False`, the :py:attr:`kva_rating` of each inverter in the power plant is set
+                                  as the :py:attr:`apparent_power` of the inverter model specified by
+                                  :py:data:`inverter_id`.
+    :param float lgia_limitation: Maximum power output limit for power plant according to its Large Generator
+                                  Interconnection Agreement (LGIA). Must be between :py:data:`0` and :py:data:`2000` -
+                                  units :py:data:`[MWac]`.
     :param float availability_loss: Accounts for losses due to any plant-wide outage events such as inverter
-                                    shutdowns/failures. Must be between :py:data:`0` and :py:data:`25` - units `[%]`.
+                                    shutdowns/failures. Must be between :py:data:`0` and :py:data:`25` - units
+                                    :py:data:`[%]`.
     :param float power_factor: The ratio of the power that can be used and the product of the operating current and
                                voltage (also referred to as Plant kVA Derate). Defaults to :py:data:`1.0`. Must be
-                               between :py:data:`0` and :py:data:`1`, where `1` is a "unity" power factor. Defaults to
-                               `1.0` in :py:meth:`~plantpredict.powerplant.PowerPlant.__init__` and automatically
-                               recalculated when :py:meth:`~plantpredict.powerplant.PowerPlant.create` called.
-    :param list transformers: Defaults to an empty list `[]` See "Example contents & parameter specifications for
-                              :py:attr:`transformers`" below.
-    :param list transmission_lines: Defaults to an empty list `[]`. See "Example contents & parameter specifications for
-                                    :py:attr:`transmission_lines`" below.
-    :param list blocks: Defaults to an empty list `[]`. See "Example contents & parameter specifications for
-                        :py:attr:`blocks`" below.
+                               between :py:data:`0` and :py:data:`1`, where :py:data:`1` is a "unity" power factor.
+                               Defaults to :py:data"`1.0` in :py:meth:`~plantpredict.powerplant.PowerPlant.__init__` and
+                               automatically recalculated when :py:meth:`~plantpredict.powerplant.PowerPlant.create`
+                               called.
+    :param list transformers: Defaults to an empty list (:py:data:`[]`). See "Example contents of
+                              :py:attr:`transformers`" below for sample contents. Use the "power plant builder" method
+                              :py:meth:`~plantpredict.powerplant.PowerPlant.add_transformer` to easily add a new
+                              transformer to the attribute (list) :py:attr:`transformers`.
+    :param list transmission_lines: Defaults to an empty list (:py:data:`[]`). See "Example contents of
+                                    :py:attr:`transmission_lines`" below for sample contents. Use the
+                                    "power plant builder" method
+                                    :py:meth:`~plantpredict.powerplant.PowerPlant.add_transmission_line` to easily add a
+                                    new transmission line to the attribute (list) :py:attr:`transmission_lines`.
+    :param list blocks: Defaults to an empty list (:py:data:`[]`). See "Example contents of :py:attr:`blocks`" below
+                        for sample contents. Use the "power plant builder" method
+                        :py:meth:`~plantpredict.powerplant.PowerPlant.add_block` to easily add a new block to the
+                        attribute (list) :py:attr:`blocks`. Subsequently use the methods
+                        :py:meth:`plantpredict.powerplant.PowerPlant.add_array`,
+                        :py:meth:`plantpredict.powerplant.PowerPlant.add_inverter`, and
+                        :py:meth:`plantpredict.powerplant.PowerPlant.add_dc-field` to build out the full power plant
+                        hierarchical structure.
+
+    .. container:: toggle
+
+        .. container:: header
+
+            Example contents of :py:attr:`transformers`
+
+        .. container:: transformers
+
+            .. code-block:: python
+
+                [{
+                    "id": 23982,
+                    "rating": 0.6,              # units [MVA]
+                    "high_side_voltage": 0,     # units [kV]
+                    "no_load_loss": 0,          # units [%]
+                    "full_load_loss": 0,        # units [%]
+                    "ordinal": 0
+                }]
+
+    .. container:: toggle
+
+        .. container:: header
+
+            Example contents of :py:attr:`transmission_lines`
+
+        .. container:: transmission_lines
+
+            .. code-block:: python
+
+                [{
+                    "id": 0,
+                    "length": 0,                             # units [km]
+                    "resistance": 0,                         # units [Ohms/300 m]
+                    "number_of_conducters_per_phase": 0,
+                    "ordinal": 0,
+                }]
 
     .. container:: toggle
 
@@ -186,53 +234,6 @@ class PowerPlant(PlantPredictEntity):
                         }],
                     }],
                 }]
-
-            .. csv-table:: Parameter specifications for :py:attr:`blocks`
-
-                :file: ../docs/_static/csv_tables/powerplant_blocks.csv
-                :header-rows: 1
-                :stub-columns: 1
-                :widths: 20 5 75
-                :align: center
-
-    .. container:: toggle
-
-        .. container:: header
-
-            Example contents of :py:attr:`transformers`
-
-        .. container:: transformers
-
-            .. code-block:: python
-
-                [{
-                    "id": 0,
-                    "rating": 0,
-                    "high_side_voltage": 0,
-                    "no_load_loss": 0,
-                    "full_load_loss": 0,
-                    "ordinal": 0
-                }]
-
-    .. container:: toggle
-
-        .. container:: header
-
-            Example contents of :py:attr:`transmission_lines`
-
-        .. container:: transmission_lines
-
-            .. code-block:: python
-
-                [{
-                    "id": 0,
-                    "length": 0,
-                    "resistance": 0,
-                    "number_of_conducters_per_phase": 0,
-                    "ordinal: 0,
-                }]
-    |
-
     """
     def create(self):
         """
