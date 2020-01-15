@@ -20,8 +20,8 @@ class PowerPlant(PlantPredictEntity):
     might be either attribute assignments or variable inputs to the method.
 
     Sample code for properly building a :py:class:`~plantpredict.powerplant.PowerPlant` can be found in
-    :ref:`example_usage`. While a new :py:class:`~plantpredict.powerplant.PowerPlant` can be initialized via the
-    :py:meth:`~plantpredict.powerplant.PowerPlant.__init__`, as in the following example:
+    :ref:`example_usage`. While a new :py:class:`~plantpredict.powerplant.PowerPlant` can be initialized via its
+    :py:meth:`~plantpredict.powerplant.PowerPlant.__init__` method, as in the following example:
 
     .. code-block:: python
 
@@ -34,15 +34,17 @@ class PowerPlant(PlantPredictEntity):
 
         powerplant = api.powerplant(project_id=1, prediction_id=2)
 
-    where both cases assume that `api` is a properly defined :py:class:`~plantpredict.api.Api` object, and that the
-    package has been imported at the top of the script with `import plantpredict`.
+    where both cases assume that :py:data:`api` is a properly defined :py:class:`~plantpredict.api.Api` object, and that
+    the package has been imported at the top of the script with:
+
+    .. code-block:: python
+
+        `import plantpredict`
 
     Note on parameters listed below: This list of attributes is comprehensive, but does not encompass 100% of parameters
     that might be available via :py:meth:`plantpredict.powerplant.PowerPlant.get` after the associated prediction is
     run. The list includes all relevant attributes that a user should/can set upon building the
-    :py:class:`~plantpredict.powerplant.PowerPlant`, plus some of the post-prediction-run parameters. This note also
-    applies to the thoroughness of key-value pairs in the large dictionaries within some of these attributes, such
-    as in :py:attr:`blocks`.
+    :py:class:`~plantpredict.powerplant.PowerPlant`, plus some of the post-prediction-run parameters.
 
     :param plantpredict.api.Api api: An properly initialized instance of the PlantPredict API client class,
                                      :py:class:`~plantpredict.api.Api`, containing such important attributes as
