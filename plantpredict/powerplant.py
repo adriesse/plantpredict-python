@@ -69,25 +69,25 @@ class PowerPlant(PlantPredictEntity):
     :param float power_factor: The ratio of the power that can be used and the product of the operating current and
                                voltage (also referred to as Plant kVA Derate). Defaults to :py:data:`1.0`. Must be
                                between :py:data:`0` and :py:data:`1`, where :py:data:`1` is a "unity" power factor.
-                               Defaults to :py:data"`1.0` in :py:meth:`~plantpredict.powerplant.PowerPlant.__init__` and
+                               Defaults to :py:data`1.0` in :py:meth:`~plantpredict.powerplant.PowerPlant.__init__` and
                                automatically recalculated when :py:meth:`~plantpredict.powerplant.PowerPlant.create`
                                called.
     :param list transformers: Defaults to an empty list (:py:data:`[]`). See "Example contents of
                               :py:attr:`transformers`" below for sample contents. Use the "power plant builder" method
                               :py:meth:`~plantpredict.powerplant.PowerPlant.add_transformer` to easily add a new
-                              transformer to the attribute (list) :py:attr:`transformers`.
+                              transformer to the attribute :py:attr:`transformers`.
     :param list transmission_lines: Defaults to an empty list (:py:data:`[]`). See "Example contents of
                                     :py:attr:`transmission_lines`" below for sample contents. Use the
                                     "power plant builder" method
                                     :py:meth:`~plantpredict.powerplant.PowerPlant.add_transmission_line` to easily add a
-                                    new transmission line to the attribute (list) :py:attr:`transmission_lines`.
+                                    new transmission line to the attribute :py:attr:`transmission_lines`.
     :param list blocks: Defaults to an empty list (:py:data:`[]`). See "Example contents of :py:attr:`blocks`" below
                         for sample contents. Use the "power plant builder" method
                         :py:meth:`~plantpredict.powerplant.PowerPlant.add_block` to easily add a new block to the
-                        attribute (list) :py:attr:`blocks`. Subsequently use the methods
-                        :py:meth:`plantpredict.powerplant.PowerPlant.add_array`,
-                        :py:meth:`plantpredict.powerplant.PowerPlant.add_inverter`, and
-                        :py:meth:`plantpredict.powerplant.PowerPlant.add_dc-field` to build out the full power plant
+                        attribute :py:attr:`blocks`. Subsequently use the methods
+                        :py:meth:`~plantpredict.powerplant.PowerPlant.add_array`,
+                        :py:meth:`~plantpredict.powerplant.PowerPlant.add_inverter`, and
+                        :py:meth:`~plantpredict.powerplant.PowerPlant.add_dc_field` to build out the full power plant
                         hierarchical structure.
 
     .. container:: toggle
@@ -233,6 +233,7 @@ class PowerPlant(PlantPredictEntity):
                         }],
                     }],
                 }]
+    |
     """
     def create(self):
         """
