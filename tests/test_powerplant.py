@@ -3,7 +3,7 @@ import unittest
 
 from tests import plantpredict_unit_test_case, mocked_requests
 from tests.mocked_methods import mock_get_inverter_apparent_power, mock_get_inverter_kva_rating, \
-    mock_calculate_default_post_height
+    mock_calculate_default_post_height, mock_calculate_collector_bandwidth
 from plantpredict.powerplant import PowerPlant
 from plantpredict.enumerations import TrackingTypeEnum, ModuleOrientationEnum, BacktrackingTypeEnum
 
@@ -595,12 +595,18 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             self.assertEqual(e.args[0], "Both field_dc_power and number_of_series_strings_wired_in_parallel are None. "
                                         "One of these variables must be specified, and the other will be calculated.")
 
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_collector_bandwidth',
+                new=mock_calculate_collector_bandwidth)
+    @mock.patch('plantpredict.plant_predict_entity.requests.get', new=mocked_requests.mocked_requests_get)
     def test_calculate_post_to_post_spacing_from_gcr(self):
-        post_to_post_spacing = PowerPlant.calculate_post_to_post_spacing_from_gcr(
-            collector_bandwidth=4.03,
-            ground_coverage_ratio=0.40
+        self._make_mocked_api()
+        powerplant = PowerPlant(self.mocked_api)
+        post_to_post_spacing = powerplant.calculate_post_to_post_spacing_from_gcr(
+            ground_coverage_ratio=0.40,
+            module_id=123,
+            modules_high=4
         )
-        self.assertAlmostEqual(post_to_post_spacing, 10.07, 2)
+        self.assertAlmostEqual(post_to_post_spacing, 4.175, 3)
 
     def test_calculate_field_dc_power(self):
         field_dc_power = PowerPlant.calculate_field_dc_power_from_dc_ac_ratio(

@@ -983,19 +983,41 @@ class PowerPlant(PlantPredictEntity):
 
         return field_dc_power, number_of_series_strings_wired_in_parallel
 
-    @staticmethod
-    def calculate_post_to_post_spacing_from_gcr(collector_bandwidth, ground_coverage_ratio):
+    @handle_refused_connection
+    @handle_error_response
+    def calculate_post_to_post_spacing_from_gcr(self, ground_coverage_ratio, module_id, modules_high,
+                                                module_orientation=None, vertical_intermodule_gap=0.02):
         """
         Useful helper method for calculating :py:attr:`post_to_post_spacing` based on a desired ground coverage ratio
         (GCR). :py:attr:`post_to_post_spacing` is a required input for
         :py:meth:`~plantpredict.powerplant.PowerPlant.add_dc_field`.
 
-        :param float collector_bandwidth: The total width/depth of each table/row of modules in the DC field. Must be
-                                          between :py:data:`0` and :py:data:`30` - units :py:data:`[m]`.
-        :param ground_coverage_ratio: Ratio of collector bandwidth to row spacing - units :py:data:`[decimal]`.
+        :param float ground_coverage_ratio: Ratio of collector bandwidth to row spacing - units :py:data:`[decimal]`.
+        :param int module_id: Unique identifier of the module to be used in the DC field.
+        :param int modules_high: Number of modules high per table (number of ranks). Must be between :py:data:`1` and
+                                 :py:data:`50`.
+        :param module_orientation: Represents the orientation (portrait or landscape) of modules in the DC field. If
+                                   left as default (:py:data:`None`), is automatically set as the
+                                   :py:attr:`module_orientation` of the module model specified by :py:data:`module_id`.
+                                   Use :py:class:`~plantpredict.enumerations.ModuleOrientationEnum`.
+        :type module_orientation: int, None
+        :param float vertical_intermodule_gap: Vertical gap between each module on the mounting structure. Defaults to
+                                               :py:data:`0.02`. Must be between :py:data:`0` and py:data:`1` - units
+                                               :py:data:`[m]'.
         :return: Post to post spacing (row spacing) of DC field - units :py:data:`[m]`.
         :rtype: float
         """
+        m = self.api.module(id=module_id)
+        m.get()
+
+        collector_bandwidth = self._calculate_collector_bandwidth(
+            module_width=m.width,
+            module_length=m.length,
+            module_orientation=module_orientation if module_orientation is not None else m.default_orientation,
+            modules_high=modules_high,
+            vertical_intermodule_gap=vertical_intermodule_gap
+        )
+
         return collector_bandwidth / ground_coverage_ratio
 
     @staticmethod
@@ -1159,10 +1181,11 @@ class PowerPlant(PlantPredictEntity):
         :param float maximum_tracking_limit_angle_d: Maximum tracking angle for horizontal tracker array. Defaults to
                                                      :py:data:`60.0`. Must be between :py:data:`0` and :py:data:`90` -
                                                      units :py:data:`[degrees]`.
-        :param float lateral_intermodule_gap: Lateral gap between each module on the mounting structure. Must be between
-                                              :py:data:`0` and py:data:`1` - units :py:data:`[m]'.
-        :param float vertical_intermodule_gap: Vertical gap between each module on the mounting structure. Must be
-                                               between :py:data:`0` and py:data:`1` - units :py:data:`[m]'.
+        :param float lateral_intermodule_gap: Lateral gap between each module on the mounting structure. Defaults to
+                                              :py:data:`0.02`. Must be between :py:data:`0` and py:data:`1` - units :py:data:`[m]'.
+        :param float vertical_intermodule_gap: Vertical gap between each module on the mounting structure. Defaults to
+                                               :py:data:`0.02`. Must be between :py:data:`0` and py:data:`1` - units
+                                               :py:data:`[m]'.
         :param float table_to_table_spacing: Space between tables in each row. Defaults to :py:data:`0.0`. Must be
                                              between :py:data:`0` and :py:data:`50`.
         :param float tables_removed_for_pcs: Number of tables removed in DC field to make room for its power
