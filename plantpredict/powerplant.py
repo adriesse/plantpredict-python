@@ -1269,7 +1269,7 @@ class PowerPlant(PlantPredictEntity):
                             valid inverter in the array. Also raised if :py:data:`tracking_type` is
                             :py:attr:`~plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT` and :py:data:`module_tilt`
                             is :py:data:`None`, or if :py:data:`tracking_type` is
-                            `~plantpredict.enumerations.TrackingTypeEnum.HORIZONTAL_TRACKER` and
+                            :py:attr:`~plantpredict.enumerations.TrackingTypeEnum.HORIZONTAL_TRACKER` and
                             :py:data:`tracking_backtracking_type` is :py:data:`None`. Also raised if both
                             :py:data:`field_dc_power` and :py:data`number_of_series_strings_wired_in_parallel` are
                             :py:data:`None` or are both not :py:data:`None`. Also raised if :py:data:`tracking_type` is
