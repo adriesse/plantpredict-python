@@ -14,6 +14,11 @@ Every example assumes that you first :code:`import plantpredict` and authenticat
 Create Project and Prediction from scratch.
 -------------------------------------------
 
+This is one example of how to build a project, prediction, and attach a power plant. There are a variety of optional
+settings for every component that can't be captured in a single example. Please refer to the documentation for
+:py:class:`~plantpredict.project.Project`, :py:class:`~plantpredict.prediction.Prediction`, and
+:py:class:`~plantpredict.powerplant.PowerPlant` for more information.
+
 Instantiate a local instance of :py:class:`~plantpredict.project.Project`, assigning :py:attr:`name`,
 :py:attr:`latitude`, and :py:attr:`longitude`.
 
@@ -103,7 +108,7 @@ Create the prediction in the PlantPredict database.
 
     prediction.create()
 
-Change the prediction's status to :py:attr:`~plantpredict.enumerations.PredictionStatusEnum.DRAFT-SHARED` to make it
+Change the prediction's status to :py:attr:`plantpredict.enumerations.PredictionStatusEnum.DRAFT-SHARED` to make it
 accessible to other members of your team (or to another relevant status).
 
 .. code-block:: python
@@ -119,8 +124,8 @@ Instantiate a local instance of :py:class:`~plantpredict.powerplant.PowerPlant`,
 
 Add a fixed tilt block, array, inverter, and dc field using :py:meth:`~plantpredict.powerplant.PowerPlant.add_block`,
 :py:meth:`~plantpredict.powerplant.PowerPlant.add_array`, :py:meth:`~plantpredict.powerplant.PowerPlant.add_inverter`
-and :py:meth:`~plantpredict.powerplant.PowerPlant.add_dc_field`, respectively. In this example, the minimum required
-fields are selected, and the rest are defaulted. Refer to each method's documentation for information on what other
+and :py:meth:`~plantpredict.powerplant.PowerPlant.add_dc_field`, respectively. In this example, not all optional fields
+are used in this method. Refer to each method's documentation for information on what other
 power plant attributes can be configured. Additionally, refer to the `PlantPredict User Guide
 <https://plantpredict.com/user_manual/predictions/#power-plant-builder>`_ for documentation on power plant
 hierarchy.
@@ -131,40 +136,41 @@ hierarchy.
     fixed_tilt_array_name = powerplant.add_array(
         block_name=fixed_tilt_block_name,
         transformer_enabled=False,
+        repeater=3,
+        description="Arrays in north eastern section of plant."
     )
     fixed_tilt_inverter_name = powerplant.add_inverter(
         block_name=fixed_tilt_block_name,
         array_name=fixed_tilt_array_name,
         inverter_id=619,
-        setpoint_kw=720.0
+        setpoint_kw=720.0,
+        repeater=2
     )
 
-Assuming there is one DC field on the inverter, the number of strings can be calculated from a DC AC ratio. If there
+Assuming there is one DC field on the inverter, the field DC power can be calculated from a DC AC ratio. If there
 were two identical DC fields on a single inverter, you would use half of the number of strings. For irregular
-configurations, perform a custom calculation for number of strings in parallel and field dc power.
+configurations, perform a custom calculation for number of strings in parallel and field dc power. Additionally, the
+post to post spacing can be calculated from GCR and some information about the module being used in the DC field. Use
+the helpers to prepare field DC power and post to post spacing, and then add the fixed tilt DC field.
 
 .. code-block:: python
 
-    inverter = powerplant.blocks[0]["arrays"][0]["inverters"][0]
-    field_dc_power = powerplant.calculate_field_dc_power(dc_ac_ratio=1.20, inverter_setpoint=inverter["setpoint_kw"])
-    number_of_series_strings_wired_in_parallel = powerplant.calculate_number_of_series_strings_wired_in_parallel(
-        field_dc_power=field_dc_power,
-        planned_module_rating=115.0,
-        modules_wired_in_series=10
-    )
+    field_dc_power = powerplant.calculate_field_dc_power_from_dc_ac_ratio(dc_ac_ratio=1.2, setpoint_kw=720.0)
+    post_to_post_spacing = powerplant.calculate_post_to_post_spacing_from_gcr(ground_coverage_ratio=0.40, module_id=298,
+                                                                              modules_high=4)
+
     fixed_tilt_dc_field_name = powerplant.add_dc_field(
         block_name=fixed_tilt_block_name,
         array_name=fixed_tilt_array_name,
         inverter_name=fixed_tilt_inverter_name,
         module_id=298,
-        ground_coverage_ratio=0.40,
-        number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
-        field_dc_power=field_dc_power,
         tracking_type=TrackingTypeEnum.FIXED_TILT,
-        module_tilt=25.0,
         modules_high=4,
         modules_wired_in_series=10,
-        number_of_rows=100
+        post_to_post_spacing=post_to_post_spacing,
+        number_of_rows=10,
+        field_dc_power=field_dc_power,
+        module_tilt=30
     )
 
 You can continue to add new blocks, or even add arrays to blocks, inverters to arrays, etc. The code below is an
@@ -184,25 +190,26 @@ example of adding a block with a DC field that uses single-axis tracking.
         setpoint_kw=720.0
     )
 
-Assuming the tracker array uses the same inverter set point, module and DC AC ratio, the number of strings in parallel
-and field DC power calculated previously can be used.
-
+Prepare the field DC power and post to post spacing for the tracker DC field, and then add it to the inverter.
 
 .. code-block:: python
+
+    field_dc_power = powerplant.calculate_field_dc_power_from_dc_ac_ratio(dc_ac_ratio=1.1, setpoint_kw=720.0)
+    post_to_post_spacing = powerplant.calculate_post_to_post_spacing_from_gcr(ground_coverage_ratio=0.20, module_id=298,
+                                                                              modules_high=1)
 
     tracker_dc_field_name = powerplant.add_dc_field(
         block_name=tracker_block_name,
         array_name=tracker_array_name,
         inverter_name=tracker_inverter_name,
         module_id=298,
-        ground_coverage_ratio=0.40,
-        number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
-        field_dc_power=field_dc_power,
         tracking_type=TrackingTypeEnum.HORIZONTAL_TRACKER,
-        dc_field_backtracking_type=BacktrackingTypeEnum.TRUE_TRACKING,
-        modules_high=4,
+        modules_high=1,
         modules_wired_in_series=10,
-        number_of_rows=100
+        post_to_post_spacing=post_to_post_spacing,
+        number_of_rows=10,
+        field_dc_power=field_dc_power,
+        tracking_backtracking_type=BacktrackingTypeEnum.TRUE_TRACKING
     )
 
 Create the local instance of :py:class:`~plantpredict.powerplant.PowerPlant` as a new entity in the PlantPredict
@@ -218,6 +225,58 @@ The prediction can now be run.
 .. code-block:: python
 
     prediction.run()
+
+Model System-Level of Power Plant (Transformer, Transmission, etc.)
+---------------------------------------------------------------------
+
+This tutorial details how to model Total System Capacity, Transformers and Transmission Lines for a power plant/energy
+prediction. This can be done upon initial creation of a prediction from scratch (see the example for
+`Create Project and Prediction from scratch.`_), but for the sake of example, we will consider the case of updating an
+existing power plant.
+
+Instantiate a :py:class:`~plantpredict.powerplant.PowerPlant`, specifying its :py:attr:`project_id` and
+:py:attr:`prediction_id` (visible in the URL of that prediction in a web browser
+... :py:data:`/projects/{project_id}/prediction/{id}`).
+
+.. code-block:: python
+
+    project_id = 13161   # CHANGE TO YOUR PROJECT ID
+    prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
+    powerplant = api.powerplant(project_id=project_id, prediction_id=prediction_id)
+
+Retrieve the power plant's attributes.
+
+.. code-block:: python
+
+    powerplant.get()
+
+Set the system :py:attr:`availability_loss` on the :py:class:`~plantpredict.powerplant.PowerPlant` instance in units
+:py:data:`[%]`.
+
+.. code-block:: python
+
+    powerplant.availability_loss = 1.7
+
+Set the plant output (LGIA) limit in units :py:data:`[MWac]`.
+
+.. code-block:: python
+
+    powerplant.lgia_limitation = 0.8
+
+Add :py:attr:`transformers` and :py:data:`transmission_lines`, specifying the :py:attr:`ordinal` (1-indexed) such that
+they are in the desired order (where 1 is closest to the physical output of the plant).
+
+.. code-block:: python
+
+    powerplant.add_transformer(rating=0.6, high_side_voltage=600, no_load_loss=1.1, full_load_loss=1.7, ordinal=1)
+    powerplant.add_transmission_line(length=3, resistance=0.1, number_of_conductors_per_phase=1, ordinal=2)
+
+Call the :py:meth:`~plantpredict.powerplant.PowerPlant.update` method on the instance of
+:py:class:`~plantpredict.powerplant.PowerPlant` to persist these changes to PlantPredict.
+
+.. code-block:: python
+
+    powerplant.update()
 
 Download nodal data.
 ---------------------
@@ -687,55 +746,3 @@ Call the :py:meth:`~plantpredict.prediction.Prediction.update` method on the ins
 
     prediction.update()
 
-
-Model System-Level of Power Plant (Transformer, Transmission, etc.)
----------------------------------------------------------------------
-
-This tutorial details how to model Total System Capacity, Transformers and Transmission Lines for a power plant/energy
-prediction. This can be done upon initial creation of a prediction from scratch (see the example for
-`Create Project and Prediction from scratch.`_), but for the sake of example, we will consider the case of updating an
-existing power plant.
-
-Instantiate a :py:class:`~plantpredict.powerplant.PowerPlant`, specifying its :py:attr:`project_id` and
-:py:attr:`prediction_id` (visible in the URL of that prediction in a web browser
-... :py:data:`/projects/{project_id}/prediction/{id}`).
-
-.. code-block:: python
-
-    project_id = 13161   # CHANGE TO YOUR PROJECT ID
-    prediction_id = 147813   # CHANGE TO YOUR PREDICTION ID
-    powerplant = api.powerplant(project_id=project_id, prediction_id=prediction_id)
-
-Retrieve the power plant's attributes.
-
-.. code-block:: python
-
-    powerplant.get()
-
-Set the system :py:attr:`availability_loss` on the :py:class:`~plantpredict.powerplant.PowerPlant` instance in units
-:py:data:`[%]`.
-
-.. code-block:: python
-
-    powerplant.availability_loss = 1.7
-
-Set the plant output (LGIA) limit in units :py:data:`[MWac]`.
-
-.. code-block:: python
-
-    powerplant.lgia_limitation = 0.8
-
-Add :py:attr:`transformers` and :py:data:`transmission_lines`, specifying the :py:attr:`ordinal` (1-indexed) such that
-they are in the desired order (where 1 is closest to the physical output of the plant).
-
-.. code-block:: python
-
-    powerplant.add_transformer(rating=0.6, high_side_voltage=600, no_load_loss=1.1, full_load_loss=1.7, ordinal=1)
-    powerplant.add_transmission_line(length=3, resistance=0.1, number_of_conductors_per_phase=1, ordinal=2)
-
-Call the :py:meth:`~plantpredict.powerplant.PowerPlant.update` method on the instance of
-:py:class:`~plantpredict.powerplant.PowerPlant` to persist these changes to PlantPredict.
-
-.. code-block:: python
-
-    powerplant.update()
