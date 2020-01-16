@@ -34,11 +34,10 @@ class PowerPlant(PlantPredictEntity):
 
         powerplant = api.powerplant(project_id=1, prediction_id=2)
 
-    where both cases assume that :py:data:`api` is a properly defined :py:class:`~plantpredict.api.Api` object, and that
-    the package has been imported at the top of the script with :code:`import plantpredict`.
+    where both cases assume that :py:data:`api` is a properly defined :py:class:`~plantpredict.api.Api` object.
 
     Note on parameters listed below: This list of attributes is comprehensive, but does not encompass 100% of parameters
-    that might be available via :py:meth:`plantpredict.powerplant.PowerPlant.get` after the associated prediction is
+    that might be available via :py:meth:`~plantpredict.powerplant.PowerPlant.get` after the associated prediction is
     run. The list includes all relevant attributes that a user should/can set upon building the
     :py:class:`~plantpredict.powerplant.PowerPlant`, plus some of the post-prediction-run parameters.
 
