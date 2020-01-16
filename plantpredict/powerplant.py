@@ -69,7 +69,7 @@ class PowerPlant(PlantPredictEntity):
     :param float power_factor: The ratio of the power that can be used and the product of the operating current and
                                voltage (also referred to as Plant kVA Derate). Defaults to :py:data:`1.0`. Must be
                                between :py:data:`0` and :py:data:`1`, where :py:data:`1` is a "unity" power factor.
-                               Defaults to :py:data`1.0` in :py:meth:`~plantpredict.powerplant.PowerPlant.__init__` and
+                               Defaults to :py:data:`1.0` in :py:meth:`~plantpredict.powerplant.PowerPlant.__init__` and
                                automatically recalculated when :py:meth:`~plantpredict.powerplant.PowerPlant.create`
                                called.
     :param list transformers: Defaults to an empty list (:py:data:`[]`). See "Example contents of
