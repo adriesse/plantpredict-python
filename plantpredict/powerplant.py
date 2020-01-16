@@ -102,11 +102,11 @@ class PowerPlant(PlantPredictEntity):
 
                 [{
                     "id": 23982,
-                    "rating": 0.6,              # units [MVA]
-                    "high_side_voltage": 0,     # units [kV]
-                    "no_load_loss": 0,          # units [%]
-                    "full_load_loss": 0,        # units [%]
-                    "ordinal": 0
+                    "rating": 0.6,                # units [MVA]
+                    "high_side_voltage": 4.0,     # units [kV]
+                    "no_load_loss": 0.5,          # units [%]
+                    "full_load_loss": 1.0,        # units [%]
+                    "ordinal": 1
                 }]
 
     .. container:: toggle
@@ -120,11 +120,11 @@ class PowerPlant(PlantPredictEntity):
             .. code-block:: python
 
                 [{
-                    "id": 0,
-                    "length": 0,                             # units [km]
-                    "resistance": 0,                         # units [Ohms/300 m]
-                    "number_of_conducters_per_phase": 0,
-                    "ordinal": 0,
+                    "id": 48373,
+                    "length": 2.0,                             # units [km]
+                    "resistance": 0.5,                         # units [Ohms/300 m]
+                    "number_of_conducters_per_phase": 3,
+                    "ordinal": 1
                 }]
 
     .. container:: toggle
@@ -137,98 +137,90 @@ class PowerPlant(PlantPredictEntity):
 
             .. code-block:: python
 
+                from plantpredict.enumerations import TrackingTypeEnum, ModuleOrientationEnum, BacktrackingTypeEnum
+
                 [{
-                    "name": 0,
-                    "id": 0,
-                    "description": "string"
-                    "repeater": 0,
+                    "name": 1,
+                    "id": 57383,
+                    "description": "Description of block."
+                    "repeater": 5,
                     "energization_date": "2019-12-26T16:43:55.867Z",
                     "use_energization_date": True,
                     "arrays": [{
-                        "name": 0,
-                        "id": 0,
-                        "description": "string",
-                        "repeater": 0,
-                        "ac_collection_loss": 0,
-                        "das_load": 0,
-                        "cooling_load": 0,
-                        "additional_losses": 0,
-                        "match_total_inverter_kva": true,
-                        "transformer_enabled": true,
-                        "array_based_shading": true,
-                        "array_shading_number_of_rows": 0,
-                        "transformer_kva_rating": 0,
-                        "transformer_high_side_voltage": 0,
-                        "transformer_no_load_loss": 0,
-                        "transformer_full_load_loss": 0,
-                        "tracker_motor_losses": 0,
+                        "name": 1,
+                        "id": 22323,
+                        "description": "Description of array.",
+                        "repeater": 2,
+                        "ac_collection_loss": 1.0,                              # units [%]
+                        "das_load": 1.2,                                        # units [%]
+                        "cooling_load": 0.8,                                    # units [%]
+                        "additional_losses": 0.1,                               # units [%]
+                        "match_total_inverter_kva": True,
+                        "transformer_enabled": True,
+                        "transformer_kva_rating": 600.0,                        # units [kVA]
+                        "transformer_high_side_voltage": 34.7,                  # units [V]
+                        "transformer_no_load_loss": 0.2,                        # units [%]
+                        "transformer_full_load_loss": 0.7,                      # units [%]
+                        "tracker_motor_losses": 0.1,                            # units [%]
                         "inverters": [{
-                            "name": "string",
-                            "id": 0,
-                            "description": "string"
-                            "repeater": 0,
-                            "inverter_id": 0,
-                            "inverter": {} # dictionary containing full contents of an Inverter
-                            "setpoint_kw": 0,
-                            "power_factor": 0,
-                            "kva_rating": 0,
+                            "name": "A",
+                            "id": 234290,
+                            "description": "Description of inverter."
+                            "repeater": 1,
+                            "inverter_id": 242,
+                            "inverter": {} # Inverter model contents
+                            "setpoint_kw": 600.0,                                       # units [kW]
+                            "power_factor": 1.0,
+                            "kva_rating": 600.0,                                        # units [kW]
                             "dc_fields": [{
-                                "name": 0,
-                                "id": 0,
-                                "description": "string",
-                                "repeater": 0,
-                                "module_id": 0,
-                                "module": {}  # dictionary containing full contents of a Module model
-                                "tracking_type": plantpredict.enumerations.TrackingTypeEnum.FIXED_TILT,
-                                "module_orientation": plantpredict.enumerations.ModuleOrientationEnum,
+                                "name": 1,
+                                "id": 235324,
+                                "description": "Description of DC field.",
+                                "repeater": 3,
+                                "module_id": 749,
+                                "module": {}  # Module model contents
+                                "tracking_type": TrackingTypeEnum.FIXED_TILT,
+                                "module_orientation": ModuleOrientationEnum.PORTRAIT,
                                 "tables_removed_for_pcs": 0,
-                                "ground_slope": 0,
-                                "ground_slope_azimuth": 0,
-                                "transverse_slope": 0,
-                                "baseline_slope": 0,
-                                "modules_high": 0,
-                                "modules_wide": 0,
-                                "lateral_intermodule_gap": 0,
-                                "vertical_intermodule_gap": 0,
-                                "field_length": 0,
-                                "field_width": 0,
-                                "collector_bandwidth": 0,
-                                "table_length": 0,
-                                "tables_per_row": 0,
-                                "post_to_post_spacing": 0,
-                                "number_of_rows": 0,
-                                "table_to_table_spacing": 0,
-                                "module_azimuth": 0,
-                                "module_tilt": 0,
-                                "tracking_backtracking_type": "None",
-                                "tracker_pitch_angle_d": 0,
-                                "minimum_tracking_limit_angle_d": 0,
-                                "maximum_tracking_limit_angle_d": 0,
-                                "tracker_stow_angle": 0,
-                                "post_height": 0,
-                                "structure_shading": 0,
-                                "backside_mismatch": 0,
-                                "field_dc_power": 0,
-                                "modules_wired_in_series": 0,
-                                "number_of_series_strings_wired_in_parallel": 0,
-                                "planned_module_rating": 0,
-                                "sandia_conductive_coef": 0,
-                                "sandia_convective_coef": 0,
-                                "cell_to_module_temp_diff": 0,
-                                "heat_balance_conductive_coef": 0,
-                                "heat_balance_convective_coef": 0,
-                                "module_mismatch_coefficient": 0,
-                                "module_quality": 0,
-                                "light_induced_degradation": 0,
-                                "tracker_load_loss": 0,
-                                "dc_wiring_loss_at_stc": 0,
-                                "dc_health": 0,
-                                "effective_resistance_at_stc": 0,
-                                "total_module_area": 0,
-                                "uiam_d": 0,
-                                "uiam_g": 0,
-                                "ush_d": 0,
-                                "ush_g": 0,
+                                "ground_slope": 0,                                                  # units [%]
+                                "ground_slope_azimuth": 0,                                          # units [degrees]
+                                "modules_high": 4,
+                                "modules_wide": 18,
+                                "lateral_intermodule_gap": 0.02,                                    # units [m]
+                                "vertical_intermodule_gap": 0.02,                                   # units [m]
+                                "field_length": 20.0,                                               # units [m]
+                                "field_width": 11.0,                                                # units [m]
+                                "collector_bandwidth": 2.2,                                         # units [m]
+                                "table_length": 6.7,                                                # units [m]
+                                "tables_per_row": 3,
+                                "post_to_post_spacing": 1.8,                                        # units [m]
+                                "number_of_rows": 16,
+                                "table_to_table_spacing": 0.05,                                     # units [m]
+                                "module_azimuth": 180,                                              # units [degrees]
+                                "module_tilt": 30,                                                  # units [degrees]
+                                "tracking_backtracking_type": BacktrackingTypeEnum.TRUE_TRACKING,
+                                "tracker_pitch_angle_d": 0,                                         # units [degrees]
+                                "minimum_tracking_limit_angle_d": -60.0,                            # units [degrees]
+                                "maximum_tracking_limit_angle_d": 60.0,                             # units [degrees]
+                                "tracker_stow_angle": 0,                                            # units [degrees]
+                                "post_height": 1.5,                                                 # units [m]
+                                "structure_shading": 2.0,                                           # units [%]
+                                "backside_mismatch": 1.0,                                           # units [%]
+                                "field_dc_power": 800.0,                                            # units [kW]
+                                "modules_wired_in_series": 10,
+                                "number_of_series_strings_wired_in_parallel": 400,
+                                "planned_module_rating": 325.0,                                     # units [W]
+                                "sandia_conductive_coef": -3.47,
+                                "sandia_convective_coef": -0.0594,
+                                "cell_to_module_temp_diff": 3.0,                                    # units [deg-C]
+                                "heat_balance_conductive_coef": 30.7,
+                                "heat_balance_convective_coef": 0.0,
+                                "module_mismatch_coefficient": 1.0,                                 # units [%]
+                                "module_quality": 1.0,                                              # units [%]
+                                "light_induced_degradation": 1.0,                                   # units [%]
+                                "tracker_load_loss": 0.0,                                           # units [%]
+                                "dc_wiring_loss_at_stc": 1.5,                                       # units [%]
+                                "dc_health": 1.0,                                                   # units [%]
                             }],
                         }],
                     }],
@@ -1073,8 +1065,8 @@ class PowerPlant(PlantPredictEntity):
                      field_dc_power=None, number_of_series_strings_wired_in_parallel=None, module_tilt=None,
                      module_orientation=None, module_azimuth=None, tracking_backtracking_type=None,
                      minimum_tracking_limit_angle_d=-60.0, maximum_tracking_limit_angle_d=60.0,
-                     lateral_intermodule_gap=0.02, vertical_intermodule_gap=0.02, array_based_shading=False,
-                     table_to_table_spacing=0.0, tables_removed_for_pcs=0, module_quality=None,
+                     lateral_intermodule_gap=0.02, vertical_intermodule_gap=0.02, table_to_table_spacing=0.0,
+                     tables_removed_for_pcs=0, module_quality=None,
                      module_mismatch_coefficient=None, light_induced_degradation=None, dc_wiring_loss_at_stc=1.5,
                      dc_health=1.0, heat_balance_conductive_coef=None, heat_balance_convective_coef=None,
                      sandia_conductive_coef=None, sandia_convective_coef=None, cell_to_module_temp_diff=None,
@@ -1157,8 +1149,6 @@ class PowerPlant(PlantPredictEntity):
                                               :py:data:`0` and py:data:`1` - units `[m]'.
         :param float vertical_intermodule_gap: Vertical gap between each module on the mounting structure. Must be
                                                between :py:data:`0` and py:data:`1` - units `[m]'.
-        :param bool array_based_shading: If `True`, arrays will be modeled as infinite rows, and therefore edge-based
-                                         shading effects will be ignored. Defaults to `False`.
         :param float table_to_table_spacing: Space between tables in each row. Defaults to `0.0`. Must be between
                                              :py:data:`0` and :py:data:`50`.
         :param float tables_removed_for_pcs: Number of tables removed in DC field to make room for its power
@@ -1353,7 +1343,6 @@ class PowerPlant(PlantPredictEntity):
                 "vertical_intermodule_gap": vertical_intermodule_gap,
                 "modules_wide": modules_wide,
                 "table_to_table_spacing": table_to_table_spacing,
-                "array_based_shading": array_based_shading,
                 "number_of_rows": number_of_rows,
                 "table_length": table_length,
                 "tables_per_row": tables_per_row,
