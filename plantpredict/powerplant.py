@@ -90,6 +90,12 @@ class PowerPlant(PlantPredictEntity):
                         :py:meth:`~plantpredict.powerplant.PowerPlant.add_dc_field` to build out the full power plant
                         hierarchical structure.
 
+    Below are some samples of the more complex attributes that would be populated after calling
+    :py:meth:`~plantpredict.powerplant.PowerPlant.get` on an existing power plant in PlantPredict. This also is a sample
+    of what the contents might look like before creating a new powerplant with
+    :py:meth:`~plantpredict.powerplant.PowerPlant.create` (or update an existing one with
+    :py:meth:`~plantpredict.powerplant.PowerPlant.update`:
+
     .. container:: toggle
 
         .. container:: header
@@ -100,7 +106,7 @@ class PowerPlant(PlantPredictEntity):
 
             .. code-block:: python
 
-                [{
+                powerplant.transformers = [{
                     "id": 23982,
                     "rating": 0.6,                # units [MVA]
                     "high_side_voltage": 4.0,     # units [kV]
@@ -119,7 +125,7 @@ class PowerPlant(PlantPredictEntity):
 
             .. code-block:: python
 
-                [{
+                powerplant.transmission_lines = [{
                     "id": 48373,
                     "length": 2.0,                             # units [km]
                     "resistance": 0.5,                         # units [Ohms/300 m]
@@ -139,7 +145,7 @@ class PowerPlant(PlantPredictEntity):
 
                 from plantpredict.enumerations import TrackingTypeEnum, ModuleOrientationEnum, BacktrackingTypeEnum
 
-                [{
+                powerplant.blocks = [{
                     "name": 1,
                     "id": 57383,
                     "description": "Description of block."
