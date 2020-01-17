@@ -30,6 +30,7 @@ Contents
    authentication_oauth2
    sdk_reference
    example_usage
+   release_notes
 
 
 Indices and tables
