@@ -86,40 +86,38 @@ fixed_tilt_block_name = powerplant.add_block()
 fixed_tilt_array_name = powerplant.add_array(
     block_name=fixed_tilt_block_name,
     transformer_enabled=False,
+    repeater=3,
+    description="Arrays in north eastern section of plant."
 )
 fixed_tilt_inverter_name = powerplant.add_inverter(
     block_name=fixed_tilt_block_name,
     array_name=fixed_tilt_array_name,
     inverter_id=619,
-    setpoint_kw=720.0
+    setpoint_kw=720.0,
+    repeater=2
 )
 
-# Assuming there is one dc_field on the inverter, the number of strings can be calculated from a DC AC ratio. If there
-# were two identical dc fields on a single inverter, you would use half of the number of strings. For irregular
-# configurations, perform a custom calculation for number of strings in parallel and field dc power.
-inverter = powerplant.blocks[0]["arrays"][0]["inverters"][0]
-field_dc_power = powerplant.calculate_field_dc_power(dc_ac_ratio=1.20, inverter_setpoint=inverter["setpoint_kw"])
-number_of_series_strings_wired_in_parallel = powerplant.calculate_number_of_series_strings_wired_in_parallel(
-    field_dc_power=field_dc_power,
-    planned_module_rating=115.0,
-    modules_wired_in_series=10
-)
+# Prepare parameters for DC fields
+field_dc_power = powerplant.calculate_field_dc_power_from_dc_ac_ratio(dc_ac_ratio=1.2, setpoint_kw=720.0)
+post_to_post_spacing = powerplant.calculate_post_to_post_spacing_from_gcr(ground_coverage_ratio=0.40, module_id=298,
+                                                                          modules_high=4)
+
+# Add the fixed tilt DC field.
 fixed_tilt_dc_field_name = powerplant.add_dc_field(
     block_name=fixed_tilt_block_name,
     array_name=fixed_tilt_array_name,
     inverter_name=fixed_tilt_inverter_name,
     module_id=298,
-    ground_coverage_ratio=0.40,
-    number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
-    field_dc_power=field_dc_power,
     tracking_type=TrackingTypeEnum.FIXED_TILT,
-    module_tilt=25.0,
     modules_high=4,
     modules_wired_in_series=10,
-    number_of_rows=100
+    post_to_post_spacing=post_to_post_spacing,
+    number_of_rows=10,
+    field_dc_power=field_dc_power,
+    module_tilt=30
 )
 
-# add tracker array
+# Add the tracker block, array, and inverter.
 tracker_block_name = powerplant.add_block()
 tracker_array_name = powerplant.add_array(
     block_name=tracker_block_name,
@@ -132,21 +130,24 @@ tracker_inverter_name = powerplant.add_inverter(
     setpoint_kw=720.0
 )
 
-# Assuming the tracker array uses the same inverter set point, module and DC AC ratio, the number of strings in parallel
-# and field dc power calculated previously can be used.
+# Prepare parameters for DC fields
+field_dc_power = powerplant.calculate_field_dc_power_from_dc_ac_ratio(dc_ac_ratio=1.1, setpoint_kw=720.0)
+post_to_post_spacing = powerplant.calculate_post_to_post_spacing_from_gcr(ground_coverage_ratio=0.20, module_id=298,
+                                                                          modules_high=1)
+
+# Add the tracker DC field.
 tracker_dc_field_name = powerplant.add_dc_field(
     block_name=tracker_block_name,
     array_name=tracker_array_name,
     inverter_name=tracker_inverter_name,
     module_id=298,
-    ground_coverage_ratio=0.40,
-    number_of_series_strings_wired_in_parallel=number_of_series_strings_wired_in_parallel,
-    field_dc_power=field_dc_power,
     tracking_type=TrackingTypeEnum.HORIZONTAL_TRACKER,
-    dc_field_backtracking_type=BacktrackingTypeEnum.TRUE_TRACKING,
-    modules_high=4,
+    modules_high=1,
     modules_wired_in_series=10,
-    number_of_rows=100
+    post_to_post_spacing=post_to_post_spacing,
+    number_of_rows=10,
+    field_dc_power=field_dc_power,
+    tracking_backtracking_type=BacktrackingTypeEnum.TRUE_TRACKING
 )
 
 # create the local instance of PowerPlant as a new entity in the PlantPredict database. since the id's of the project

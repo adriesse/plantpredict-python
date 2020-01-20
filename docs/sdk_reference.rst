@@ -10,11 +10,19 @@ PlantPredict's GUI, but is fully applicable to the API. Additional documentation
 including a full list of endpoints and their respective inputs/outputs can be found
 `here <http://api.plantpredict.com/swagger/ui/index#/>`_.
 
-API
+Classes
+*****************
+
+Api
 =================
 
+.. automodule:: plantpredict.api
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Project
-----------------
+=================
 
 .. automodule:: plantpredict.project
     :members:
@@ -22,7 +30,7 @@ Project
     :show-inheritance:
 
 Prediction
-----------------
+=================
 
 .. automodule:: plantpredict.prediction
     :members:
@@ -30,7 +38,7 @@ Prediction
     :show-inheritance:
 
 PowerPlant
-----------------
+=================
 
 .. automodule:: plantpredict.powerplant
     :members:
@@ -38,7 +46,7 @@ PowerPlant
     :show-inheritance:
 
 Weather
-----------------
+=================
 
 .. automodule:: plantpredict.weather
     :members:
@@ -46,7 +54,7 @@ Weather
     :show-inheritance:
 
 Module
-----------------
+=================
 
 .. automodule:: plantpredict.module
     :members:
@@ -54,7 +62,7 @@ Module
     :show-inheritance:
 
 Inverter
-----------------
+=================
 
 .. automodule:: plantpredict.inverter
     :members:
@@ -62,7 +70,7 @@ Inverter
     :show-inheritance:
 
 Geo
---------------
+=================
 
 .. automodule:: plantpredict.geo
     :members:
@@ -70,7 +78,7 @@ Geo
     :show-inheritance:
 
 ASHRAE
--------------
+=================
 
 .. automodule:: plantpredict.ashrae
     :members:
@@ -78,14 +86,14 @@ ASHRAE
     :show-inheritance:
 
 Helpers
-=======
+******************
 
 .. automodule:: plantpredict.helpers
     :members:
     :undoc-members:
 
 Data Enumerations
-===================
+********************
 
 .. automodule:: plantpredict.enumerations
     :members:

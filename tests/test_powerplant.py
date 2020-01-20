@@ -2,7 +2,8 @@ import mock
 import unittest
 
 from tests import plantpredict_unit_test_case, mocked_requests
-from tests.mocked_methods import mock_get_inverter_power_rated, mock_get_inverter_kva_rating
+from tests.mocked_methods import mock_get_inverter_apparent_power, mock_get_inverter_kva_rating, \
+    mock_calculate_default_post_height, mock_calculate_collector_bandwidth
 from plantpredict.powerplant import PowerPlant
 from plantpredict.enumerations import TrackingTypeEnum, ModuleOrientationEnum, BacktrackingTypeEnum
 
@@ -10,12 +11,14 @@ from plantpredict.enumerations import TrackingTypeEnum, ModuleOrientationEnum, B
 class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
 
     @mock.patch('plantpredict.plant_predict_entity.PlantPredictEntity.create')
-    def test_create(self, mocked_create):
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_and_set_average_power_factor')
+    def test_create(self, mock_calculate_and_set_average_power_factor, mocked_create):
         self._make_mocked_api()
         powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
 
         powerplant.create()
         self.assertEqual(powerplant.create_url_suffix, "/Project/7/Prediction/77/PowerPlant")
+        self.assertTrue(mock_calculate_and_set_average_power_factor.called)
         self.assertTrue(mocked_create.called)
         self.assertEqual(powerplant.power_factor, 1.0)
 
@@ -43,6 +46,65 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
                 {"id": 11, "name": 1, "inverters": [{"id": 111, "name": "A", "dc_fields": [{"id": 1111, "name": 1}]}]}
             ]}
         ]
+
+    def test_calculate_sum_power_factors(self):
+        self._make_mocked_api()
+        powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        powerplant.blocks = [{
+            'repeater': 1,
+            'arrays': [
+                {
+                    'repeater': 1,
+                    'inverters': [
+                        {'repeater': 5, 'power_factor': 1.0},
+                        {'repeater': 1, 'power_factor': 0.9},
+                        {'repeater': 3, 'power_factor': 0.8}
+                    ]
+                },
+                {
+                    'repeater': 1,
+                    'inverters': [
+                        {'repeater': 6, 'power_factor': 0.96},
+                        {'repeater': 2, 'power_factor': 1.0}
+                    ]
+                }
+            ],
+        }]
+
+        sum_power_factors = powerplant._calculate_sum_power_factors()
+        self.assertAlmostEqual(sum_power_factors, 16.06)
+
+    def test_calculate_num_inverters(self):
+        self._make_mocked_api()
+        powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        powerplant.blocks = [
+            {'repeater': 1, 'arrays': [{'repeater': 1, 'inverters': [{'power_factor': 0.91703056769, 'repeater': 3}]}]},
+            {'repeater': 1, 'arrays': [{'repeater': 2, 'inverters': [{'power_factor': 1, 'repeater': 1}]}]},
+            {'repeater': 1, 'arrays': [{'repeater': 1, 'inverters': [{'power_factor': 0.95487627365, 'repeater': 1}]}]},
+        ]
+
+        num_inverters = powerplant._calculate_num_inverters()
+        self.assertEqual(num_inverters, 6)
+
+    def test_calculate_and_set_average_power_factor(self):
+        self._make_mocked_api()
+        powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        powerplant.blocks = [
+            {'repeater': 1, 'arrays': [{'repeater': 1, 'inverters': [{'power_factor': 0.91703056769, 'repeater': 3}]}]},
+            {'repeater': 1, 'arrays': [{'repeater': 2, 'inverters': [{'power_factor': 1, 'repeater': 1}]}]},
+            {'repeater': 1, 'arrays': [{'repeater': 1, 'inverters': [{'power_factor': 0.95487627365, 'repeater': 1}]}]},
+        ]
+
+        powerplant._calculate_and_set_average_power_factor()
+        self.assertAlmostEqual(powerplant.power_factor, 0.9509946627850558)
+
+    def test_calculate_and_set_average_power_factor_zero_inverters(self):
+        self._make_mocked_api()
+        powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        powerplant.blocks = [{'arrays': [{'inverters': []}, {'inverters': []}]}]
+
+        powerplant._calculate_and_set_average_power_factor()
+        self.assertEqual(powerplant.power_factor, 0)
 
     def test_add_transformer_first(self):
         """Tests adding a transformer to a power plant with no existing transformers."""
@@ -274,7 +336,35 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         except ValueError as e:
             self.assertEqual(e.args[0], "3 is not a valid array name in block 1.")
 
-    @mock.patch('plantpredict.powerplant.PowerPlant._get_inverter_power_rated', mock_get_inverter_power_rated)
+    def test_validate_inverter_setpoint_inputs_setpoint_none(self):
+        """Tests _validate_inverter_setpoint_inputs when setpoint_kw is None."""
+        setpoint_kw, power_factor = PowerPlant._validate_inverter_setpoint_inputs(
+            setpoint_kw=None,
+            power_factor=1.2,
+            kva_rating=600
+        )
+        self.assertEqual(setpoint_kw, 720)
+        self.assertEqual(power_factor, 1.2)
+
+    def test_validate_inverter_setpoint_inputs_setpoint_provided_power_factor_1(self):
+        """Tests _validate_inverter_setpoint_inputs when setpoint_kw is None."""
+        setpoint_kw, power_factor = PowerPlant._validate_inverter_setpoint_inputs(
+            setpoint_kw=800,
+            power_factor=1.0,
+            kva_rating=1000
+        )
+        self.assertEqual(setpoint_kw, 800)
+        self.assertEqual(power_factor, 0.8)
+
+    def test_validate_inverter_setpoint_inputs_invalid_inputs(self):
+        with self.assertRaises(ValueError):
+            PowerPlant._validate_inverter_setpoint_inputs(
+                setpoint_kw=800,
+                power_factor=1.2,
+                kva_rating=1000
+            )
+
+    @mock.patch('plantpredict.powerplant.PowerPlant._get_inverter_apparent_power', mock_get_inverter_apparent_power)
     @mock.patch('plantpredict.powerplant.PowerPlant._get_inverter_kva_rating', mock_get_inverter_kva_rating)
     def test_add_inverter_default_inputs_use_cooling_temp(self):
         self._make_mocked_api()
@@ -289,13 +379,13 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "name": "B",
             "repeater": 1,
             "inverter_id": 123,
-            "setpoint_kw": 800,
+            "setpoint_kw": 900,
             "power_factor": 1.0,
             "kva_rating": 900.0,
             "dc_fields": []
         })
 
-    @mock.patch('plantpredict.powerplant.PowerPlant._get_inverter_power_rated', mock_get_inverter_power_rated)
+    @mock.patch('plantpredict.powerplant.PowerPlant._get_inverter_apparent_power', mock_get_inverter_apparent_power)
     @mock.patch('plantpredict.powerplant.PowerPlant._get_inverter_kva_rating', mock_get_inverter_kva_rating)
     def test_add_inverter_invalid_array_name(self):
         self._make_mocked_api()
@@ -306,13 +396,14 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         with self.assertRaises(ValueError):
             self.powerplant.add_inverter(block_name=1, array_name=3, inverter_id=123)
 
+    @mock.patch('plantpredict.powerplant.PowerPlant._get_inverter_apparent_power', mock_get_inverter_apparent_power)
     def test_add_inverter_non_default_inputs_no_use_cooling_temp(self):
         self._make_mocked_api()
         self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
         self.powerplant.use_cooling_temp = False
         self._init_powerplant_structure()
         inverter_name = self.powerplant.add_inverter(
-            block_name=1, array_name=1, inverter_id=123, setpoint_kw=800, kva_rating=650.0
+            block_name=1, array_name=1, inverter_id=123, setpoint_kw=800
         )
 
         self.assertEqual(len(self.powerplant.blocks[0]["arrays"][0]["inverters"]), 2)
@@ -323,7 +414,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "inverter_id": 123,
             "setpoint_kw": 800,
             "power_factor": 1.0,
-            "kva_rating": 650.0,
+            "kva_rating": 800.0,
             "dc_fields": []
         })
 
@@ -504,12 +595,18 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             self.assertEqual(e.args[0], "Both field_dc_power and number_of_series_strings_wired_in_parallel are None. "
                                         "One of these variables must be specified, and the other will be calculated.")
 
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_collector_bandwidth',
+                new=mock_calculate_collector_bandwidth)
+    @mock.patch('plantpredict.plant_predict_entity.requests.get', new=mocked_requests.mocked_requests_get)
     def test_calculate_post_to_post_spacing_from_gcr(self):
-        post_to_post_spacing = PowerPlant.calculate_post_to_post_spacing_from_gcr(
-            collector_bandwidth=4.03,
-            ground_coverage_ratio=0.40
+        self._make_mocked_api()
+        powerplant = PowerPlant(self.mocked_api)
+        post_to_post_spacing = powerplant.calculate_post_to_post_spacing_from_gcr(
+            ground_coverage_ratio=0.40,
+            module_id=123,
+            modules_high=4
         )
-        self.assertAlmostEqual(post_to_post_spacing, 10.07, 2)
+        self.assertAlmostEqual(post_to_post_spacing, 4.175, 3)
 
     def test_calculate_field_dc_power(self):
         field_dc_power = PowerPlant.calculate_field_dc_power_from_dc_ac_ratio(
@@ -590,6 +687,191 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         except ValueError as e:
             self.assertEqual(e.args[0], "'B' is not a valid inverter name in array 1 of block 1.")
 
+    def test_calculate_default_post_height_less_than_1pt5meters(self):
+        """Tests that 1.5 is returned if calculated post height is less than 1.5"""
+        post_height = PowerPlant._calculate_default_post_height(
+            tracking_type=TrackingTypeEnum.FIXED_TILT,
+            collector_bandwidth=1.5,
+            module_tilt=30,
+            minimum_tracking_limit_angle_d=-60,
+            maximum_tracking_limit_angle_d=60
+        )
+
+        self.assertEqual(post_height, 1.5)
+
+    def test_calculate_default_post_height_fixed_tilt(self):
+        post_height = PowerPlant._calculate_default_post_height(
+            tracking_type=TrackingTypeEnum.FIXED_TILT,
+            collector_bandwidth=3.0,
+            module_tilt=30,
+            minimum_tracking_limit_angle_d=-60,
+            maximum_tracking_limit_angle_d=60
+        )
+
+        self.assertEqual(post_height, 1.75)
+
+    def test_calculate_default_post_height_tracker(self):
+        post_height = PowerPlant._calculate_default_post_height(
+            tracking_type=TrackingTypeEnum.HORIZONTAL_TRACKER,
+            collector_bandwidth=3.0,
+            module_tilt=30,
+            minimum_tracking_limit_angle_d=-60,
+            maximum_tracking_limit_angle_d=60
+        )
+
+        self.assertEqual(post_height, 2.299038105676658)
+
+    @mock.patch('plantpredict.powerplant.PowerPlant._calculate_default_post_height', mock_calculate_default_post_height)
+    @mock.patch('plantpredict.plant_predict_entity.requests.get', new=mocked_requests.mocked_requests_get)
+    @mock.patch('plantpredict.project.requests.get', new=mocked_requests.mocked_requests_get)
+    def test_add_dc_field_with_bifacial_default_inputs(self):
+        self._make_mocked_api(module_id=456)
+        self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        self._init_powerplant_structure()
+
+        self.powerplant.add_dc_field(
+            block_name=1,
+            array_name=1,
+            inverter_name="A",
+            module_id=456,
+            tracking_type=TrackingTypeEnum.FIXED_TILT,
+            number_of_series_strings_wired_in_parallel=400,
+            modules_high=4,
+            modules_wired_in_series=10,
+            post_to_post_spacing=1.0,
+            module_tilt=30,
+        )
+
+        self.assertEqual(self.powerplant.blocks[0]["arrays"][0]["inverters"][0]["dc_fields"][1], {
+            "name": 2,
+            "module_id": 456,
+            "tracking_type": TrackingTypeEnum.FIXED_TILT,
+            "module_tilt": 30,
+            "tracking_backtracking_type": None,
+            "minimum_tracking_limit_angle_d": -60.0,
+            "maximum_tracking_limit_angle_d": 60.0,
+            "module_orientation": ModuleOrientationEnum.LANDSCAPE,
+            "modules_high": 4,
+            "module_azimuth": 180.0,
+            "collector_bandwidth": 4.859999999999999,
+            "post_to_post_spacing": 1.0,
+            "planned_module_rating": 120,
+            "modules_wired_in_series": 10,
+            "field_dc_power": 480.0,
+            "number_of_series_strings_wired_in_parallel": 400,
+            "module_count": 4000.0,
+            "module_quality": 1.0,
+            "module_mismatch_coefficient": 1.0,
+            "light_induced_degradation": 1.0,
+            "dc_wiring_loss_at_stc": 1.5,
+            "dc_health": 1.0,
+            "heat_balance_conductive_coef": -3.47,
+            "heat_balance_convective_coef": -0.0594,
+            "sandia_conductive_coef": 30.7,
+            "cell_to_module_temp_diff": 3.0,
+            "sandia_convective_coef": 0.0,
+            "tracker_load_loss": 0.0,
+            "lateral_intermodule_gap": 0.02,
+            "vertical_intermodule_gap": 0.02,
+            "modules_wide": 10,
+            "table_to_table_spacing": 0.0,
+            "number_of_rows": 1,
+            "table_length": 20.18,
+            "tables_per_row": 100.0,
+            "tables_removed_for_pcs": 0,
+            'field_length': 4.859999999999999,
+            'field_width': 2019.98,
+            'post_height': 2.234,
+            'structure_shading': 0.0,
+            'backside_mismatch': 3.0
+        })
+
+    @mock.patch('plantpredict.plant_predict_entity.requests.get', new=mocked_requests.mocked_requests_get)
+    @mock.patch('plantpredict.project.requests.get', new=mocked_requests.mocked_requests_get)
+    def test_add_dc_field_with_bifacial_non_default_inputs(self):
+        self._make_mocked_api(module_id=456)
+        self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        self._init_powerplant_structure()
+
+        self.powerplant.add_dc_field(
+            block_name=1,
+            array_name=1,
+            inverter_name="A",
+            module_id=456,
+            tracking_type=TrackingTypeEnum.FIXED_TILT,
+            number_of_series_strings_wired_in_parallel=400,
+            modules_high=4,
+            modules_wired_in_series=10,
+            post_to_post_spacing=1.0,
+            module_tilt=30,
+            post_height=1.5,
+            structure_shading=1.0,
+            backside_mismatch=2.0
+        )
+
+        self.assertEqual(self.powerplant.blocks[0]["arrays"][0]["inverters"][0]["dc_fields"][1], {
+            "name": 2,
+            "module_id": 456,
+            "tracking_type": TrackingTypeEnum.FIXED_TILT,
+            "module_tilt": 30,
+            "tracking_backtracking_type": None,
+            "minimum_tracking_limit_angle_d": -60.0,
+            "maximum_tracking_limit_angle_d": 60.0,
+            "module_orientation": ModuleOrientationEnum.LANDSCAPE,
+            "modules_high": 4,
+            "module_azimuth": 180.0,
+            "collector_bandwidth": 4.859999999999999,
+            "post_to_post_spacing": 1.0,
+            "planned_module_rating": 120,
+            "modules_wired_in_series": 10,
+            "field_dc_power": 480.0,
+            "number_of_series_strings_wired_in_parallel": 400,
+            "module_count": 4000.0,
+            "module_quality": 1.0,
+            "module_mismatch_coefficient": 1.0,
+            "light_induced_degradation": 1.0,
+            "dc_wiring_loss_at_stc": 1.5,
+            "dc_health": 1.0,
+            "heat_balance_conductive_coef": -3.47,
+            "heat_balance_convective_coef": -0.0594,
+            "sandia_conductive_coef": 30.7,
+            "cell_to_module_temp_diff": 3.0,
+            "sandia_convective_coef": 0.0,
+            "tracker_load_loss": 0.0,
+            "lateral_intermodule_gap": 0.02,
+            "vertical_intermodule_gap": 0.02,
+            "modules_wide": 10,
+            "table_to_table_spacing": 0.0,
+            "number_of_rows": 1,
+            "table_length": 20.18,
+            "tables_per_row": 100.0,
+            "tables_removed_for_pcs": 0,
+            'field_length': 4.859999999999999,
+            'field_width': 2019.98,
+            'post_height': 1.5,
+            'structure_shading': 1.0,
+            'backside_mismatch': 2.0
+        })
+
+    def test_add_dc_field_seasonal_tilt(self):
+        self._make_mocked_api()
+        self.powerplant = PowerPlant(api=self.mocked_api, project_id=7, prediction_id=77)
+        self._init_powerplant_structure()
+
+        with self.assertRaises(ValueError):
+            self.powerplant.add_dc_field(
+                block_name=1,
+                array_name=1,
+                inverter_name="A",
+                module_id=123,
+                tracking_type=TrackingTypeEnum.SEASONAL_TILT,
+                number_of_series_strings_wired_in_parallel=400,
+                modules_high=4,
+                modules_wired_in_series=10,
+                post_to_post_spacing=1.0,
+                module_tilt=30
+            )
+
     @mock.patch('plantpredict.plant_predict_entity.requests.get', new=mocked_requests.mocked_requests_get)
     @mock.patch('plantpredict.project.requests.get', new=mocked_requests.mocked_requests_get)
     def test_add_dc_field_fixed_tilt(self):
@@ -646,7 +928,6 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "vertical_intermodule_gap": 0.02,
             "modules_wide": 10,
             "table_to_table_spacing": 0.0,
-            "array_based_shading": False,
             "number_of_rows": 1,
             "table_length": 20.18,
             "tables_per_row": 100.0,
@@ -711,7 +992,6 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
             "vertical_intermodule_gap": 0.02,
             "modules_wide": 10,
             "table_to_table_spacing": 0.0,
-            "array_based_shading": False,
             "number_of_rows": 1,
             "table_length": 20.18,
             "tables_per_row": 100.0,
@@ -855,7 +1135,7 @@ class TestPowerPlant(plantpredict_unit_test_case.PlantPredictUnitTestCase):
         self.assertEqual(self.powerplant.project_id, 7)
         self.assertEqual(self.powerplant.prediction_id, 77)
         self.assertTrue(self.powerplant.use_cooling_temp)
-        self.assertIsNone(self.powerplant.power_factor)
+        self.assertEqual(self.powerplant.power_factor, 1.0)
         self.assertEqual(self.powerplant.blocks, [])
         self.assertEqual(self.powerplant.transformers, [])
         self.assertEqual(self.powerplant.transmission_lines, [])

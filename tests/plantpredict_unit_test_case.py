@@ -19,13 +19,13 @@ class PlantPredictUnitTestCase(unittest.TestCase):
         self.mocked_api.geo().state_province_code = "CO"
 
     @mock.patch('plantpredict.api.Api')
-    def _make_mocked_api(self, mocked_api):
+    def _make_mocked_api(self, mocked_api, module_id=123):
         self.mocked_api = mocked_api()
         self.mocked_api.base_url = "https://api.plantpredict.com"
         self.mocked_api.access_token = 'dummy_token'
 
         self.mocked_api.prediction.return_value = Prediction(self.mocked_api)
-        self.mocked_api.module.return_value = Module(api=self.mocked_api, id=123)
+        self.mocked_api.module.return_value = Module(api=self.mocked_api, id=module_id)
         self.mocked_api.project.return_value = Project(api=self.mocked_api, id=7)
         self.mocked_api.ashrae.return_value = ASHRAE(api=self.mocked_api, latitude=33.0, longitude=-110.0)
 

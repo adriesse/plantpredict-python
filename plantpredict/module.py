@@ -3,8 +3,9 @@ import requests
 import pandas
 from operator import itemgetter
 from itertools import groupby
+
 from plantpredict.plant_predict_entity import PlantPredictEntity
-from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel, convert_json_list
+from plantpredict.utilities import convert_json, camel_to_snake, snake_to_camel
 from plantpredict.error_handlers import handle_refused_connection, handle_error_response
 
 

@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.abspath('../'))
 # -- General configuration ------------------------------------------------
 
 # mock module import for successful build
-autodoc_mock_imports = ['pandas']
+autodoc_mock_imports = ['pandas', 'numpy']
 
 # force autodoc to list class methods in order defined in source code rather than alphabetically
 autodoc_member_order = 'bysource'
@@ -57,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'plantpredict-python'
-copyright = u'2019, Stephen Kaplan'
+copyright = u'2020, Stephen Kaplan'
 author = u'Stephen Kaplan'
 
 # The version info for the project you're documenting, acts as replacement for
